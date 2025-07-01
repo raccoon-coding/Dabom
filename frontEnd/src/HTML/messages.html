@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DaBom - Messages</title>
+    <link rel="stylesheet" href="messages.css">kljf lksjdklfjlksdfjkldrfnkrnklenanvmeklrjklsjfkldjlkfdksdugktpdy wjwjdsm quddnrldfkrhgkqlskejljflkjsdlkfjlksjelifsepoifioSJOIJEfosjoiefsssssddsdfj;lsdfks;kdlfj;k
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div style="display: flex; align-items: center;">
+                <div class="logo">
+                    <h1>DaBom</h1>
+                </div>
+                <div class="nav-menu">
+                    <a href="#" class="nav-item">홈</a>
+                    <a href="#" class="nav-item">채널</a>
+                    <a href="#" class="nav-item">플레이리스트</a>
+                    <a href="#" class="nav-item">Together</a>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="동영상, 채널 검색...">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <div class="nav-right">
+                <button class="nav-btn">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="nav-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <button class="nav-btn active">
+                    <i class="fas fa-envelope"></i>
+                    <span class="message-badge">5</span>
+                </button>
+                <img src="https://via.placeholder.com/35x35/ff4757/ffffff?text=U" alt="프로필" class="profile-img">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages Container -->
+    <div class="messages-container">
+        <!-- Chat List -->
+        <div class="chat-list">
+            <div class="chat-list-header">
+                <h2>메시지</h2>
+                <button class="new-chat-btn">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <div class="chat-search">
+                <input type="text" class="chat-search-input" placeholder="대화 검색...">
+            </div>
+
+            <div class="chat-list-content">
+                <div class="chat-item active" data-chat-id="1">
+                    <div class="chat-avatar">
+                        <img src="https://via.placeholder.com/50x50/2ed573/ffffff?text=A" alt="Alice">
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">Alice Johnson</div>
+                        <div class="chat-last-message">안녕하세요! 어떻게 지내세요?</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">2분 전</div>
+                        <div class="unread-count">3</div>
+                    </div>
+                </div>
+
+                <div class="chat-item" data-chat-id="2">
+                    <div class="chat-avatar">
+                        <img src="https://via.placeholder.com/50x50/007bff/ffffff?text=B" alt="Bob">
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">Bob Smith</div>
+                        <div class="chat-last-message">프로젝트 관련해서 얘기해요</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">1시간 전</div>
+                    </div>
+                </div>
+
+                <div class="chat-item" data-chat-id="3">
+                    <div class="chat-avatar">
+                        <img src="https://via.placeholder.com/50x50/9c27b0/ffffff?text=C" alt="Carol">
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">Carol Wilson</div>
+                        <div class="chat-last-message">사진 정말 멋져요! 👍</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">3시간 전</div>
+                        <div class="unread-count">1</div>
+                    </div>
+                </div>
+
+                <div class="chat-item" data-chat-id="4">
+                    <div class="chat-avatar">
+                        <img src="https://via.placeholder.com/50x50/ffa502/ffffff?text=D" alt="David">
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">David Brown</div>
+                        <div class="chat-last-message">네, 내일 봬요</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">어제</div>
+                    </div>
+                </div>
+
+                <div class="chat-item" data-chat-id="5">
+                    <div class="chat-avatar">
+                        <img src="https://via.placeholder.com/50x50/ff6b6b/ffffff?text=E" alt="Emma">
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">Emma Davis</div>
+                        <div class="chat-last-message">감사합니다!</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">2일 전</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <img src="https://via.placeholder.com/40x40/2ed573/ffffff?text=A" alt="Alice" class="chat-header-avatar">
+                    <div class="chat-header-details">
+                        <h3 id="chatUserName">Alice Johnson</h3>
+                        <div class="chat-header-status" id="chatUserStatus">온라인</div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="chat-action-btn">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="chat-action-btn">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="chat-action-btn">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message">
+                    <img src="https://via.placeholder.com/32x32/2ed573/ffffff?text=A" alt="Alice" class="message-avatar">
+                    <div>
+                        <div class="message-content">안녕하세요! 어떻게 지내세요?</div>
+                        <div class="message-time">오후 2:30</div>
+                    </div>
+                </div>
+
+                <div class="message sent">
+                    <img src="https://via.placeholder.com/32x32/ff4757/ffffff?text=U" alt="You" class="message-avatar">
+                    <div>
+                        <div class="message-content">안녕하세요! 저는 잘 지내고 있어요. 감사합니다!</div>
+                        <div class="message-time">오후 2:32</div>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <img src="https://via.placeholder.com/32x32/2ed573/ffffff?text=A" alt="Alice" class="message-avatar">
+                    <div>
+                        <div class="message-content">그래서 좋네요! 오늘 날씨가 정말 좋아요 ☀️</div>
+                        <div class="message-time">오후 2:33</div>
+                    </div>
+                </div>
+
+                <div class="message sent">
+                    <img src="https://via.placeholder.com/32x32/ff4757/ffffff?text=U" alt="You" class="message-avatar">
+                    <div>
+                        <div class="message-content">맞아요! 산책하기 좋은 날씨네요</div>
+                        <div class="message-time">오후 2:35</div>
+                    </div>
+                </div>
+
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <img src="https://via.placeholder.com/32x32/2ed573/ffffff?text=A" alt="Alice" class="message-avatar">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message-input-container">
+                <div class="message-input-wrapper">
+                    <div class="input-actions">
+                        <button class="input-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="input-btn">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <button class="input-btn">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                    <textarea class="message-input" placeholder="메시지 입력..." rows="1" id="messageInput"></textarea>
+                    <button class="send-btn" id="sendBtn" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 채팅 데이터
+        const chatData = {
+            1: {
+                name: "Alice Johnson",
+                avatar: "https://via.placeholder.com/50x50/2ed573/ffffff?text=A",
+                status: "온라인",
+                messages: [
+                    { id: 1, sender: "Alice", content: "안녕하세요! 어떻게 지내세요?", time: "오후 2:30", sent: false },
+                    { id: 2, sender: "You", content: "안녕하세요! 저는 잘 지내고 있어요. 감사합니다!", time: "오후 2:32", sent: true },
+                    { id: 3, sender: "Alice", content: "그래서 좋네요! 오늘 날씨가 정말 좋아요 ☀️", time: "오후 2:33", sent: false },
+                    { id: 4, sender: "You", content: "맞아요! 산책하기 좋은 날씨네요", time: "오후 2:35", sent: true }
+                ]
+            },
+            2: {
+                name: "Bob Smith",
+                avatar: "https://via.placeholder.com/50x50/007bff/ffffff?text=B",
+                status: "30분 전 접속",
+                messages: [
+                    { id: 1, sender: "Bob", content: "프로젝트 관련해서 얘기해요", time: "오후 1:00", sent: false },
+                    { id: 2, sender: "You", content: "네, 어떤 부분인가요?", time: "오후 1:02", sent: true }
+                ]
+            },
+            3: {
+                name: "Carol Wilson",
+                avatar: "https://via.placeholder.com/50x50/9c27b0/ffffff?text=C",
+                status: "온라인",
+                messages: [
+                    { id: 1, sender: "You", content: "어제 찍은 사진이에요", time: "오전 11:00", sent: true },
+                    { id: 2, sender: "Carol", content: "사진 정말 멋져요! 👍", time: "오전 11:30", sent: false }
+                ]
+            }
+        };
+
+        // DOM 요소들
+        const chatItems = document.querySelectorAll('.chat-item');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatUserName = document.getElementById('chatUserName');
+        const chatUserStatus = document.getElementById('chatUserStatus');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        let currentChatId = '1';
+        let isTyping = false;
+
+        // 현재 시간 형식화
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('ko-KR', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+
+        // 메시지 렌더링
+        function renderMessages(chatId) {
+            const chat = chatData[chatId];
+            if (!chat) return;
+
+            chatMessages.innerHTML = '';
+            
+            chat.messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${message.sent ? 'sent' : ''}`;
+                
+                const avatarSrc = message.sent ? 
+                    'https://via.placeholder.com/32x32/ff4757/ffffff?text=U' : 
+                    chat.avatar.replace('50x50', '32x32');
+
+                messageDiv.innerHTML = `
+                    <img src="${avatarSrc}" alt="${message.sender}" class="message-avatar">
+                    <div>
+                        <div class="message-content">${message.content}</div>
+                        <div class="message-time">${message.time}</div>
+                    </div>
+                `;
+                chatMessages.appendChild(messageDiv);
+            });
+
+            // 타이핑 인디케이터는 항상 맨 아래에 추가
+            chatMessages.appendChild(typingIndicator);
+            typingIndicator.style.display = "none";
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 채팅 헤더 정보 렌더링
+        function renderChatHeader(chatId) {
+            const chat = chatData[chatId];
+            if (!chat) return;
+            chatUserName.textContent = chat.name;
+            chatUserStatus.textContent = chat.status;
+            document.querySelector('.chat-header-avatar').src = chat.avatar.replace('50x50', '40x40');
+        }
+
+        // 채팅 전환
+        chatItems.forEach(item => {
+            item.addEventListener('click', function () {
+                const selectedId = this.getAttribute('data-chat-id');
+                if (selectedId === currentChatId) return;
+
+                document.querySelector('.chat-item.active')?.classList.remove('active');
+                this.classList.add('active');
+                currentChatId = selectedId;
+                renderChatHeader(currentChatId);
+                renderMessages(currentChatId);
+            });
+        });
+
+        // 메시지 입력 시 버튼 활성화
+        messageInput.addEventListener('input', function () {
+            sendBtn.disabled = !this.value.trim();
+        });
+
+        // 메시지 전송
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey && !sendBtn.disabled) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+            const chat = chatData[currentChatId];
+            if (!chat) return;
+
+            const now = getCurrentTime();
+            chat.messages.push({
+                id: chat.messages.length + 1,
+                sender: "You",
+                content: text,
+                time: now,
+                sent: true
+            });
+            messageInput.value = '';
+            sendBtn.disabled = true;
+            renderMessages(currentChatId);
+        }
+
+        // 초기 렌더링
+        renderChatHeader(currentChatId);
+        renderMessages(currentChatId);
+    </script>
+</body>
+</html>
