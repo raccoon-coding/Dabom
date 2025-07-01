@@ -5,7 +5,7 @@
     <div class="header-left">
       <div class="header-logo">
         <a href="/">
-          <img src="../images/dabom2.png" alt="DaBom Logo" class="logo-image" />
+          <img src="../../assets/images/dabom2.png" alt="DaBom Logo" class="logo-image" />
         </a>
       </div>
       <div class="nav-left">
