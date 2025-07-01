@@ -11,13 +11,23 @@
   justify-content: center;
   padding: 1rem;
 }
-
+/* Create Room Modal */
 .create-room-modal {
-  display: none;
+  position: fixed;      /* 화면 전체 레이어로 고정 */
+  top: 0;               /* 상단 0 */
+  left: 0;              /* 좌측 0 */
+  width: 100vw;         /* 뷰포트 전체 너비 */
+  height: 100vh;        /* 뷰포트 전체 높이 */
+  display: none;        /* 기본 숨김 */
+  padding: 1rem;
+  box-sizing: border-box;
+  z-index: 2000;        /* 필요 시 레이어 순서 조정 */
 }
 
 .create-room-modal.active {
-  display: flex;
+  display: flex;            /* 보여줄 때 flex 켜기 */
+  align-items: center;      /* 세로 중앙 정렬 */
+  justify-content: center;  /* 가로 중앙 정렬 */
 }
 
 .modal-overlay {
