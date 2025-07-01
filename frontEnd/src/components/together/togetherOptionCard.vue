@@ -1,4 +1,11 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import CreateTogetherModal from './CreateTogetherModal.vue'
+
+const showModal = ref(false)
+const openCreateRoomModal = () => { showModal.value = true }
+const closeModal        = () => { showModal.value = false }
+</script>
 
 <template>
   <div class="option-card">
@@ -8,7 +15,7 @@
     <div class="option-content">
       <h3>새 방 만들기</h3>
       <p>새로운 Together 방을 만들어 친구들을 초대하세요</p>
-      <button class="btn-option" id="createRoomBtn">
+      <button class="btn-option" id="createRoomBtn"  @click="openCreateRoomModal">
         <i class="fas fa-plus"></i>
         방 만들기
       </button>
@@ -31,6 +38,11 @@
       </div>
     </div>
   </div>
+  <!-- 모달 컴포넌트 조건부 렌더링 -->
+  <CreateTogetherModal 
+    :visible="showModal" 
+    @close="closeModal" 
+  />
 </template>
 
 <style scoped>

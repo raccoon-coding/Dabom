@@ -1,48 +1,65 @@
-<script setup></script>
+<script setup>
+// 부모로부터 visible prop 받고, close 이벤트 emit
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false
+  }
+})
+const emit = defineEmits(['close'])
+
+// 모달 닫기
+const closeModal = () => emit('close')
+</script>
 
 <template>
-  <div class="create-room-modal" id="createRoomModal">
-    <div class="modal-overlay"></div>
+  <!-- ① 모달을 하나로 통합하고, prop.visible에 따라 .active 토글 -->
+  <div class="create-room-modal" :class="{ active: props.visible }">
+    <div class="modal-overlay" @click="closeModal"></div>
     <div class="modal-content">
       <div class="modal-header">
         <h3><i class="fas fa-plus"></i> Together 방 만들기</h3>
-        <button class="modal-close" id="closeCreateRoom">
+        <button class="modal-close" @click="closeModal">
           <i class="fas fa-times"></i>
         </button>
       </div>
 
-      <form class="create-room-form" id="createRoomForm">
+      <form class="create-room-form" @submit.prevent="closeModal">
+        <!-- 방 이름 입력 -->
         <div class="form-group">
           <label for="roomName">방 이름 *</label>
           <input
-            type="text"
             id="roomName"
+            type="text"
             required
             maxlength="50"
             placeholder="방 이름을 입력하세요"
           />
-          <div class="char-count"><span id="roomNameCount">0</span>/50</div>
+          <div class="char-count"><span>0</span>/50</div>
         </div>
 
+        <!-- 동영상 URL 입력 -->
         <div class="form-group">
           <label for="videoUrl">동영상 URL</label>
           <input
-            type="url"
             id="videoUrl"
+            type="url"
             placeholder="함께 볼 동영상 URL을 입력하세요 (선택사항)"
           />
           <div class="help-text">나중에 방에서 동영상을 선택할 수도 있습니다</div>
         </div>
 
+        <!-- 최대 참가자 수 -->
         <div class="form-group">
-          <label for="maxParticipants">최대 참가자 수 *</label>
+          <label for="maxUser">최대 참가자 수 *</label>
           <input
-            type="text"
             id="maxUser"
-            placeholder="Together 최대 인원 수를 입력하세요.(추후에 수정 가능합니다.)"
+            type="text"
+            placeholder="Together 최대 인원 수를 입력하세요"
           />
         </div>
 
+        <!-- 공개 설정 -->
         <div class="form-group">
           <label>방 공개 설정</label>
           <div class="radio-group">
@@ -58,14 +75,16 @@
               <input type="radio" name="roomPrivacy" value="friends" />
               <span class="radio-mark"></span>
               <div class="radio-content">
-                <strong>비공개방</strong>
+                <strong>비공개 방</strong>
                 <span>초대한 친구들만 참가할 수 있습니다</span>
               </div>
             </label>
           </div>
         </div>
+
+        <!-- 모달 푸터(버튼) -->
         <div class="modal-footer">
-          <button type="button" class="btn-cancel">취소</button>
+          <button type="button" class="btn-cancel" @click="closeModal">취소</button>
           <button type="submit" class="btn-create">
             <i class="fas fa-plus"></i>
             방 만들기
