@@ -57,5 +57,5 @@
 </template>
 
 <style scoped>
-@import url(..\..\assets\main\footer.css);
+@import url("../../assets/main/footer.css");
 </style>

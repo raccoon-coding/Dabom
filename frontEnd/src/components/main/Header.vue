@@ -62,5 +62,5 @@
 </template>
 
 <style scoped>
-@import url(..\..\assets\main\header.css);
+@import url("../../assets/main/header.css");
 </style>
