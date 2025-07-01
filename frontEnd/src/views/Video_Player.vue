@@ -1,0 +1,28 @@
+<script setup>
+import Video_Main_Info from '../components/Video_Player/Video_Main_Info.vue'
+import Video_Tag_Explain from '../components/Video_Player/Video_Tag_Explain.vue'
+import Video_Recommand from '../components/Video_Player/Video_Recommand.vue'
+import Video_Comment from '../components/Video_Player/Video_Comment.vue'
+</script>
+<template>
+    <div class="video-container">
+        <!-- 영상 플레이어 영역 -->
+        <div class="video-player-section">
+            <div class="video-player-wrapper">
+                <!-- 실제 비디오 플레이어 -->
+                <video id="mainVideoPlayer" class="video-player" controls>
+                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                        type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <Video_Main_Info></Video_Main_Info>
+            </div>
+                <Video_Recommand></Video_Recommand>
+            </div>
+                <Video_Tag_Explain></Video_Tag_Explain>
+                <Video_Comment></Video_Comment>
+    </div>
+</template>
+<style scoped>
+@import url(../assets/Video_Player/Video_Player.css);
+</style>

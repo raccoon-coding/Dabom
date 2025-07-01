@@ -1,18 +1,20 @@
-// Main JavaScript for DaBom Streaming Platform
-
-// Global variables
+// Vue 호환 비디오 플레이어 스크립트
 let currentRating = 0;
 let isTogetherModeActive = false;
 
-// DOM Content Loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initializeVideoPlayer();
-    initializeStarRating();
-    initializeTogetherMode();
-    initializeComments();
-    initializeMobileMenu();
-    initializeSearch();
-});
+// Vue 인스턴스가 마운트된 후 초기화
+function initializeVideoPlayerForVue() {
+    // Vue의 $nextTick과 유사한 기능을 위해 지연 실행
+    setTimeout(() => {
+        initializeVideoPlayer();
+        initializeStarRating();
+        initializeTogetherMode();
+        initializeComments();
+        initializeMobileMenu();
+        initializeSearch();
+        initializeAdditionalFeatures();
+    }, 100);
+}
 
 // Video Player Functions
 function initializeVideoPlayer() {
@@ -20,34 +22,37 @@ function initializeVideoPlayer() {
     const playPauseBtn = document.getElementById('playPauseBtn');
 
     if (video && playPauseBtn) {
+        // 기존 이벤트 리스너 제거 (중복 방지)
+        const newPlayPauseBtn = playPauseBtn.cloneNode(true);
+        playPauseBtn.parentNode.replaceChild(newPlayPauseBtn, playPauseBtn);
+
         // Play/Pause functionality
-        playPauseBtn.addEventListener('click', function() {
+        newPlayPauseBtn.addEventListener('click', function () {
             if (video.paused) {
                 video.play();
-                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                newPlayPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             } else {
                 video.pause();
-                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                newPlayPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             }
         });
 
         // Update play/pause button based on video state
-        video.addEventListener('play', function() {
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        video.addEventListener('play', function () {
+            newPlayPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
         });
 
-        video.addEventListener('pause', function() {
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        video.addEventListener('pause', function () {
+            newPlayPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         });
 
         // Video ended
-        video.addEventListener('ended', function() {
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        video.addEventListener('ended', function () {
+            newPlayPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         });
 
         // Update video time and progress
-        video.addEventListener('timeupdate', function() {
-            // This could be used for progress bar updates
+        video.addEventListener('timeupdate', function () {
             updateVideoProgress();
         });
     }
@@ -62,16 +67,24 @@ function updateVideoProgress() {
 function initializeStarRating() {
     const stars = document.querySelectorAll('.star-rating-interactive i');
 
-    stars.forEach((star, index) => {
-        star.addEventListener('mouseenter', function() {
+    // 기존 이벤트 리스너 제거
+    stars.forEach((star) => {
+        const newStar = star.cloneNode(true);
+        star.parentNode.replaceChild(newStar, star);
+    });
+
+    // 새로운 별점 요소들에 이벤트 추가
+    const newStars = document.querySelectorAll('.star-rating-interactive i');
+    newStars.forEach((star, index) => {
+        star.addEventListener('mouseenter', function () {
             highlightStars(index + 1);
         });
 
-        star.addEventListener('mouseleave', function() {
+        star.addEventListener('mouseleave', function () {
             highlightStars(currentRating);
         });
 
-        star.addEventListener('click', function() {
+        star.addEventListener('click', function () {
             currentRating = index + 1;
             highlightStars(currentRating);
             submitRating(currentRating);
@@ -113,23 +126,36 @@ function initializeTogetherMode() {
     const chatInput = document.querySelector('.chat-input');
 
     if (togetherBtn) {
-        togetherBtn.addEventListener('click', function() {
+        // 기존 이벤트 리스너 제거
+        const newTogetherBtn = togetherBtn.cloneNode(true);
+        togetherBtn.parentNode.replaceChild(newTogetherBtn, togetherBtn);
+
+        newTogetherBtn.addEventListener('click', function () {
             toggleTogetherMode();
         });
     }
 
     if (closeTogetherBtn) {
-        closeTogetherBtn.addEventListener('click', function() {
+        const newCloseBtn = closeTogetherBtn.cloneNode(true);
+        closeTogetherBtn.parentNode.replaceChild(newCloseBtn, closeTogetherBtn);
+
+        newCloseBtn.addEventListener('click', function () {
             toggleTogetherMode();
         });
     }
 
     if (sendMessageBtn && chatInput) {
-        sendMessageBtn.addEventListener('click', function() {
+        const newSendBtn = sendMessageBtn.cloneNode(true);
+        sendMessageBtn.parentNode.replaceChild(newSendBtn, sendMessageBtn);
+
+        const newChatInput = chatInput.cloneNode(true);
+        chatInput.parentNode.replaceChild(newChatInput, chatInput);
+
+        newSendBtn.addEventListener('click', function () {
             sendChatMessage();
         });
 
-        chatInput.addEventListener('keypress', function(e) {
+        newChatInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 sendChatMessage();
             }
@@ -140,6 +166,8 @@ function initializeTogetherMode() {
 function toggleTogetherMode() {
     const togetherBtn = document.getElementById('togetherBtn');
     const togetherPanel = document.getElementById('togetherPanel');
+
+    if (!togetherBtn || !togetherPanel) return;
 
     isTogetherModeActive = !isTogetherModeActive;
 
@@ -164,7 +192,7 @@ function sendChatMessage() {
     const chatInput = document.querySelector('.chat-input');
     const chatMessages = document.querySelector('.chat-messages');
 
-    if (chatInput.value.trim() === '') return;
+    if (!chatInput || !chatMessages || chatInput.value.trim() === '') return;
 
     const message = chatInput.value.trim();
     const messageElement = document.createElement('div');
@@ -185,12 +213,14 @@ function sendChatMessage() {
 function simulateParticipantJoin() {
     setTimeout(() => {
         const chatMessages = document.querySelector('.chat-messages');
-        const joinMessage = document.createElement('div');
-        joinMessage.classList.add('chat-message');
-        joinMessage.style.color = 'var(--secondary-color)';
-        joinMessage.innerHTML = '<em>사용자3님이 함께 시청을 시작했습니다.</em>';
-        chatMessages.appendChild(joinMessage);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        if (chatMessages) {
+            const joinMessage = document.createElement('div');
+            joinMessage.classList.add('chat-message');
+            joinMessage.style.color = 'var(--secondary-color)';
+            joinMessage.innerHTML = '<em>사용자3님이 함께 시청을 시작했습니다.</em>';
+            chatMessages.appendChild(joinMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
     }, 2000);
 }
 
@@ -203,12 +233,14 @@ function simulateChatResponse() {
     ];
 
     const chatMessages = document.querySelector('.chat-messages');
-    const responseMessage = document.createElement('div');
-    responseMessage.classList.add('chat-message');
-    responseMessage.innerHTML = `<strong>사용자${Math.floor(Math.random() * 3) + 1}:</strong> ${responses[Math.floor(Math.random() * responses.length)]}`;
+    if (chatMessages) {
+        const responseMessage = document.createElement('div');
+        responseMessage.classList.add('chat-message');
+        responseMessage.innerHTML = `<strong>사용자${Math.floor(Math.random() * 3) + 1}:</strong> ${responses[Math.floor(Math.random() * responses.length)]}`;
 
-    chatMessages.appendChild(responseMessage);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+        chatMessages.appendChild(responseMessage);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 }
 
 // Comments Functions
@@ -220,17 +252,34 @@ function initializeComments() {
 
     // Show/hide comment actions based on textarea focus
     if (commentTextarea && commentActions) {
-        commentTextarea.addEventListener('focus', function() {
+        // 기존 이벤트 제거
+        const newTextarea = commentTextarea.cloneNode(true);
+        commentTextarea.parentNode.replaceChild(newTextarea, commentTextarea);
+
+        newTextarea.addEventListener('focus', function () {
             commentActions.style.display = 'flex';
         });
+    }
 
-        cancelBtn?.addEventListener('click', function() {
-            commentTextarea.value = '';
-            commentActions.style.display = 'none';
-            commentTextarea.blur();
+    if (cancelBtn) {
+        const newCancelBtn = cancelBtn.cloneNode(true);
+        cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+        newCancelBtn.addEventListener('click', function () {
+            const textarea = document.querySelector('.comment-textarea');
+            if (textarea) {
+                textarea.value = '';
+                commentActions.style.display = 'none';
+                textarea.blur();
+            }
         });
+    }
 
-        submitBtn?.addEventListener('click', function() {
+    if (submitBtn) {
+        const newSubmitBtn = submitBtn.cloneNode(true);
+        submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
+
+        newSubmitBtn.addEventListener('click', function () {
             submitComment();
         });
     }
@@ -246,21 +295,30 @@ function initializeCommentButtons() {
     const replyButtons = document.querySelectorAll('.reply-btn');
 
     likeButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            toggleLike(this);
-        });
+        if (!btn.hasAttribute('data-vue-initialized')) {
+            btn.setAttribute('data-vue-initialized', 'true');
+            btn.addEventListener('click', function () {
+                toggleLike(this);
+            });
+        }
     });
 
     dislikeButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            toggleDislike(this);
-        });
+        if (!btn.hasAttribute('data-vue-initialized')) {
+            btn.setAttribute('data-vue-initialized', 'true');
+            btn.addEventListener('click', function () {
+                toggleDislike(this);
+            });
+        }
     });
 
     replyButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            showReplyForm(this);
-        });
+        if (!btn.hasAttribute('data-vue-initialized')) {
+            btn.setAttribute('data-vue-initialized', 'true');
+            btn.addEventListener('click', function () {
+                showReplyForm(this);
+            });
+        }
     });
 }
 
@@ -268,7 +326,7 @@ function submitComment() {
     const commentTextarea = document.querySelector('.comment-textarea');
     const commentsList = document.querySelector('.comments-list');
 
-    if (commentTextarea.value.trim() === '') return;
+    if (!commentTextarea || !commentsList || commentTextarea.value.trim() === '') return;
 
     const commentContent = commentTextarea.value.trim();
     const newComment = createCommentElement(commentContent);
@@ -276,7 +334,10 @@ function submitComment() {
     commentsList.insertBefore(newComment, commentsList.firstChild);
 
     commentTextarea.value = '';
-    document.querySelector('.comment-actions').style.display = 'none';
+    const commentActions = document.querySelector('.comment-actions');
+    if (commentActions) {
+        commentActions.style.display = 'none';
+    }
 
     showNotification('댓글이 등록되었습니다!', 'success');
 
@@ -299,14 +360,14 @@ function createCommentElement(content) {
             </div>
             <p class="comment-text">${content}</p>
             <div class="comment-actions">
-                <button class="comment-btn like-btn">
+                <button class="comment-btn like-btn" data-vue-initialized="true">
                     <i class="fas fa-thumbs-up"></i>
                     0
                 </button>
-                <button class="comment-btn dislike-btn">
+                <button class="comment-btn dislike-btn" data-vue-initialized="true">
                     <i class="fas fa-thumbs-down"></i>
                 </button>
-                <button class="comment-btn reply-btn">답글</button>
+                <button class="comment-btn reply-btn" data-vue-initialized="true">답글</button>
                 <button class="comment-btn report-btn">신고</button>
             </div>
         </div>
@@ -317,15 +378,15 @@ function createCommentElement(content) {
     const newDislikeBtn = commentDiv.querySelector('.dislike-btn');
     const newReplyBtn = commentDiv.querySelector('.reply-btn');
 
-    newLikeBtn.addEventListener('click', function() {
+    newLikeBtn.addEventListener('click', function () {
         toggleLike(this);
     });
 
-    newDislikeBtn.addEventListener('click', function() {
+    newDislikeBtn.addEventListener('click', function () {
         toggleDislike(this);
     });
 
-    newReplyBtn.addEventListener('click', function() {
+    newReplyBtn.addEventListener('click', function () {
         showReplyForm(this);
     });
 
@@ -346,7 +407,9 @@ function toggleLike(button) {
 
         // Remove dislike if active
         const dislikeBtn = button.parentElement.querySelector('.dislike-btn');
-        dislikeBtn.classList.remove('active');
+        if (dislikeBtn) {
+            dislikeBtn.classList.remove('active');
+        }
     }
 
     countSpan.textContent = ` ${count}`;
@@ -362,11 +425,13 @@ function toggleDislike(button) {
 
         // Remove like if active
         const likeBtn = button.parentElement.querySelector('.like-btn');
-        likeBtn.classList.remove('active');
-        const countSpan = likeBtn.querySelector('i').nextSibling;
-        let count = parseInt(countSpan.textContent.trim()) || 0;
-        if (count > 0) {
-            countSpan.textContent = ` ${count - 1}`;
+        if (likeBtn) {
+            likeBtn.classList.remove('active');
+            const countSpan = likeBtn.querySelector('i').nextSibling;
+            let count = parseInt(countSpan.textContent.trim()) || 0;
+            if (count > 0) {
+                countSpan.textContent = ` ${count - 1}`;
+            }
         }
     }
 }
@@ -404,11 +469,11 @@ function showReplyForm(button) {
     const submitBtn = replyForm.querySelector('.reply-submit');
     const textarea = replyForm.querySelector('.reply-textarea');
 
-    cancelBtn.addEventListener('click', function() {
+    cancelBtn.addEventListener('click', function () {
         replyForm.remove();
     });
 
-    submitBtn.addEventListener('click', function() {
+    submitBtn.addEventListener('click', function () {
         if (textarea.value.trim()) {
             submitReply(commentItem, textarea.value.trim());
             replyForm.remove();
@@ -440,14 +505,14 @@ function submitReply(commentItem, replyContent) {
             </div>
             <p class="comment-text">${replyContent}</p>
             <div class="comment-actions">
-                <button class="comment-btn like-btn">
+                <button class="comment-btn like-btn" data-vue-initialized="true">
                     <i class="fas fa-thumbs-up"></i>
                     0
                 </button>
-                <button class="comment-btn dislike-btn">
+                <button class="comment-btn dislike-btn" data-vue-initialized="true">
                     <i class="fas fa-thumbs-down"></i>
                 </button>
-                <button class="comment-btn reply-btn">답글</button>
+                <button class="comment-btn reply-btn" data-vue-initialized="true">답글</button>
             </div>
         </div>
     `;
@@ -459,15 +524,15 @@ function submitReply(commentItem, replyContent) {
     const newDislikeBtn = replyElement.querySelector('.dislike-btn');
     const newReplyBtn = replyElement.querySelector('.reply-btn');
 
-    newLikeBtn.addEventListener('click', function() {
+    newLikeBtn.addEventListener('click', function () {
         toggleLike(this);
     });
 
-    newDislikeBtn.addEventListener('click', function() {
+    newDislikeBtn.addEventListener('click', function () {
         toggleDislike(this);
     });
 
-    newReplyBtn.addEventListener('click', function() {
+    newReplyBtn.addEventListener('click', function () {
         showReplyForm(this);
     });
 
@@ -489,10 +554,14 @@ function initializeMobileMenu() {
     const navMenu = document.querySelector('.nav-menu');
 
     if (mobileMenuBtn && navMenu) {
-        mobileMenuBtn.addEventListener('click', function() {
+        // 기존 이벤트 제거
+        const newMobileMenuBtn = mobileMenuBtn.cloneNode(true);
+        mobileMenuBtn.parentNode.replaceChild(newMobileMenuBtn, mobileMenuBtn);
+
+        newMobileMenuBtn.addEventListener('click', function () {
             navMenu.classList.toggle('mobile-active');
 
-            const icon = mobileMenuBtn.querySelector('i');
+            const icon = newMobileMenuBtn.querySelector('i');
             if (navMenu.classList.contains('mobile-active')) {
                 icon.classList.remove('fa-bars');
                 icon.classList.add('fa-times');
@@ -510,18 +579,25 @@ function initializeSearch() {
     const searchBtn = document.querySelector('.search-btn');
 
     if (searchInput && searchBtn) {
-        searchBtn.addEventListener('click', function() {
+        // 기존 이벤트 제거
+        const newSearchBtn = searchBtn.cloneNode(true);
+        searchBtn.parentNode.replaceChild(newSearchBtn, searchBtn);
+
+        const newSearchInput = searchInput.cloneNode(true);
+        searchInput.parentNode.replaceChild(newSearchInput, searchInput);
+
+        newSearchBtn.addEventListener('click', function () {
             performSearch();
         });
 
-        searchInput.addEventListener('keypress', function(e) {
+        newSearchInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 performSearch();
             }
         });
 
         // Search suggestions (could be expanded)
-        searchInput.addEventListener('input', function() {
+        newSearchInput.addEventListener('input', function () {
             showSearchSuggestions(this.value);
         });
     }
@@ -529,6 +605,8 @@ function initializeSearch() {
 
 function performSearch() {
     const searchInput = document.querySelector('.search-input');
+    if (!searchInput) return;
+
     const query = searchInput.value.trim();
 
     if (query === '') return;
@@ -578,7 +656,9 @@ function showNotification(message, type = 'info') {
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => {
-            document.body.removeChild(notification);
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
         }, 300);
     }, 3000);
 }
@@ -593,8 +673,9 @@ function addToPlaylist() {
 function shareVideo() {
     // Copy video URL to clipboard
     if (navigator.share) {
+        const videoTitle = document.querySelector('.video-title');
         navigator.share({
-            title: document.querySelector('.video-title').textContent,
+            title: videoTitle ? videoTitle.textContent : '비디오 공유',
             url: window.location.href
         }).then(() => {
             showNotification('공유가 완료되었습니다!', 'success');
@@ -623,24 +704,27 @@ function copyToClipboard(text) {
     }
 }
 
-// Initialize additional features when page loads
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize additional features
+function initializeAdditionalFeatures() {
     // Add event listeners for share and playlist buttons
     const shareBtn = document.querySelector('.share-btn');
     const playlistBtn = document.querySelector('.playlist-btn');
 
-    if (shareBtn) {
+    if (shareBtn && !shareBtn.hasAttribute('data-vue-initialized')) {
+        shareBtn.setAttribute('data-vue-initialized', 'true');
         shareBtn.addEventListener('click', shareVideo);
     }
 
-    if (playlistBtn) {
+    if (playlistBtn && !playlistBtn.hasAttribute('data-vue-initialized')) {
+        playlistBtn.setAttribute('data-vue-initialized', 'true');
         playlistBtn.addEventListener('click', addToPlaylist);
     }
 
     // Add subscribe button functionality
     const subscribeBtn = document.querySelector('.btn-subscribe');
-    if (subscribeBtn) {
-        subscribeBtn.addEventListener('click', function() {
+    if (subscribeBtn && !subscribeBtn.hasAttribute('data-vue-initialized')) {
+        subscribeBtn.setAttribute('data-vue-initialized', 'true');
+        subscribeBtn.addEventListener('click', function () {
             if (this.textContent === '구독') {
                 this.textContent = '구독 중';
                 this.style.backgroundColor = 'var(--border-color)';
@@ -655,12 +739,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add message button functionality
     const messageBtn = document.querySelector('.btn-message');
-    if (messageBtn) {
-        messageBtn.addEventListener('click', function() {
+    if (messageBtn && !messageBtn.hasAttribute('data-vue-initialized')) {
+        messageBtn.setAttribute('data-vue-initialized', 'true');
+        messageBtn.addEventListener('click', function () {
             showNotification('DM 기능은 개발 중입니다.', 'info');
         });
     }
-});
+}
 
 // Additional responsive utilities
 function handleResize() {
@@ -674,5 +759,15 @@ function handleResize() {
     }
 }
 
-window.addEventListener('resize', handleResize);
-window.addEventListener('load', handleResize);
+// Vue 컴포넌트에서 사용할 수 있도록 전역으로 노출
+if (typeof window !== 'undefined') {
+    window.initializeVideoPlayerForVue = initializeVideoPlayerForVue;
+    window.handleResize = handleResize;
+
+    // 리사이즈 이벤트 리스너 추가 (중복 방지)
+    if (!window.videoPlayerResizeListenerAdded) {
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('load', handleResize);
+        window.videoPlayerResizeListenerAdded = true;
+    }
+}
