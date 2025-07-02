@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import CreateTogetherModal from './CreateTogetherModal.vue'
+import CreateTogetherModal from '@/components/together/CreateTogetherModal.vue'
 
 const showModal = ref(false);
 const joinRoomUrl = '';
@@ -83,5 +83,5 @@ const joinRoom = async () => {
 </template>
 
 <style scoped>
-@import url(../../assets/together/TogetherOptionCard.css);
+@import url(@/assets/together/TogetherOptionCard.css);
 </style>

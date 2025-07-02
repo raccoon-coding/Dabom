@@ -1,15 +1,11 @@
 <script setup>
 import card from '@/components/together/TogetherCard.vue'
 import togetherSearch from '@/components/together/TogetherSearch.vue'
-import quickButton from '@/components/together/TogetherQuickButton.vue'
-
-
 </script>
 
 <template>
     <div class="together-container">
         <togetherSearch /> 
-        <quickButton />
         <!-- Active Rooms -->
         <div class="active-rooms">
             <div class="section-header">
