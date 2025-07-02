@@ -1,4 +1,4 @@
-import VideoCardComp from "@/components/videos/VideoCardComp.vue"
+
 import Login from "@/views/Login.vue"
 import Signup from "@/views/Signup.vue"
 
