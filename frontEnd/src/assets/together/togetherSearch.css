@@ -34,3 +34,18 @@
 .search-btn:hover {
   background-color: var(--primary-color);
 }
+
+.together-search {
+  position: relative;
+  display: flex;
+  width: 80%;
+  text-align: center;
+  margin-left: 10%;
+  margin-bottom: 5%;
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
