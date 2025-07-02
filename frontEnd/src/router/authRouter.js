@@ -12,10 +12,6 @@ const authRoutes = [
     path: '/login',
     name: 'login',
     component: Login,
-  },
-  {
-    path: '/test',
-    component: VideoCardComp
   }
 ]
 
