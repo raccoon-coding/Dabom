@@ -4,7 +4,6 @@ import togetherSearch from '@/components/together/TogetherSearch.vue'
 import card from '@/components/together/TogetherCard.vue'
 import myTogetherCard from '@/components/together/MyTogetherCard.vue'
 import optionCard from '@/components/together/TogetherOptionCard.vue'
-import quickButton from '@/components/together/TogetherQuickButton.vue'
 </script>
 
 <template>
@@ -14,7 +13,6 @@ import quickButton from '@/components/together/TogetherQuickButton.vue'
         <div class="room-options">
             <optionCard />
         </div>
-        <quickButton />
         <!-- Active Rooms -->
         <div class="active-rooms">
             <div class="section-header">
@@ -41,6 +39,6 @@ import quickButton from '@/components/together/TogetherQuickButton.vue'
 </template>
 
 <style scoped>
-@import url('../../../assets/together/Together.css');
-@import url('../../../assets/main/main.css');
+@import url('@/assets/together/Together.css');
+@import url('@/assets/main/main.css');
 </style>

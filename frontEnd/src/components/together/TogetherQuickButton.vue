@@ -13,5 +13,5 @@
 </template>
 
 <style scoped>
-@import url(../../assets/together/TogetherQuickButton.css);
+@import url(@/assets/together/TogetherQuickButton.css);
 </style>

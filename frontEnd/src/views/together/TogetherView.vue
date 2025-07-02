@@ -1,10 +1,7 @@
 <script setup>
 import axios from 'axios'
-import togetherHeader from '../../components/together/TogetherHeader.vue'
-import card from '../../components/together/TogetherCard.vue'
-import myTogetherCard from '../../components/together/MyTogetherCard.vue'
-import optionCard from '../../components/together/TogetherOptionCard.vue'
-import quickButton from '../../components/together/TogetherQuickButton.vue'
+import togetherHeader from '@/components/together/TogetherHeader.vue'
+import quickButton from '@/components/together/TogetherQuickButton.vue'
 </script>
 
 <template>
@@ -12,7 +9,8 @@ import quickButton from '../../components/together/TogetherQuickButton.vue'
     <div class="together-container">
       <togetherHeader />
       <router-view></router-view>
-      </div>
+      <quickButton />
+    </div>
   </main>
 </template>
 

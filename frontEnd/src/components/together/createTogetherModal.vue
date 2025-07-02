@@ -1,5 +1,5 @@
 <script setup>
-import {ref, defineEmits, defineProps} from 'vue'
+import {ref} from 'vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -120,5 +120,5 @@ const sendApi = () => {
 </template>
 
 <style scoped>
-@import url(../../assets/together/CreateTogetherModal.css);
+@import url(@/assets/together/CreateTogetherModal.css);
 </style>

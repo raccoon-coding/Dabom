@@ -60,5 +60,5 @@ const joinRoom = () => {
 </template>
 
 <style scoped>
-@import url(../../assets/together/TogetherCard.css);
+@import url(@/assets/together/TogetherCard.css);
 </style>
