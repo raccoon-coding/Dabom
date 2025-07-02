@@ -1,10 +1,29 @@
-import TogetherView from '../views/together.vue'
+import TogetherView from '@/views/together/TogetherView.vue'
+import TogetherMainView from '@/views/together/subview/TogetherMainView.vue'
+import TogetherRoom from '@/views/TogetherRoom.vue'
 
 const togetherRoutes = [
   {
-    path: '/together', // 오타 수정: '/togehter' → '/together'
-    name: 'together',
+    path: '/together',
+    name: 'Together',
     component: TogetherView,
+    children: [
+      {
+        path: '/together',
+        name: 'TogetherMain',
+        component: TogetherMainView,
+      },
+      {
+        path: '/together/search',
+        name: 'TogetherSearch',
+        component: () => import('@/views/together/subview/TogetherSearchView.vue'),
+      },
+    ],
+  },
+  {
+    path: '/together/:id',
+    name: 'TogetherRoom',
+    component: TogetherRoom,
   },
 ]
 

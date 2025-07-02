@@ -1,20 +1,44 @@
 <script setup>
-// 부모로부터 visible prop 받고, close 이벤트 emit
+import {ref} from 'vue'
+import axios from 'axios'
+
 const props = defineProps({
   visible: {
     type: Boolean,
     default: false
   }
 })
+// Events 정의[17][20]
 const emit = defineEmits(['close'])
 
-// 모달 닫기
-const closeModal = () => emit('close')
+// 모달 닫기 함수
+const closeModal = () => {
+  emit('close')
+}
+
+// 배경 클릭시 모달 닫기
+const handleBackdropClick = (event) => {
+  if (event.target === event.currentTarget) {
+    handleClose()
+  }
+}
+
+// 방 만들기 버튼 클릭 시 데이터 전송
+const sendApi = () => {
+  alert("방을 생성했습니다.")
+  // 전송 API 작성 및 데이터 받기
+  // redirect 함수 작성
+}
 </script>
 
 <template>
-  <!-- ① 모달을 하나로 통합하고, prop.visible에 따라 .active 토글 -->
-  <div class="create-room-modal" :class="{ active: props.visible }">
+  <div 
+    v-if="visible" 
+    class="modal-backdrop" 
+    @click="handleBackdropClick"
+  ></div>
+  
+  <div class="create-room-modal">
     <div class="modal-overlay" @click="closeModal"></div>
     <div class="modal-content">
       <div class="modal-header">
@@ -85,7 +109,7 @@ const closeModal = () => emit('close')
         <!-- 모달 푸터(버튼) -->
         <div class="modal-footer">
           <button type="button" class="btn-cancel" @click="closeModal">취소</button>
-          <button type="submit" class="btn-create">
+          <button type="submit" class="btn-create" @click="sendApi">
             <i class="fas fa-plus"></i>
             방 만들기
           </button>
@@ -96,5 +120,5 @@ const closeModal = () => emit('close')
 </template>
 
 <style scoped>
-@import url(../../assets/together/createTogetherModal.css);
+@import url(@/assets/together/CreateTogetherModal.css);
 </style>

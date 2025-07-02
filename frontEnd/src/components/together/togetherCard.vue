@@ -1,4 +1,7 @@
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 // defineProps({
 //     title: String,
 //     host: String,
@@ -9,7 +12,7 @@
 const joinRoom = () => {
   // props로 받은 URL로 이동
   if (true) {
-    window.location.href = "together/12"
+    router.push({ name: 'TogetherRoom', params: {id: 12}})
   } else {
     console.log('URL이 제공되지 않았습니다.')
   }
@@ -57,5 +60,5 @@ const joinRoom = () => {
 </template>
 
 <style scoped>
-@import url(../../assets/together/togetherCard.css);
+@import url(@/assets/together/TogetherCard.css);
 </style>
