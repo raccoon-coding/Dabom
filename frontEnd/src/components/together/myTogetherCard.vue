@@ -30,5 +30,5 @@
 </template>
 
 <style scoped>
-@import url(../../assets/together/myTogetherCard.css);
+@import url(../../assets/together/MyTogetherCard.css);
 </style>

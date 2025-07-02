@@ -18,14 +18,10 @@
   left: 0;              /* 좌측 0 */
   width: 100vw;         /* 뷰포트 전체 너비 */
   height: 100vh;        /* 뷰포트 전체 높이 */
-  display: none;        /* 기본 숨김 */
+  display: flex;        /* 기본 숨김 */
   padding: 1rem;
   box-sizing: border-box;
   z-index: 2000;        /* 필요 시 레이어 순서 조정 */
-}
-
-.create-room-modal.active {
-  display: flex;            /* 보여줄 때 flex 켜기 */
   align-items: center;      /* 세로 중앙 정렬 */
   justify-content: center;  /* 가로 중앙 정렬 */
 }
