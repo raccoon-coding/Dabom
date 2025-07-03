@@ -1,5 +1,25 @@
 <script setup>
+import { reactive } from 'vue';
+import api from '@/api/auth'
 
+const state = reactive({
+    showPassword: false
+})
+
+const loginForm = reactive({
+    email: '',
+    password: ''
+})
+
+const togglePassword = () => {
+    state.showPassword = !state.showPassword;
+}
+
+const login = () => {
+    // TODO: Login 로직
+    // api.login()
+    console.log("로그인 로직 ㅋㅋ")
+}
 </script>
 
 <template>
@@ -8,6 +28,7 @@
         <!-- font awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     </head>
+
     <div class="login-container">
         <div class="login-form-wrapper">
             <div class="login-header">
@@ -15,19 +36,21 @@
                 <p>DaBom에서 새로운 스트리밍 경험을 시작하세요</p>
             </div>
             <div class="login-form-container">
-                <form class="login-form" id="loginForm">
+                <form class="login-form" id="loginForm" @submit.prevent="login()">
                     <div class="form-group">
                         <label for="email">이메일</label>
-                        <input type="email" id="email" name="email" required placeholder="이메일을 입력하세요">
+                        <input type="email" id="email" name="email" required placeholder="이메일을 입력하세요"
+                            v-model="loginForm.email">
                         <span class="error-message" id="emailError"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="password">비밀번호</label>
                         <div class="password-input">
-                            <input type="password" id="password" name="password" required placeholder="비밀번호를 입력하세요">
-                            <button type="button" class="toggle-password" id="togglePassword">
-                                <i class="fas fa-eye"></i>
+                            <input :type="state.showPassword ? 'text' : 'password'" id="password" name="password"
+                                v-model="loginForm.password" required placeholder="비밀번호를 입력하세요">
+                            <button type="button" class="toggle-password" id="togglePassword" @click="togglePassword">
+                                <i :class="state.showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                             </button>
                         </div>
                         <span class="error-message" id="passwordError"></span>
@@ -39,7 +62,7 @@
                             <span class="checkmark"></span>
                             로그인 상태 유지
                         </label>
-                        <a href="forgot-password.html" class="forgot-link">비밀번호를 잊으셨나요?</a>
+                        <a href="#" class="forgot-link">비밀번호를 잊으셨나요?</a>
                     </div>
 
                     <button type="submit" class="btn-login">
@@ -68,7 +91,8 @@
                 </div>
 
                 <div class="signup-link">
-                    <p>계정이 없으신가요? <a href="signup.html">회원가입</a></p>
+                    <p>계정이 없으신가요? <RouterLink :to="{ name: 'signup' }">회원가입</RouterLink>
+                    </p>
                 </div>
             </div>
         </div>
