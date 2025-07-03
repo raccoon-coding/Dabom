@@ -19,7 +19,7 @@
   text-decoration: none;
 }
 
-/* Channel Header */
+/* Channel Header
 .channel-header {
   position: relative;
   margin-bottom: 2rem;
@@ -129,9 +129,9 @@
 
 .btn-message:hover {
   background-color: rgba(255, 255, 255, 0.3);
-}
+} */
 
-/* Channel Navigation */
+/* Channel Navigation
 .channel-nav {
   background-color: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
@@ -173,7 +173,7 @@
 .channel-nav-item.active {
   color: var(--primary-color);
   border-bottom-color: var(--primary-color);
-}
+} */
 
 /* Content Tabs */
 .channel-content {
@@ -470,6 +470,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -493,10 +494,14 @@
 /*통계*/
 .stats-boxes {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4등분, 한 줄로 꽉! */
-  gap: 2rem; /* 카드 사이 간격 */
-  width: 100%; /* 부모 너비 전체 */
+  grid-template-columns: repeat(4, 1fr);
+  /* 4등분, 한 줄로 꽉! */
+  gap: 2rem;
+  /* 카드 사이 간격 */
+  width: 100%;
+  /* 부모 너비 전체 */
 }
+
 .stat-card {
   flex: 1 1 180px;
   min-width: 180px;
@@ -510,12 +515,14 @@
   transition: all 0.22s;
   border: 2px solid transparent;
 }
+
 .stat-card:hover,
 .stat-card.active {
   border-color: #fa5500;
   background: #232326;
   transform: translateY(-4px) scale(1.04);
 }
+
 .stat-number {
   font-size: 2.2rem;
   font-weight: 700;
@@ -523,26 +530,31 @@
   margin-bottom: 0.5rem;
   letter-spacing: -2px;
 }
+
 .stat-label {
   font-size: 1.05rem;
   color: #bbb;
   letter-spacing: -0.5px;
 }
+
 .stats-chart-container {
   width: 100%;
   min-height: 340px;
   padding: 1.2rem 0.5rem 0.3rem 0.5rem;
 }
+
 @media (max-width: 800px) {
   .stats-boxes {
     flex-direction: column;
     gap: 1.2rem;
   }
+
   .stat-card {
     min-width: 0;
     width: 100%;
     max-width: none;
   }
+
   .stats-chart-container {
     min-height: 220px;
   }
