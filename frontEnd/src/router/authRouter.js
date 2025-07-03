@@ -1,6 +1,6 @@
 
-import Login from "@/views/Login.vue"
-import Signup from "@/views/Signup.vue"
+import Login from "@/views/auth/Login.vue"
+import Signup from "@/views/auth/Signup.vue"
 
 const authRoutes = [
   {
