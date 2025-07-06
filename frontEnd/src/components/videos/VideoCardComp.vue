@@ -1,26 +1,13 @@
 <script setup>
 
-const mockVideo = {
-    id: 'abc123',
-    title: '병욱님의 키보드 탐구',
-    thumbnailUrl: '#',
-    duration: '12:34',
-    channel: {
-        name: '알리 매니아',
-        avatarUrl: '#',
-    },
-    rating: 4.2,
-    views: '12',
-    uploadedAt: '2',
-};
-
+const props = defineProps(['video'])
 </script>
 
 <template>
     <div class="video-card">
         <div class="video-thumbnail">
             <img src="@/assets/images/dabom2.png" alt="썸네일" />
-            <div class="video-duration">{{ mockVideo.duration }}</div>
+            <div class="video-duration">{{ props.video.duration }}</div>
             <div class="video-overlay">
                 <button class="video-overlay__play-btn">
                     <i class="fas fa-play"></i>
@@ -37,8 +24,8 @@ const mockVideo = {
                 <img src="@/assets/images/dabom2.png" alt="채널이미지" />
             </div>
             <div class="video-details">
-                <h4 class="video-title">{{ mockVideo.title }}</h4>
-                <p class="channel-name">{{ mockVideo.channel.name }}</p>
+                <h4 class="video-title">{{ props.video.title }}</h4>
+                <p class="channel-name">{{ props.video.channel.name }}</p>
                 <div class="video-meta">
                     <div class="star-rating">
 
@@ -47,10 +34,10 @@ const mockVideo = {
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="far fa-star"></i>
-                        <span class="rating-score">{{ mockVideo.rating }}</span>
+                        <span class="rating-score">{{ props.video.rating }}</span>
                     </div>
-                    <span class="view-count">{{ mockVideo.views }}</span>
-                    <span class="upload-time">{{ mockVideo.uploadedAt }}일 전</span>
+                    <span class="view-count">{{ props.video.views }}</span>
+                    <span class="upload-time">{{ props.video.uploadedAt }}일 전</span>
                 </div>
             </div>
         </div>
@@ -59,14 +46,17 @@ const mockVideo = {
 
 <style scoped>
 .video-card {
-    max-width: 21rem;
+    /* max-width: 21rem; */
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: unset;
     background-color: var(--card-bg);
     border-radius: 12px;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.video-thumbnail {
+/* .video-thumbnail {
     position: relative;
     overflow: hidden;
 }
@@ -75,7 +65,23 @@ const mockVideo = {
     width: 100%;
     height: 100%;
     object-fit: cover;
+} */
+
+.video-thumbnail {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    /* 또는 4 / 3 등 원하는 비율 */
+    border-radius: 8px;
 }
+
+.video-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 
 .video-duration {
     position: absolute;

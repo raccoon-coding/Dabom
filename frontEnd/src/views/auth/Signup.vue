@@ -1,4 +1,104 @@
 <script setup>
+import { reactive } from 'vue';
+import { checkEmailExists, checkChannelNameExists } from "@/api/auth/index.js"
+
+const state = reactive({
+    showPassword: false,
+    confirmPassword: false,
+    passwordStrengthClass: '', // weak / medium / strong
+    passwordStrengthLabel: '' // 약함 / 보통 / 강함
+})
+
+const signupForm = reactive({
+    email: '',
+    channelName: '',
+    password: '',
+    password2: '',
+})
+
+const signupErrors = reactive({
+    email: '',
+    channelName: '',
+    password: '',
+    confirmPassword: '',
+    fullName: ''
+})
+
+const togglePassword = () => {
+    state.showPassword = !state.showPassword;
+}
+
+const toggleConfirmPassword = () => {
+    state.confirmPassword = !state.confirmPassword;
+}
+
+const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!signupForm.email || !emailRegex.test(signupForm.email)) {
+        signupErrors.email = '올바른 이메일을 입력해주세요.'
+        return false
+    }
+    return true
+}
+
+const validateChannelName = () => {
+    const channelNameRegex = /^[a-zA-Z0-9_]{3,20}$/
+    if (!signupForm.channelName || !channelNameRegex.test(signupForm.channelName)) {
+        signupErrors.channelName = '사용자명은 3-20자의 영문, 숫자, 언더스코어만 사용할 수 있습니다.'
+        return false
+    }
+    return true
+}
+
+const validatePassword = () => {
+    if (!signupForm.password || signupForm.password.length < 8) {
+        signupErrors.password = '비밀번호는 8자 이상이어야 합니다.'
+        return false
+    }
+    return true
+}
+
+const validateConfirmPassword = () => {
+    if (signupForm.password !== signupForm.confirmPassword) {
+        signupErrors.confirmPassword = '비밀번호가 일치하지 않습니다.'
+        return false
+    }
+    return true
+}
+
+const validateSignupForm = () => {
+    Object.keys(signupErrors).forEach(errorField => signupErrors[errorField] = '') // 에러 필드 초기화
+    const emailValid = validateEmail()
+    const channelValid = validateChannelName()
+    const passwordValid = validatePassword()
+    const confirmPasswordValid = validateConfirmPassword()
+    return emailValid && channelValid && passwordValid && confirmPasswordValid
+}
+
+const updatePasswordStrength = () => {
+    let strength = 0;
+
+    if (signupForm.password.length >= 8) strength++;
+    if (/[a-z]/.test(signupForm.password)) strength++;
+    if (/[A-Z]/.test(signupForm.password)) strength++;
+    if (/[0-9]/.test(signupForm.password)) strength++;
+    if (/[^a-zA-Z0-9]/.test(signupForm.password)) strength++;
+
+    if (strength <= 2) {
+        state.passwordStrengthClass = 'weak'
+        state.passwordStrengthLabel = '약함';
+    } else if (strength <= 3) {
+        state.passwordStrengthClass = 'medium'
+        state.passwordStrengthLabel = '보통';
+    } else {
+        state.passwordStrengthClass = 'strong'
+        state.passwordStrengthLabel = '강함';
+    }
+}
+
+const onSubmit = () => {
+    validateSignupForm()
+}
 
 </script>
 
@@ -11,43 +111,51 @@
             </div>
 
             <!-- signup form -->
-            <form action="#" class="signup-form" id="signupForm">
+            <form action="#" class="signup-form" id="signupForm" @submit.prevent="onSubmit">
                 <div class="form-step active" id="step1">
                     <div class="form-group">
                         <label for="email">이메일 *</label>
                         <div class="input-with-button">
-                            <input type="email" id="email" name="email" required placeholder="이메일을 입력하세요">
-                            <button type="button" class="btn-check" id="checkEmailBtn">중복확인</button>
+                            <input type="email" id="email" name="email" required v-model="signupForm.email"
+                                placeholder="이메일을 입력하세요">
+                            <button type="button" class="btn-check" id="checkEmailBtn"
+                                @click="checkEmailExists(signupForm.email)">중복확인</button>
                         </div>
-                        <span class="error-message" id="emailError"></span>
-                        <span class="success-message" id="emailSuccess"></span>
+                        <span class="error-message" v-if="signupErrors.email">{{ signupErrors.email }}</span>
+                        <!-- <span class="success-message" id="emailSuccess"></span> -->
                     </div>
 
                     <div class="form-group">
-                        <label for="username">채널명 *</label>
+                        <label for="channelName">닉네임(채널명) *</label>
                         <div class="input-with-button">
-                            <input type="text" id="username" name="username" required placeholder="사용자명을 입력하세요">
-                            <button type="button" class="btn-check" id="checkUsernameBtn">중복확인</button>
+                            <input type="text" id="channelName" name="channelName" required
+                                v-model="signupForm.channelName" placeholder="사용자명을 입력하세요">
+                            <button type="button" class="btn-check" id="checkChannelNameBtn"
+                                @click="checkChannelNameExists(signupForm.email)">중복확인</button>
                         </div>
-                        <span class="error-message" id="usernameError"></span>
-                        <span class="success-message" id="usernameSuccess"></span>
+                        <span class="error-message" v-if="signupErrors.channelName">{{ signupErrors.channelName
+                        }}</span>
+                        <!-- <span class="success-message" id="channelName"></span> -->
                         <span class="help-text">영문, 숫자, 언더스코어만 사용 가능 (3-20자)</span>
                     </div>
 
                     <div class="form-group">
                         <label for="password">비밀번호 *</label>
                         <div class="password-input">
-                            <input type="password" id="password" name="password" required placeholder="비밀번호를 입력하세요">
-                            <button type="button" class="toggle-password" id="togglePassword">
-                                <i class="fas fa-eye"></i>
+                            <input :type="state.showPassword ? 'text' : 'password'" id="password" name="password"
+                                required v-model="signupForm.password" @input="updatePasswordStrength()"
+                                placeholder="비밀번호를 입력하세요">
+                            <button type="button" class="toggle-password" id="togglePassword" @click="togglePassword">
+                                <i :class="state.showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                             </button>
                         </div>
-                        <span class="error-message" id="passwordError"></span>
+                        <span class="error-message" v-if="signupErrors.password">{{ signupErrors.password }}</span>
                         <div class="password-strength" id="passwordStrength">
                             <div class="strength-bar">
-                                <div class="strength-fill"></div>
+                                <div class="strength-fill" :class="state.passwordStrengthClass"></div>
                             </div>
-                            <span class="strength-text">비밀번호 강도</span>
+                            <span class="strength-text">비밀번호 강도: {{ state.passwordStrengthLabel }}</span>
+
                         </div>
                         <span class="help-text">영문 소문자, 특수문자 포함 8자 이상</span>
                     </div>
@@ -55,25 +163,24 @@
                     <div class="form-group">
                         <label for="confirmPassword">비밀번호 확인 *</label>
                         <div class="password-input">
-                            <input type="password" id="confirmPassword" name="confirmPassword" required
+                            <input :type="state.confirmPassword ? 'text' : 'password'" id="confirmPassword"
+                                name="confirmPassword" required v-model="signupForm.password2"
                                 placeholder="비밀번호를 다시 입력하세요">
-                            <button type="button" class="toggle-password" id="toggleConfirmPassword">
-                                <i class="fas fa-eye"></i>
+                            <button type="button" class="toggle-password" id="toggleConfirmPassword"
+                                @click="toggleConfirmPassword">
+                                <i :class="state.confirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                             </button>
                         </div>
-                        <span class="error-message" id="confirmPasswordError"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="fullName">이름 *</label>
-                        <input type="text" id="fullName" name="fullName" required placeholder="실명을 입력하세요">
-                        <span class="error-message" id="fullNameError"></span>
+                        <span class="error-message" v-if="signupErrors.confirmPassword">{{ signupErrors.confirmPassword
+                            }}</span>
                     </div>
 
-                    <div class="form-group">
+                    <!-- 생년월일 -->
+                    <!-- <div class="form-group">
                         <label for="birthDate">생년월일</label>
                         <input type="date" id="birthDate" name="birthDate">
                         <span class="error-message" id="birthDateError"></span>
-                    </div>
+                    </div> -->
 
                     <!-- 휴대폰 인증 -->
                     <!-- <div class="form-group">
@@ -96,7 +203,7 @@
                     </div> -->
 
                     <div class="form-navigation">
-                        <button type="submit" class="btn-signup" id="submitSignup">회원가입</button>
+                        <button type="submit" class="btn-signup" id="submitSignup" @click="onSubmit()">회원가입</button>
                     </div>
                 </div>
             </form>
@@ -264,7 +371,7 @@
     background-color: var(--border-color);
 }
 
-/* ##### password - strength ##### */
+/* ##### password - 강도 ##### */
 .password-strength {
     margin-top: 0.5rem;
 }
@@ -310,12 +417,8 @@
     font-size: 0.875rem;
     margin-top: 0.5rem;
     display: block;
-    opacity: 0;
+    /* opacity: 0; */
     transition: var(--transition);
-}
-
-.error-message.show {
-    opacity: 1;
 }
 
 .success-message {

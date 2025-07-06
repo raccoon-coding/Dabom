@@ -1,6 +1,7 @@
-import VideoCardComp from "@/components/videos/VideoCardComp.vue"
-import Login from "@/views/Login.vue"
-import Signup from "@/views/Signup.vue"
+
+import SidebarContainer from "@/components/sidebar/SidebarContainer.vue"
+import Login from "@/views/auth/Login.vue"
+import Signup from "@/views/auth/Signup.vue"
 
 const authRoutes = [
   {
@@ -12,6 +13,10 @@ const authRoutes = [
     path: '/login',
     name: 'login',
     component: Login,
+  },
+  {
+    path: "/tttttt",
+    component: SidebarContainer
   }
 ]
 

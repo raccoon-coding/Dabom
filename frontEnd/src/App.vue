@@ -1,12 +1,13 @@
 <script setup>
-import Header from './components/main/Header.vue'
-import Footer from './components/main/Footer.vue'
+import HeaderComp from '@/components/main/HeaderComp.vue';
+import FooterComp from '@/components/main/FooterComp.vue';
+
 </script>
 
 <template>
-  <Header />
+  <HeaderComp />
   <RouterView />
-  <Footer />
+  <FooterComp />
 </template>
 
 <style scoped></style>

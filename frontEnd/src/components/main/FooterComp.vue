@@ -1,7 +1,6 @@
 <script setup></script>
 
 <template>
-  <!-- =========================== 푸터 =========================== -->
   <footer class="footer">
     <div class="footer-container">
       <!-- 브랜드 정보 섹션 -->
@@ -57,7 +56,6 @@
 </template>
 
 <style scoped>
-/* Footer */
 .footer {
   background-color: var(--card-bg);
   border-top: 1px solid var(--border-color);
