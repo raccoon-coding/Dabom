@@ -1,5 +1,8 @@
 <script setup>
+const emits = defineEmits(['open_chat_modal', 'close_chat_modal'])
 
+const openChatModal = () => emits("open_chat_modal")
+const closeChatModal = () => emits("close_chat_modal")
 </script>
 
 <template>
