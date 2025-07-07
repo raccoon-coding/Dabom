@@ -2,6 +2,7 @@
 import TogetherMasterModal from '@/components/together_room/TogetherMasterModal.vue';
 import TogetherRoomChat from '@/components/together_room/TogetherRoomChat.vue';
 import TogetherRoomNavigator from '@/components/together_room/TogetherRoomNavigator.vue';
+import Video_Player_Component from '@/components/Video_Player/Video_Player_Component.vue';
 
 import {reactive} from 'vue'
 
@@ -9,6 +10,7 @@ const stateModal = reactive({
     chatModal: false,
     masterModal: false,
 });
+const testUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 
 const openChatModal = () => {
     stateModal.chatModal = true;
@@ -28,103 +30,39 @@ const closeMasterModal = () => {
 </script>
 
 <template>
-    <TogetherRoomNavigator />
-<!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-controls">
-                <button class="nav-btn" id="chatToggle" title="채팅" @click="openChatModal()">
-                    <i class="fas fa-comments"></i>
-                </button>
-                <button class="nav-btn" id="settingsBtn" title="설정">
-                    <i class="fas fa-cog"></i>
-                </button>
-                <button class="nav-btn" id="fullscreenBtn" title="전체화면">
-                    <i class="fas fa-expand"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
+    <TogetherRoomNavigator @open_chat_modal="openChatModal()" @close_chat_modal="closeChatModal()" />
     <!-- Main Content -->
     <main class="main-content">
         <div class="video-section" id="videoSection">
             <!-- Video Container -->
-            <div class="video-container">
+            <div class="video-container" :class="{ 'modal-open': stateModal.chatModal }" >
                 <div class="video-player">
-                    <div class="video-placeholder">
-                        <i class="fas fa-play-circle" style="font-size: 4rem; margin-bottom: 1rem; display: block;"></i>
-                        비디오를 선택하여 함께 시청하세요
-                    </div>
-                    
-                    <!-- Video Controls -->
-                    <div class="video-controls">
-                        <button class="play-pause-btn" id="playPauseBtn">
-                            <i class="fas fa-play"></i>
-                        </button>
-                        <div class="progress-bar" id="progressBar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                        <div class="time-display">00:30 / 02:45</div>
-                    </div>
-
+                    <Video_Player_Component :video_url="testUrl" :is_open_modal="stateModal.chatModal" />
                     <!-- Master Button -->
                     <button class="master-btn" id="masterBtn" @click="openMasterModal()">
                         <i class="fas fa-crown"></i>
                         마스터 화면
                     </button>
                 </div>
-
-                <!-- Video Info -->
-                <div class="video-info">
-                    <h2 class="video-title">함께보기 - 샘플 비디오</h2>
-                    <div class="video-meta">
-                        <div class="viewers-count">
-                            <i class="fas fa-users"></i>
-                            <span id="viewersCount">5명 시청 중</span>
-                        </div>
-                        <div>
-                            <i class="fas fa-clock"></i>
-                            시작된 시간: 2분 전
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Users Section -->
-            <div class="users-section">
-                <h3 class="users-title">
-                    <i class="fas fa-users"></i>
-                    참여자 목록 (5명)
-                </h3>
-                <div class="users-grid" id="usersGrid">
-                    <div class="user-card">
-                        <div class="user-avatar">김</div>
-                        <div class="user-name">김철수</div>
-                    </div>
-                    <div class="user-card">
-                        <div class="user-avatar">이</div>
-                        <div class="user-name">이영희</div>
-                    </div>
-                    <div class="user-card">
-                        <div class="user-avatar">박</div>
-                        <div class="user-name">박민수</div>
-                    </div>
-                    <div class="user-card">
-                        <div class="user-avatar">최</div>
-                        <div class="user-name">최지영</div>
-                    </div>
-                    <div class="user-card">
-                        <div class="user-avatar">정</div>
-                        <div class="user-name">정대현</div>
-                    </div>
-                </div>
             </div>
         </div>
+        <TogetherMasterModal v-if="stateModal.masterModal" @close_modal="closeMasterModal()"></TogetherMasterModal>
+        <TogetherRoomChat v-if="stateModal.chatModal" @close_modal="closeChatModal()"></TogetherRoomChat>
     </main>
-    <TogetherMasterModal v-if="stateModal.masterModal" @close_modal="closeMasterModal()"></TogetherMasterModal>
-    <TogetherRoomChat v-if="stateModal.chatModal" @close_modal="closeChatModal()"></TogetherRoomChat>
 </template>
 
 <style scoped>
+/* 비디오 컨테이너 애니메이션 */
+.video-container {
+    width: 90%;
+  height: 90%;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-origin: 50% 50%; /* 정확한 중심점 */
+}
 
+/* 모달이 열릴 때 비디오 축소 효과 */
+.video-container.modal-open {
+    transform: translateX(-200px) scale(0.8);
+    transform-origin: 50% 50%; /* Y축 중심점 유지 */
+}
 </style>
