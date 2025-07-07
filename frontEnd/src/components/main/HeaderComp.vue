@@ -5,7 +5,7 @@
     <div class="header-left">
       <div class="header-logo">
         <a href="/">
-          <img src="../../assets/images/dabom2.png" alt="DaBom Logo" class="logo-image" />
+          <img src="@/assets/images/dabom2.png" alt="DaBom Logo" class="logo-image" />
         </a>
       </div>
       <div class="nav-left">
@@ -30,7 +30,7 @@
       <div v-else class="nav-right">
         <div class="profile-wrapper">
           <div class="profile-trigger">
-            <img src="../images/btg.jpg" alt="프로필" class="profile-img" />
+            <img src="@/assets/images/dabom2.png" alt="프로필" class="profile-img" />
           </div>
           <div class="profile-dropdown">
             <a href="#" class="dropdown-item">내 채널</a>
