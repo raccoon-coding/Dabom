@@ -1,0 +1,13 @@
+/* Chat List */
+.chat-list {
+    width: 350px;
+    background-color: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-list-content {
+    flex: 1;
+    overflow-y: auto;
+}

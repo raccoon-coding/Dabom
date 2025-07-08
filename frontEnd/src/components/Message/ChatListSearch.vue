@@ -25,6 +25,6 @@ function handleSearch() {
 </template>
 
 <style scoped>
-@import url(../../assets/Message/Message.css);
+@import url(../../assets/Message/ChatListSearch.css);
 
 </style>
