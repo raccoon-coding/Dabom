@@ -1,5 +1,7 @@
 <script setup>
+import { useRouter } from 'vue-router';
 
+const router = useRouter()
 </script>
 
 <template>
@@ -7,19 +9,19 @@
      <nav class="channel-nav">
 
 <div class="nav-container">
-    <button class="channel-nav-item active" data-tab="videos">
+    <button class="channel-nav-item active" data-tab="videos" @click="$router.push('/channel/videos')">
         <i class="fas fa-video"></i>
         동영상
     </button>
-    <button class="channel-nav-item" data-tab="playlists">
+    <button class="channel-nav-item" data-tab="playlists" @click="$router.push('/channel/playlists')">
         <i class="fas fa-list"></i>
         플레이리스트
     </button>
-    <button class="channel-nav-item" data-tab="community">
+    <button class="channel-nav-item" data-tab="community" @click="$router.push('/channel/community')">
         <i class="fas fa-comments"></i>
         커뮤니티
     </button>
-    <button class="channel-nav-item" data-tab="about">
+    <button class="channel-nav-item" data-tab="about" @click="$router.push('/channel/about')">
         <i class="fas fa-info-circle"></i>
         정보
     </button>

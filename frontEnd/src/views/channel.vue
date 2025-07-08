@@ -1,14 +1,10 @@
 <script setup>
-// import channelhead from '../components/channel/ChennalHead.vue';
 import channelnavigation from '@/components/channel/ChannelNavigation.vue';
-// import channelsection from '.\components\channel\ChannelSection.vue';
 </script>
 
 <template>
-<channelhead />
-<channelnavigation />
-
-<channelsection />
+    <channelnavigation />
+    <RouterView />
 
 </template>
 
