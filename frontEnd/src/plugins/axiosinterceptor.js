@@ -1,9 +1,10 @@
 import axios from "axios"
 
 const api = axios.create({
-    baseURL: '#',
+    baseURL: '',
     timeout: 5000
 });
+
 
 api.interceptors.request.use(
     (config) => {
