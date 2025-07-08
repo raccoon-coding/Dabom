@@ -4,6 +4,7 @@ import api from "@/api/auth"
 import SignupForm from '@/entity/auth/SignupForm';
 import SignupFormErrors from '@/entity/auth/SignupFormErrors';
 import { useRouter } from 'vue-router';
+import Modal from '@/components/main/Modal.vue';
 
 
 const router = useRouter()
@@ -16,7 +17,9 @@ const state = reactive({
     showPassword: false,
     confirmPassword: false,
     passwordStrengthClass: '', // weak / medium / strong
-    passwordStrengthLabel: '' // 약함 / 보통 / 강함
+    passwordStrengthLabel: '', // 약함 / 보통 / 강함
+    signupSuccess: false,
+    signupRedirectTimeoutId: null,
 })
 
 const togglePassword = () => {
@@ -38,8 +41,9 @@ const checkEmailExists = async (email) => {
         return
     }
 
-    const data = await api.checkEmailExists(email)
-    form.signupForm.isEmailChecked = !data.isDuplicate
+    const result = await api.checkEmailExists(email)
+    console.log(result.data)
+    form.signupForm.isEmailChecked = !result.data.isDuplicate
 }
 
 const checkChannelNameExists = async (channelName) => {
@@ -49,14 +53,12 @@ const checkChannelNameExists = async (channelName) => {
     }
 
     if (!validateChannelName()) {
-        console.log("무간지옥")
         form.signupForm.isChannelChecked = null;
         return
     }
 
-    const data = await api.checkChannelNameExists(channelName)
-    console.log(data)
-    form.signupForm.isChannelChecked = !data.isDuplicate
+    const result = await api.checkChannelNameExists(channelName)
+    form.signupForm.isChannelChecked = !result.data.isDuplicate
 }
 
 const validateEmail = () => {
@@ -125,20 +127,24 @@ const updatePasswordStrength = () => {
     }
 }
 
-const onSubmit = async () => {
-    validateSignupForm()
-
-    const data = await api.signup(form.signupForm)
-    if (data.status !== 200) {
-        alert("회원가입 실패.")
-        return
-    }
+const signupSuccessHandler = () => {
+    state.signupSuccess = true
+}
+const handleModalConfirm = () => {
+    state.signupSuccess = false;
     router.push({ name: 'login' });
+}
+
+const onSubmit = async () => {
+    // validateSignupForm() 
+    signupSuccessHandler()
 }
 
 </script>
 
 <template>
+    <Modal v-if="state.signupSuccess" title="회원가입 완료" message="성공적으로 회원가입이 완료되었습니다. 로그인 페이지로 이동합니다."
+        @confirm="handleModalConfirm" />
     <div class="singup-container">
         <div class="signup-form-wrapper">
             <div class="signup-header">
