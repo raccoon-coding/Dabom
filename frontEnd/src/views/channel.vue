@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import channelnavigation from '@/components/channel/ChannelNavigation.vue';
 </script>
 
@@ -11,4 +11,4 @@ import channelnavigation from '@/components/channel/ChannelNavigation.vue';
 <style scoped>
 @import url('../assets/channel/channel.css');
 @import url('../assets/main/main.css');
-</style>
+</style> -->
