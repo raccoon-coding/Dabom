@@ -32,7 +32,7 @@ const login = () => {
     <div class="login-container">
         <div class="login-form-wrapper">
             <div class="login-header">
-                <h2>로그인</h2>
+                <h1>로그인</h1>
                 <p>DaBom에서 새로운 스트리밍 경험을 시작하세요</p>
             </div>
             <div class="login-form-container">

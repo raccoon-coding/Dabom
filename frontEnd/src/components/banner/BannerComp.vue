@@ -1,6 +1,8 @@
 <script setup>
 import SearchQueryForm from '@/entity/SearchQueryForm'
 import { reactive } from 'vue'
+import SearchBarComp from '@/components/search/SearchBarComp.vue'
+
 
 const state = reactive({
     searchQueryForm: new SearchQueryForm()
@@ -15,7 +17,8 @@ const onSubmit = () => {
     <section class="main-banner">
         <h1 class="main-banner_title">여기가 메인 배너 타이틀임</h1>
         <p class="main-banner_subtitle">여긴 서브타이틀임</p>
-        <div class="search-container">
+        <SearchBarComp />
+        <!-- <div class="search-container">
             <form class="search-form" @submit.prevent="onSubmit">
                 <div class="search-input-wrapper">
                     <input type="text" v-model="state.searchQueryForm.query" placeholder="검색어를 입력하세요..."
@@ -25,7 +28,7 @@ const onSubmit = () => {
                     </button>
                 </div>
             </form>
-        </div>
+        </div> -->
     </section>
 </template>
 

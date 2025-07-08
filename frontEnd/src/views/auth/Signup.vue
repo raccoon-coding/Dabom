@@ -106,7 +106,7 @@ const onSubmit = () => {
     <div class="singup-container">
         <div class="signup-form-wrapper">
             <div class="signup-header">
-                <h2>회원가입</h2>
+                <h1>회원가입</h1>
                 <p>DaBom 커뮤니티의 새로운 멤버가 되어보세요</p>
             </div>
 
@@ -246,10 +246,9 @@ const onSubmit = () => {
     margin-bottom: 2rem;
 }
 
-.signup-header h2 {
+.signup-header h1 {
     text-align: center;
     color: var(--text-primary);
-    font-size: 1.8rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
