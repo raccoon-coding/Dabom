@@ -18,10 +18,4 @@ const isModalOpen = props.is_open_modal;
     background-color: #000;
     border-radius: 15px 15px 0 0;
 }
-
-/* 모달이 활성화되었을 때 비디오 스타일 변경 */
-.video-player.modal-active {
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
 </style>
