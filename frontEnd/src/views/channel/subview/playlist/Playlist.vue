@@ -1,23 +1,77 @@
 <script setup>
-import playlistcard from '@/views/channel/subview/playlist/Playlist_card.vue'
+import SidebarContainer from '@/components/sidebar/SidebarContainer.vue';
+import VideoSectionComp from '@/components/videos/VideoSectionComp.vue';
+import { onMounted, reactive } from 'vue';
+import api from '@/api/video'
+
+
+const playlist_videos = [
+    {
+        id: '1',
+        title: '병욱님의 키보드 탐구',
+        thumbnailUrl: '@/assets/images/dabom2.png',
+        duration: '12:34',
+        channel: {
+            name: '알리 매니아',
+            avatarUrl: '@/assets/images/dabom2.png',
+        },
+        rating: 4.2,
+        views: 12,
+        uploadedAt: 2,
+    },
+]
+
+// const state = reactive({
+//     playlist_videos: []
+// })
+
+// const getVideoList = async () => {
+//     await api.getVideoList()
+//         .then((data) => {
+//             console.log(data)
+//             state.playlist_videos = data
+//         })
+//         .catch((error) => {
+//             console.error(error)
+//         })
+// }
+// onMounted(() => {
+//     getVideoList()
+// })
 </script>
 
 <template>
-    <h2>내 재생목록</h2>
-    <div class="playlist-container">
-        <div class="playlist-header">
-            <h3>내 재생목록</h3>
-            <button class="add-playlist-button">만들기</button>
-            <button class="add-playlist-button">음악</button>
-            <button class="add-playlist-button">믹스</button>
-        </div>
-        <div class="playlist-cards">
-            <!-- Playlist_card.vue 를 불러옴 -->
-            <!-- <playlistcard v-for="n in 10" :key="n" /> -->
+    <div class="layout-wrap">
+        <SidebarContainer />
+        <div class="main-wrap">
+            <div class="video-section">
+                <!-- <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="state.popularVideos" /> -->
+                <VideoSectionComp :title="'음악'" :icon="'fas fa-fire'" :videos="playlist_videos" />
+                <VideoSectionComp :title="'스포츠'" :icon="'fas fa-fire'" :videos="playlist_videos" />
+                <VideoSectionComp :title="'교육'" :icon="'fas fa-fire'" :videos="playlist_videos" />
+            </div>
         </div>
     </div>
 </template>
 
-<style scoped>
 
+<style scoped>
+.layout-wrap {
+    display: flex;
+}
+
+.main-wrap {
+    flex: 1;
+    margin-top: 3rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 78%;
+}
+
+.video-section {
+    display: grid;
+    margin-left: 1.8rem
+}
 </style>

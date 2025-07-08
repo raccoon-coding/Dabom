@@ -85,6 +85,6 @@ function handleVoice() {
 </template>
 
 <style scoped>
-@import url(../../assets/Message/Message.css);
+@import url(../../assets/Message/MessageInput.css);
 
 </style>

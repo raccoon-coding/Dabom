@@ -5,24 +5,24 @@ import TogetherRoom from '@/views/TogetherRoom.vue'
 const togetherRoutes = [
   {
     path: '/together',
-    name: 'Together',
+    name: 'together',
     component: TogetherView,
     children: [
       {
         path: '/together',
-        name: 'TogetherMain',
+        name: 'togetherMain',
         component: TogetherMainView,
       },
       {
         path: '/together/search',
-        name: 'TogetherSearch',
+        name: 'togetherSearch',
         component: () => import('@/views/together/subview/TogetherSearchView.vue'),
       },
     ],
   },
   {
     path: '/together/:id',
-    name: 'TogetherRoom',
+    name: 'togetherRoom',
     component: TogetherRoom,
   },
 ]
