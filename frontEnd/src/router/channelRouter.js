@@ -3,26 +3,26 @@ import playlist from "@/views/channel/subview/playlist/Playlist.vue"
 import channel from "@/views/channel/ChannelMainView.vue"
 import about from "@/views/channel/subview/About.vue"
 
-const channelRouter = [
+const channelRoutes = [
     {
         path: '/channel',
         name: 'channel',
         component: channel,
         children: [
             {
-                path:'/channel/playlists',
+                path: '/channel/playlists',
                 component: playlist,
             },
             {
-                path:'/channel/community',
+                path: '/channel/community',
                 component: community,
             },
             {
-                path:'/channel/about',
+                path: '/channel/about',
                 component: about,
             },
         ],
     },
 ]
 
-export default channelRouter
+export default channelRoutes
