@@ -1,4 +1,18 @@
 <script setup>
+import { reactive } from 'vue';
+
+let data = reactive({
+    videoId: '12345',
+    title: '멋진 영상 제목이 여기에 표시됩니다 - DaBom 플랫폼 소개',
+    channelName: '크리에이티브 채널',
+    channelSubscribers: '12.5만명',
+    thumbnailUrl: 'https://via.placeholder.com/640x360',
+    views: '12만회',
+    rating: 4.2,
+    isSubscribed: false,
+    explainText: '',
+    tags: [''],
+});
 
 </script>
 
