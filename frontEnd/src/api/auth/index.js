@@ -1,53 +1,6 @@
 import api from "@/plugins/axiosinterceptor";
 
 
-// { exists: true/false }
-export const checkEmailExists = async (email) => {
-    const requestUrl = `/api/auth/exists/email`
-    let data = {}
-    const mockResponse = {
-        "status": 200,
-        "data":
-        {
-            "field": "email",
-            "isDuplicate": false
-        }
-
-    }
-    data = mockResponse.data;
-    // await api.post(requestUrl, { email })
-    //     .then((response) => {
-    //         data = response.data
-    //     })
-    //     .catch((error) => {
-    //         data = error.data
-    //     })
-    return data
-};
-
-export const checkChannelNameExists = async (channelName) => {
-    const requestUrl = `/api/auth/exists/channel`
-    let data = {}
-    const mockResponse = {
-        "status": 200,
-        "data":
-        {
-            "field": "channel",
-            "isDuplicate": false
-        }
-
-    }
-    data = mockResponse.data;
-    // await api.post(requestUrl, { channelName })
-    //     .then((response) => {
-    //         data = response.data
-    //     })
-    //     .catch((error) => {
-    //         data = error.data
-    //     })
-    return data
-};
-
 export const signup = async (signupForm) => {
     const requestUrl = `/api/auth/signup`
     let data = {}
@@ -75,6 +28,35 @@ export const login = async (loginForm) => {
     return data
 }
 
+export const checkEmailExists = async (email) => {
+    // const requestUrl = `/api/auth/exists/email`
+    const mockResponseDataSuccess = `/api/email-check-success.json`
+    const mockResponseDataFailure = `/api/email-check-failure.json`
+    let data = {}
+    await api.get(mockResponseDataSuccess)
+        .then((response) => {
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
+export const checkChannelNameExists = async (channelName) => {
+    // const requestUrl = `/api/auth/exists/channel`
+    const mockResponseDataSuccess = `/api/channel-check-success.json`
+    const mockResponseDataFailure = `/api/channel-check-failure.json`
+    let data = {}
+    await api.get(mockResponseDataSuccess)
+        .then((response) => {
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
 
 
-export default { checkEmailExists, checkChannelNameExists, login, signup }
+export default { signup, login, checkEmailExists, checkChannelNameExists }
