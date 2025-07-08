@@ -36,7 +36,7 @@ const router = useRouter()
 .channel-nav {
   background-color: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
-  position: sticky;
+  /* position: sticky; */
   top: 80px;
   z-index: 100;
 }

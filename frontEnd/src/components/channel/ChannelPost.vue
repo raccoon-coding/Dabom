@@ -1,23 +1,11 @@
 <script setup>
+import channelComment from '@/components/channel/ChannelComment.vue';
 import channelCommentModal from '@/components/channel/ChannelCommentModal.vue';
 
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-const commentModal = ref(false);
-const router = useRouter()
-
-const clickCommentBtn = () => {
-    commentModal.value = !commentModal.value;
-}
-
-const clickPost = () => {
-    router.push('/channel/community/1')
-}
 </script>
 
 <template>
-<div class="community-post" @click="clickPost">
+<div class="community-post">
     <div class="post-header">
         <div class="post-author">
             <img src="https://via.placeholder.com/40" alt="채널" class="author-avatar">
@@ -41,17 +29,20 @@ const clickPost = () => {
             <i class="fas fa-heart"></i>
                 124
         </button>
-        <button class="post-action-btn comment-btn" @click="clickCommentBtn">
+        <button class="post-action-btn comment-btn">
             <i class="fas fa-comment"></i>
                 32
-        </button>
+        </button>                           
     </div>
-    <div v-if="commentModal">
-        <channelCommentModal  />
-    </div>
+    <template>
+        <div v-for="n in 10">
+            <channelComment />
+        </div>
+    </template>
+    <channelCommentModal />
 </div>
 </template>
 
 <style scoped>
-    @import url('@/assets/channel/ChannelPostCard.css');
+
 </style>
