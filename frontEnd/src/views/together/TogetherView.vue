@@ -1,5 +1,4 @@
 <script setup>
-import axios from 'axios'
 import togetherHeader from '@/components/together/TogetherHeader.vue'
 import quickButton from '@/components/together/TogetherQuickButton.vue'
 </script>
