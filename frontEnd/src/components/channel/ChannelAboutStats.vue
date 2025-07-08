@@ -1,8 +1,6 @@
 <script setup>
-const props = defineProps({
-  modelValue: { type: String, default: 'subscribers' } // 현재 선택된 타입
-})
-const emit = defineEmits(['update:modelValue'])
+
+
 
 const statList = [
   { type: 'subscribers', number: '12.5만', label: '구독자' },
@@ -11,9 +9,7 @@ const statList = [
   { type: 'rating', number: '4.6', label: '평균 별점' }
 ]
 
-function selectType(type) {
-  emit('update:modelValue', type)
-}
+
 </script>
 
 <template>
@@ -21,9 +17,8 @@ function selectType(type) {
     <div
       v-for="stat in statList"
       :key="stat.type"
-      :class="['stat-card', { active: modelValue === stat.type }]"
+      :class="['stat-card', { active: stat.type === 'subscribers' }]"  
       :data-type="stat.type"
-      @click="selectType(stat.type)"
     >
       <div class="stat-number">{{ stat.number }}</div>
       <div class="stat-label">{{ stat.label }}</div>

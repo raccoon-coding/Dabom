@@ -2,6 +2,7 @@ import community from "@/views/channel/subview/Community.vue"
 import playlist from "@/views/channel/subview/playlist/Playlist.vue"
 import channel from "@/views/channel/ChannelMainView.vue"
 import about from "@/views/channel/subview/About.vue"
+import mychannel from "@/views/channel/MychannelMainView.vue"
 
 const channelRoutes = [
     {
@@ -21,10 +22,14 @@ const channelRoutes = [
                 path: '/channel/about',
                 component: about,
             },
-            {
+          {
+                path: '/channel/mychannel',
+                component: mychannel,
+            },
+          {
                 path: '/channel/community/:id',
                 component: () => import('@/components/channel/ChannelPost.vue')
-            }
+            }ㅉ
         ],
     },
 ]

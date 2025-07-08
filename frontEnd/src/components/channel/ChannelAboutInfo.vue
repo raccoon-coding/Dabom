@@ -33,10 +33,10 @@ import ChannelAboutStats from './ChannelAboutStats.vue';
       </div>
     </div>
   </div>
-  <div class="stat-div">
+  <!-- <div class="stat-div">
     <h2 class="stat">통계</h2>
     <ChannelAboutStats />
-  </div>  
+  </div>   -->
 </template>
 
 <style scoped>
@@ -49,8 +49,6 @@ import ChannelAboutStats from './ChannelAboutStats.vue';
 
 .about-section {
   margin-top: 5%;
-  margin-left: 5%;
-  margin-right: 5%;
   background: #2e2e2e;
   padding: 2rem;
   border-radius: 15px;
