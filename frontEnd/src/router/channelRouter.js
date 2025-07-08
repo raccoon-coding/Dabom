@@ -21,6 +21,10 @@ const channelRoutes = [
                 path: '/channel/about',
                 component: about,
             },
+            {
+                path: '/channel/community/:id',
+                component: () => import('@/components/channel/ChannelPost.vue')
+            }
         ],
     },
 ]

@@ -1,14 +1,12 @@
 <script setup>
 import channelCommentModal from '@/components/channel/ChannelCommentModal.vue';
 
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const commentModal = ref(false);
 const router = useRouter()
 
-const clickCommentBtn = () => {
-    commentModal.value = !commentModal.value;
+const clickLikeBtn = () => {
+    
 }
 
 const clickPost = () => {
@@ -17,7 +15,8 @@ const clickPost = () => {
 </script>
 
 <template>
-<div class="community-post" @click="clickPost">
+<div class="community-post">
+    <div class="post"s>
     <div class="post-header">
         <div class="post-author">
             <img src="https://via.placeholder.com/40" alt="채널" class="author-avatar">
@@ -36,17 +35,18 @@ const clickPost = () => {
             <img src="https://via.placeholder.com/500x300" alt="게시물 이미지">
         </div>
     </div>
+    </div>
     <div class="post-actions">
-        <button class="post-action-btn like-btn">
+        <button class="post-action-btn like-btn" @click="clickLikeBtn">
             <i class="fas fa-heart"></i>
                 124
         </button>
-        <button class="post-action-btn comment-btn" @click="clickCommentBtn">
+        <button class="post-action-btn comment-btn" @click="clickPost">
             <i class="fas fa-comment"></i>
                 32
         </button>
     </div>
-    <div v-if="commentModal">
+    <div v-if="commentModal" @click.stop>
         <channelCommentModal  />
     </div>
 </div>
