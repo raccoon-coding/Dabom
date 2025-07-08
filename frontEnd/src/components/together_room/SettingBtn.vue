@@ -1,11 +1,19 @@
-.nav-container {
-    display: inline-flexbox;
-    height: 0px;
-    width: 100px;
-    margin-left: 92.1%;
-}
+<script setup>
+const emits = defineEmits([''])
 
-.nav-btn {
+const openSetting = () => {
+    
+}
+</script>
+
+<template>
+<button class="setting-btn" id="settingsBtn" title="설정" @click="openSetting">
+    <i class="fas fa-cog"></i>
+</button>
+</template>
+
+<style scoped>
+.setting-btn {
     display: flexbox;
     padding: 0.75rem;
     border: none;
@@ -17,12 +25,13 @@
     font-size: 1.2rem;
 }
 
-.nav-btn:hover {
+.setting-btn:hover {
     background-color: var(--hover-color);
     color: var(--text-primary);
 }
 
-.nav-btn.active {
+.setting-btn.active {
     background-color: var(--primary-color);
     color: white;
 }
+</style>

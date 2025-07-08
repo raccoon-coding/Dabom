@@ -8,8 +8,8 @@
 }
 
 .chat-sidebar {
-    position: fixed;
-    top: 80px;
+    position: absolute;
+    top: 70px;
     right: 0px;/*숨김 : -350 / 오픈 : 0*/
     width: 350px;
     height: calc(100vh - 80px);

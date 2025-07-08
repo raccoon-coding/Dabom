@@ -1,6 +1,19 @@
 <script setup>
 import togetherHeader from '@/components/together/TogetherHeader.vue'
 import quickButton from '@/components/together/TogetherQuickButton.vue'
+import CreateTogetherModal from '@/components/together/CreateTogetherModal.vue'
+
+import { ref } from 'vue'
+
+const showModal = ref(false);
+
+const openCreateRoomModal = () => { 
+  showModal.value = true 
+}
+
+const closeModal = () => { 
+  showModal.value = false 
+}
 </script>
 
 <template>
@@ -8,7 +21,12 @@ import quickButton from '@/components/together/TogetherQuickButton.vue'
     <div class="together-container">
       <togetherHeader />
       <router-view></router-view>
-      <quickButton />
+      <span @click="openCreateRoomModal"><quickButton /></span>
+      <CreateTogetherModal 
+      v-if="showModal" 
+      :visible="showModal" 
+      @close="closeModal" 
+      />
     </div>
   </main>
 </template>

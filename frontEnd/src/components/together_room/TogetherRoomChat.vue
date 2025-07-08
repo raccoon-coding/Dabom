@@ -1,11 +1,16 @@
 <script setup>
 import Message from '@/components/together_room/TogetherRoomChatMessage.vue'
 import ModalCloseButton from '@/components/together_room/ModalCloseButton.vue'
+import settingBtn from "@/components/together_room/SettingBtn.vue"
 
-const emits = defineEmits(['close_modal'])
+const emits = defineEmits(['close_modal', 'open_master_modal'])
 
 const closeChatModal = () => {
     emits('close_modal')
+}
+
+const openMasterModal = () => {
+    emits('open_master_modal')
 }
 
 </script>
@@ -18,7 +23,10 @@ const closeChatModal = () => {
                 <i class="fas fa-circle"></i>
                 5명 온라인
             </div>
+            <div>
+                <span @click="openMasterModal"><settingBtn /></span>
             <ModalCloseButton @close_modal="closeChatModal()"/>
+            </div>
         </div>
 
         <div class="chat-messages" id="chatMessages">

@@ -30,40 +30,33 @@ const closeMasterModal = () => {
 </script>
 
 <template>
-    <TogetherRoomNavigator @open_chat_modal="openChatModal()" @close_chat_modal="closeChatModal()" />
+    <TogetherRoomNavigator @open_chat_modal="openChatModal()" @open_master_modal="openMasterModal()" />
     <!-- Main Content -->
-    <main class="main-content">
         <div class="video-section" id="videoSection">
             <!-- Video Container -->
             <div class="video-container" :class="{ 'modal-open': stateModal.chatModal }" >
                 <div class="video-player">
                     <Video_Player_Component :video_url="testUrl" :is_open_modal="stateModal.chatModal" />
-                    <!-- Master Button -->
-                    <button class="master-btn" id="masterBtn" @click="openMasterModal()">
-                        <i class="fas fa-crown"></i>
-                        마스터 화면
-                    </button>
                 </div>
             </div>
         </div>
         <TogetherMasterModal v-if="stateModal.masterModal" @close_modal="closeMasterModal()"></TogetherMasterModal>
-        <TogetherRoomChat v-if="stateModal.chatModal" @close_modal="closeChatModal()"></TogetherRoomChat>
-    </main>
+        <TogetherRoomChat v-if="stateModal.chatModal" @close_modal="closeChatModal()" @open_master_modal="openMasterModal"></TogetherRoomChat>
 </template>
 
 <style scoped>
 /* 비디오 컨테이너 애니메이션 */
 .video-container {
-  width: 80%;
-  height: 80%;
+  width: 70%;
+  height: 70%;
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  transform-origin: 50% 50%; /* 정확한 중심점 */
-  margin-left: 5.5rem;;
+  transform-origin: 50% 50%;
+  margin-left: 5.5rem;
 }
 
 /* 모달이 열릴 때 비디오 축소 효과 */
-.video-container.modal-open {
+/* .video-container.modal-open {
     transform: translateX(-150px) scale(0.8) translateY(-83px);
     transform-origin: 50% 50%; /* Y축 중심점 유지 */
-}
+/* } */
 </style>
