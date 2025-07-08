@@ -33,6 +33,8 @@ function selectType(type) {
 
 <style scoped>
 .stats-boxes {
+  margin-top: 1.5rem;
+  margin-left: 1.5rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 2rem;

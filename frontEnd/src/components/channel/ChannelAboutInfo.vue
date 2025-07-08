@@ -33,11 +33,20 @@ import ChannelAboutStats from './ChannelAboutStats.vue';
       </div>
     </div>
   </div>
-  <h3>통계</h3>
-  <ChannelAboutStats />
+  <div class="stat-div">
+    <h2 class="stat">통계</h2>
+    <ChannelAboutStats />
+  </div>  
 </template>
 
 <style scoped>
+.stat-div {
+  margin-left: 3%;
+  margin-right: 3%;
+  padding: 2rem;
+  color: #e5eaee;
+}
+
 .about-section {
   margin-top: 5%;
   margin-left: 5%;
@@ -48,6 +57,7 @@ import ChannelAboutStats from './ChannelAboutStats.vue';
   margin-bottom: 2rem;
   color: #e5eaee;
 }
+
 .about-section h3 {
   font-size: 1.4rem;
   font-weight: 700;

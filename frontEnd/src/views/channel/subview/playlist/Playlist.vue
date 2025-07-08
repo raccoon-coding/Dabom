@@ -13,7 +13,7 @@ import playlistcard from '@/views/channel/subview/playlist/Playlist_card.vue'
         </div>
         <div class="playlist-cards">
             <!-- Playlist_card.vue 를 불러옴 -->
-            <playlistcard v-for="n in 10" :key="n" />
+            <!-- <playlistcard v-for="n in 10" :key="n" /> -->
         </div>
     </div>
 </template>
