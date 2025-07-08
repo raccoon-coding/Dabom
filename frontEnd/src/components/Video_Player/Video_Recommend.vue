@@ -2,17 +2,13 @@
 import { reactive, onMounted } from 'vue';
 import api from '@/api/video_player';
 
-// data를 빈 배열로 시작합니다.
 let data = reactive([]); 
 
 const getData = async () => {
     try {
         const response = await api.getRecommendVideo();
-        console.log(response);
-        
-        // response가 배열인지 확인하고 데이터를 할당합니다.
+
         if (Array.isArray(response)) {
-            // 기존 데이터를 지우고 새로운 데이터로 채웁니다.
             data.splice(0, data.length, ...response.map(item => ({
                 title: item.title,
                 thumbnail: item.thumbnail || 'https://via.placeholder.com/150x100',
@@ -47,7 +43,6 @@ onMounted(() => {
                     <div class="recommended-meta">
                         <span class="view-count">{{ video.views }} 조회</span>
                         <div class="star-rating small">
-                            <!-- 별점 표시 로직은 필요에 따라 구현 -->
                             <template v-for="n in 5">
                                 <i v-if="video.rating >= n" class="fas fa-star"></i>
                                 <i v-else-if="video.rating >= n - 0.5" class="fas fa-star-half-alt"></i>

@@ -1,7 +1,7 @@
 <script setup>
 import Video_Main_Info from '../components/Video_Player/Video_Main_Info.vue'
 import Video_Tag_Explain from '../components/Video_Player/Video_Tag_Explain.vue'
-import Video_Recommand from '../components/Video_Player/Video_Recommand.vue'
+import Video_Recommend from '../components/Video_Player/Video_Recommend.vue'
 import Video_Comment from '../components/Video_Player/Video_Comment.vue'
 </script>
 <template>
@@ -23,7 +23,7 @@ import Video_Comment from '../components/Video_Player/Video_Comment.vue'
             </div>
             <!-- Right Sidebar -->
             <div class="recommended-sidebar">
-                <Video_Recommand></Video_Recommand>
+                <Video_Recommend></Video_Recommend>
             </div>
         </div>
     </div>
