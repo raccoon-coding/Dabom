@@ -2,6 +2,10 @@
 import BannerComp from '@/components/banner/BannerComp.vue';
 import SidebarContainer from '@/components/sidebar/SidebarContainer.vue';
 import VideoSectionComp from '@/components/videos/VideoSectionComp.vue';
+import { onMounted, reactive } from 'vue';
+import api from '@/api/video'
+
+
 const popularVideos = [
     {
         id: '1',
@@ -70,6 +74,24 @@ const popularVideos = [
     },
 
 ]
+
+// const state = reactive({
+//     popularVideos: []
+// })
+
+// const getVideoList = async () => {
+//     await api.getVideoList()
+//         .then((data) => {
+//             console.log(data)
+//             state.popularVideos = data
+//         })
+//         .catch((error) => {
+//             console.error(error)
+//         })
+// }
+// onMounted(() => {
+//     getVideoList()
+// })
 </script>
 
 <template>
@@ -78,7 +100,10 @@ const popularVideos = [
         <div class="main-content">
             <BannerComp />
             <div class="video-section">
+                <!-- <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="state.popularVideos" /> -->
                 <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="popularVideos" />
+                <VideoSectionComp :title="'추천영상'" :icon="'fas fa-fire'" :videos="popularVideos" />
+                <VideoSectionComp :title="'dfkjshjdfkdjslfhad'" :icon="'fas fa-fire'" :videos="popularVideos" />
             </div>
         </div>
     </div>

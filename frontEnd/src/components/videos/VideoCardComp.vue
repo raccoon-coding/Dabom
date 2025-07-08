@@ -47,7 +47,7 @@ const props = defineProps(['video'])
 <style scoped>
 .video-card {
     /* max-width: 21rem; */
-    margin-bottom: 1.5rem;
+    /* margin-bottom: 0.05rem; */
     width: 100%;
     max-width: unset;
     background-color: var(--card-bg);

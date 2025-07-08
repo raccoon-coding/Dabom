@@ -11,6 +11,7 @@
 
 .video-container {
     min-width: 0;
+    padding: 0 2rem 0 5.5rem;
     /* Prevents overflow */
 }
 
@@ -19,6 +20,9 @@
     background-color: var(--background-color);
     border-radius: 15px;
     overflow: hidden;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
     /* margin-bottom: 1.5rem; */
 }
 
@@ -26,6 +30,13 @@
     position: relative;
     width: 100%;
     aspect-ratio: 16/9;
+}
+
+.main-content-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex: 3;
 }
 
 .video-player {
@@ -580,6 +591,7 @@
     height: fit-content;
     position: sticky;
     top: 100px;
+    flex: 1;
 }
 
 .sidebar-title {
