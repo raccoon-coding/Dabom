@@ -5,26 +5,53 @@ import api from "@/plugins/axiosinterceptor";
 export const checkEmailExists = async (email) => {
     const requestUrl = `/api/auth/exists/email`
     let data = {}
+    const mockResponse = {
+        "status": 200,
+        "data":
+        {
+            "field": "email",
+            "isDuplicate": false
+        }
 
-    console.log("이메일 중복체크") // TODO: 삭제
-
-    await api.post(requestUrl, { email })
-        .then((response) => {
-            data = response.data
-        })
-        .catch((error) => {
-            data = error.data
-        })
+    }
+    data = mockResponse.data;
+    // await api.post(requestUrl, { email })
+    //     .then((response) => {
+    //         data = response.data
+    //     })
+    //     .catch((error) => {
+    //         data = error.data
+    //     })
     return data
 };
 
 export const checkChannelNameExists = async (channelName) => {
     const requestUrl = `/api/auth/exists/channel`
     let data = {}
+    const mockResponse = {
+        "status": 200,
+        "data":
+        {
+            "field": "channel",
+            "isDuplicate": false
+        }
 
-    console.log("채널명 중복체크") // TODO: 삭제
+    }
+    data = mockResponse.data;
+    // await api.post(requestUrl, { channelName })
+    //     .then((response) => {
+    //         data = response.data
+    //     })
+    //     .catch((error) => {
+    //         data = error.data
+    //     })
+    return data
+};
 
-    await api.post(requestUrl, { channelName })
+export const signup = async (signupForm) => {
+    const requestUrl = `/api/auth/signup`
+    let data = {}
+    await api.post(requestUrl, signupForm)
         .then((response) => {
             data = response.data
         })
@@ -32,7 +59,7 @@ export const checkChannelNameExists = async (channelName) => {
             data = error.data
         })
     return data
-};
+}
 
 export const login = async (loginForm) => {
     const requestUrl = `/api/auth/login`
@@ -50,4 +77,4 @@ export const login = async (loginForm) => {
 
 
 
-export default { checkEmailExists, checkChannelNameExists, login }
+export default { checkEmailExists, checkChannelNameExists, login, signup }

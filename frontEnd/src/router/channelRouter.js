@@ -4,7 +4,7 @@ import channel from "@/views/channel/ChannelMainView.vue"
 import about from "@/views/channel/subview/About.vue"
 import mychannel from "@/views/channel/MychannelMainView.vue"
 
-const channelRouter = [
+const channelRoutes = [
     {
         path: '/channel',
         name: 'channel',
@@ -22,15 +22,16 @@ const channelRouter = [
                 path: '/channel/about',
                 component: about,
             },
-            {
+          {
                 path: '/channel/mychannel',
                 component: mychannel,
             },
-
-
-
+          {
+                path: '/channel/community/:id',
+                component: () => import('@/components/channel/ChannelPost.vue')
+            }ㅉ
         ],
     },
 ]
 
-export default channelRouter
+export default channelRoutes

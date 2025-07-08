@@ -1,4 +1,24 @@
-<script setup></script>
+<script setup>
+import { reactive, watch } from 'vue';
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const state = reactive({
+  isDropdownOpen: false
+})
+
+const toggleDropdown = () => {
+  state.isDropdownOpen = !state.isDropdownOpen;
+  console.log(state.isDropdownOpen)
+}
+
+watch(
+  () => route.fullPath,
+  () => {
+    state.isDropdownOpen = false
+  }
+)
+</script>
 
 <template>
   <header class="header">
@@ -10,11 +30,8 @@
       </div>
       <div class="nav-left">
         <nav class="nav-menu">
-          <a href="#" class="nav-item active">홈</a>
-          <a href="#" class="nav-item">채널</a>
-          <a href="#" class="nav-item">Together</a>
-          <a href="#" class="nav-item">blank</a>
-          <a href="#" class="nav-item">내 플레이리스트</a>
+          <RouterLink :to="{ name: 'main' }" class="nav-item">홈</RouterLink>
+          <RouterLink :to="{ name: 'togetherMain' }" class="nav-item">투게더</RouterLink>
         </nav>
       </div>
     </div>
@@ -29,12 +46,13 @@
 
       <div v-else class="nav-right">
         <div class="profile-wrapper">
-          <div class="profile-trigger">
+          <div class="profile-trigger" @click="toggleDropdown">
             <img src="@/assets/images/dabom2.png" alt="프로필" class="profile-img" />
           </div>
-          <div class="profile-dropdown">
-            <a href="#" class="dropdown-item">내 채널</a>
-            <a href="#" class="dropdown-item">설정</a>
+          <div class="profile-dropdown" v-if="state.isDropdownOpen">
+            <RouterLink :to="{ name: 'channel' }" class="dropdown-item">내 채널</RouterLink>
+            <RouterLink :to="{ name: 'message' }" class="dropdown-item">DM</RouterLink>
+            <RouterLink to="#" class="dropdown-item">플레이리스트</RouterLink>
             <a href="#" class="dropdown-item">로그아웃</a>
           </div>
         </div>
@@ -160,9 +178,8 @@
   border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  display: none;
   min-width: 160px;
-  z-index: 100;
+  z-index: 1000;
   padding: 0.3rem 0;
 }
 
@@ -181,7 +198,7 @@
 }
 
 /* 드롭다운 표시 조건 */
-.nav-right:hover .profile-wrapper .profile-dropdown {
+/* .nav-right:hover .profile-wrapper .profile-dropdown {
   display: block;
-}
+} */
 </style>

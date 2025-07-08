@@ -49,6 +49,6 @@ onUpdated(scrollToBottom)
   </div>
 </template>
 <style scoped>
-@import url(../../assets/Message/Message.css);
+@import url(../../assets/Message/MessageList.css);
 
 </style>

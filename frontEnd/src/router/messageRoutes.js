@@ -1,6 +1,6 @@
 import Message from '../views/MessageContainer.vue'
 
-const MessageRoutes = [
+const messageRoutes = [
     {
         path: '/message',
         name: 'message',
@@ -8,4 +8,4 @@ const MessageRoutes = [
     },
 ]
 
-export default MessageRoutes
+export default messageRoutes

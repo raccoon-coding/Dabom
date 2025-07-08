@@ -16,6 +16,6 @@ function handleNewChat() {
 </template>
 
 <style scoped>
-@import url(../../assets/Message/Message.css);
+@import url(../../assets/Message/ChatListHeader.css);
 
 </style>

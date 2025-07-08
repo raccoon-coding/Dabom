@@ -30,6 +30,6 @@ function handleSendMessage(messageText) {
 </template>
 
 <style scoped>
-@import url(../../assets/Message/Message.css);
+@import url(../../assets/Message/ChatWindow.css);
 
 </style>
