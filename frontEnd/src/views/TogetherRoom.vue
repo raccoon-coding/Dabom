@@ -54,15 +54,16 @@ const closeMasterModal = () => {
 <style scoped>
 /* 비디오 컨테이너 애니메이션 */
 .video-container {
-    width: 90%;
-  height: 90%;
+  width: 80%;
+  height: 80%;
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   transform-origin: 50% 50%; /* 정확한 중심점 */
+  margin-left: 5.5rem;;
 }
 
 /* 모달이 열릴 때 비디오 축소 효과 */
 .video-container.modal-open {
-    transform: translateX(-200px) scale(0.8);
+    transform: translateX(-150px) scale(0.8) translateY(-83px);
     transform-origin: 50% 50%; /* Y축 중심점 유지 */
 }
 </style>
