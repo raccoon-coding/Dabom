@@ -39,7 +39,7 @@ watch(
     <!---->
 
     <div class="header-right">
-      <div v-if="isLoggedIn" class="login-menu">
+      <div v-if="!isLoggedIn" class="login-menu">
         <RouterLink :to="{ name: 'login' }" class="login-item">로그인</RouterLink>
         <RouterLink :to="{ name: 'signup' }" class="login-item">회원가입</RouterLink>
       </div>

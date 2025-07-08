@@ -1,34 +1,36 @@
 <script setup>
 import { reactive } from 'vue';
+import LoginForm from '@/entity/auth/LoginForm';
 import api from '@/api/auth'
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const form = reactive({
+    loginForm: new LoginForm()
+})
 
 const state = reactive({
     showPassword: false
-})
-
-const loginForm = reactive({
-    email: '',
-    password: ''
 })
 
 const togglePassword = () => {
     state.showPassword = !state.showPassword;
 }
 
-const login = () => {
-    // TODO: Login 로직
-    // api.login()
-    console.log("로그인 로직 ㅋㅋ")
+const login = async () => {
+    // TODO: 삭제
+    console.log("로그인 이벤트")
+    const data = await api.login(form.loginForm)
+    if (data.status !== 200) {
+        alert("로그인 실패.")
+        return
+    }
+
+    router.push({ name: 'main' });
 }
 </script>
 
 <template>
-
-    <head>
-        <!-- font awesome -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    </head>
-
     <div class="login-container">
         <div class="login-form-wrapper">
             <div class="login-header">
@@ -40,7 +42,7 @@ const login = () => {
                     <div class="form-group">
                         <label for="email">이메일</label>
                         <input type="email" id="email" name="email" required placeholder="이메일을 입력하세요"
-                            v-model="loginForm.email">
+                            v-model="form.loginForm.email">
                         <span class="error-message" id="emailError"></span>
                     </div>
 
@@ -48,7 +50,7 @@ const login = () => {
                         <label for="password">비밀번호</label>
                         <div class="password-input">
                             <input :type="state.showPassword ? 'text' : 'password'" id="password" name="password"
-                                v-model="loginForm.password" required placeholder="비밀번호를 입력하세요">
+                                v-model="form.loginForm.password" required placeholder="비밀번호를 입력하세요">
                             <button type="button" class="toggle-password" id="togglePassword" @click="togglePassword">
                                 <i :class="state.showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                             </button>
