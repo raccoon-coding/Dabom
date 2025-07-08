@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import togetherRoutes from './togetherRouter.js' // 라우트 배열 import
-import authRoutes from './authRouter.js'
 import MainView from '@/views/MainView.vue'
-import channelRouter from './channelRouter.js'
+import authRoutes from '@/router/authRouter.js'
+import videoPlayerRoutes from '@/router/videoPlayerRouter.js'
+import channelRoutes from '@/router/channelRouter.js'
+import togetherRoutes from '@/router/togetherRouter.js'
+import messageRoutes from '@/router/messageRoutes.js'
+
 
 const routes = [
   {
@@ -11,9 +14,10 @@ const routes = [
     component: MainView
   },
   ...authRoutes,
+  ...videoPlayerRoutes,
+  ...channelRoutes,
   ...togetherRoutes,
-  ...channelRouter,
-  // 다른 라우트들
+  ...messageRoutes
 ]
 
 const router = createRouter({
