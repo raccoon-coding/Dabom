@@ -46,6 +46,7 @@
   gap: 0;
   padding: 0 2rem;
   overflow-x: auto;
+  justify-content: center;
 }
 
 .channel-nav-item {

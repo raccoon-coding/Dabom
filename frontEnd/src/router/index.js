@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import togetherRoutes from './togetherRouter.js' // 라우트 배열 import
 import authRoutes from './authRouter.js'
 import MainView from '@/views/MainView.vue'
+import channelRouter from './channelRouter.js'
 
 const routes = [
   {
@@ -11,6 +12,7 @@ const routes = [
   },
   ...authRoutes,
   ...togetherRoutes,
+  ...channelRouter,
   // 다른 라우트들
 ]
 
