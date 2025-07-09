@@ -1,0 +1,67 @@
+[
+    {
+        "id": "video_001",
+        "title": "첫 번째 영상",
+        "thumbnailUrl": "https://example.com/thumb1.jpg",
+        "duration": "03:45",
+        "channel": {
+            "name": "채널A",
+            "avatarUrl": "https://example.com/channelA_avatar.png"
+        },
+        "rating": 4.5,
+        "views": 120000,
+        "uploadedAt": "2023-01-15"
+    },
+    {
+        "id": "video_002",
+        "title": "두 번째 영상",
+        "thumbnailUrl": "https://example.com/thumb2.jpg",
+        "duration": "05:20",
+        "channel": {
+            "name": "채널B",
+            "avatarUrl": "https://example.com/channelB_avatar.png"
+        },
+        "rating": 4.7,
+        "views": 250000,
+        "uploadedAt": "2023-02-10"
+    },
+    {
+        "id": "video_003",
+        "title": "세 번째 영상",
+        "thumbnailUrl": "https://example.com/thumb3.jpg",
+        "duration": "02:50",
+        "channel": {
+            "name": "채널C",
+            "avatarUrl": "https://example.com/channelC_avatar.png"
+        },
+        "rating": 4.2,
+        "views": 98000,
+        "uploadedAt": "2023-03-05"
+    },
+    {
+        "id": "video_004",
+        "title": "네 번째 영상",
+        "thumbnailUrl": "https://example.com/thumb4.jpg",
+        "duration": "04:10",
+        "channel": {
+            "name": "채널D",
+            "avatarUrl": "https://example.com/channelD_avatar.png"
+        },
+        "rating": 4.8,
+        "views": 310000,
+        "uploadedAt": "2023-04-20"
+    },
+    {
+        "id": "video_005",
+        "title": "다섯 번째 영상",
+        "thumbnailUrl": "https://example.com/thumb5.jpg",
+        "duration": "06:00",
+        "channel": {
+            "name": "채널E",
+            "avatarUrl": "https://example.com/channelE_avatar.png"
+        },
+        "rating": 4.6,
+        "views": 175000,
+        "uploadedAt": "2023-05-12"
+    }
+]

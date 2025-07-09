@@ -5,51 +5,58 @@ import { onMounted, reactive } from 'vue';
 import api from '@/api/video'
 
 
-const playlist_videos = [
-    {
-        id: '1',
-        title: '병욱님의 키보드 탐구',
-        thumbnailUrl: '@/assets/images/dabom2.png',
-        duration: '12:34',
-        channel: {
-            name: '알리 매니아',
-            avatarUrl: '@/assets/images/dabom2.png',
-        },
-        rating: 4.2,
-        views: 12,
-        uploadedAt: 2,
+// const playlist_videos = [
+//     {
+//         id: '1',
+//         title: '병욱님의 키보드 탐구',
+//         thumbnailUrl: '@/assets/images/dabom2.png',
+//         duration: '12:34',
+//         channel: {
+//             name: '알리 매니아',
+//             avatarUrl: '@/assets/images/dabom2.png',
+//         },
+//         rating: 4.2,
+//         views: 12,
+//         uploadedAt: 2,
+//     },
+// ]
+
+const playlistForm = reactive({
+    id: '',
+    title: '',
+    thumbnailUrl: '',
+    duration: '',
+    channel: {
+        name: '',
+        avatarUrl: '',
     },
-]
+    rating: '',
+    views: '',
+    uploadedAt: '',
+})
 
-// const state = reactive({
-//     playlist_videos: []
-// })
+onMounted(async () => {
+  const res = await api.playlist_show(playlistForm)
+  if (Array.isArray(res) && res.length > 0) {
+    Object.assign(playlistForm, res[0]) // API 응답 배열의 첫 번째 비디오를 playlistForm에 할당
+  }
+}) 
 
-// const getVideoList = async () => {
-//     await api.getVideoList()
-//         .then((data) => {
-//             console.log(data)
-//             state.playlist_videos = data
-//         })
-//         .catch((error) => {
-//             console.error(error)
-//         })
-// }
-// onMounted(() => {
-//     getVideoList()
-// })
+ 
+
 </script>
 
 <template>
     <div class="layout-wrap">
         <SidebarContainer />
         <div class="main-wrap">
-            <div class="video-section">
-                <!-- <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="state.popularVideos" /> -->
-                <VideoSectionComp :title="'음악'" :icon="'fas fa-fire'" :videos="playlist_videos" />
-                <VideoSectionComp :title="'스포츠'" :icon="'fas fa-fire'" :videos="playlist_videos" />
-                <VideoSectionComp :title="'교육'" :icon="'fas fa-fire'" :videos="playlist_videos" />
+            <div class="playlist-details">
+                <h2>{{ playlistForm.title }}</h2>
+                <img :src="playlistForm.thumbnailUrl" alt="Thumbnail" style="width: 300px; height: auto;">
+                <p>채널: {{ playlistForm.channel.name }}</p>
+                <p>조회수: {{ playlistForm.views }}</p>
             </div>
+            
         </div>
     </div>
 </template>
