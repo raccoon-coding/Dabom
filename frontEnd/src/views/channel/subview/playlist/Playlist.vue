@@ -1,48 +1,29 @@
 <script setup>
 import SidebarContainer from '@/components/sidebar/SidebarContainer.vue';
-import VideoSectionComp from '@/components/videos/VideoSectionComp.vue';
-import { onMounted, reactive } from 'vue';
-import api from '@/api/video'
+import VideoCardComp from '@/components/videos/VideoCardComp.vue';
+import { onMounted, computed, reactive } from 'vue';
+import api from '@/api/playlist';
 
-
-// const playlist_videos = [
-//     {
-//         id: '1',
-//         title: '병욱님의 키보드 탐구',
-//         thumbnailUrl: '@/assets/images/dabom2.png',
-//         duration: '12:34',
-//         channel: {
-//             name: '알리 매니아',
-//             avatarUrl: '@/assets/images/dabom2.png',
-//         },
-//         rating: 4.2,
-//         views: 12,
-//         uploadedAt: 2,
-//     },
-// ]
-
-const playlistForm = reactive({
-    id: '',
-    title: '',
-    thumbnailUrl: '',
-    duration: '',
-    channel: {
-        name: '',
-        avatarUrl: '',
-    },
-    rating: '',
-    views: '',
-    uploadedAt: '',
-})
+const playlist_videos = reactive({
+    music: [],
+    sports: [],
+    education: []
+});
 
 onMounted(async () => {
-  const res = await api.playlist_show(playlistForm)
-  if (Array.isArray(res) && res.length > 0) {
-    Object.assign(playlistForm, res[0]) // API 응답 배열의 첫 번째 비디오를 playlistForm에 할당
-  }
-}) 
-
- 
+  const res = await api.playlist_show();
+    if (Array.isArray(res)) {
+        for (let playlist_video of res) {
+            if(playlist_video.style === '음악') {
+                playlist_videos.music.push(playlist_video);
+            } else if (playlist_video.style === '스포츠') {
+                playlist_videos.sports.push(playlist_video);
+            } else if (playlist_video.style === '교육') {
+                playlist_videos.education.push(playlist_video);
+            }
+        }
+    }
+});
 
 </script>
 
@@ -51,16 +32,32 @@ onMounted(async () => {
         <SidebarContainer />
         <div class="main-wrap">
             <div class="playlist-details">
-                <h2>{{ playlistForm.title }}</h2>
-                <img :src="playlistForm.thumbnailUrl" alt="Thumbnail" style="width: 300px; height: auto;">
-                <p>채널: {{ playlistForm.channel.name }}</p>
-                <p>조회수: {{ playlistForm.views }}</p>
+                <!-- Display playlist details here if needed -->
             </div>
-            
+
+            <div v-if="playlist_videos.music.length > 0">
+                <h2>음악</h2>
+                <div class="video-grid">
+                    <VideoCardComp v-for="video in playlist_videos.music" :key="video.id" :video="video" />
+                </div>
+            </div>
+
+            <div v-if="playlist_videos.sports.length > 0">
+                <h2>스포츠</h2>
+                <div class="video-grid">
+                    <VideoCardComp v-for="video in playlist_videos.sports" :key="video.id" :video="video" />
+                </div>
+            </div>
+
+            <div v-if="playlist_videos.education.length > 0">
+                <h2>교육</h2>
+                <div class="video-grid">
+                    <VideoCardComp v-for="video in playlist_videos.education" :key="video.id" :video="video" />
+                </div>
+            </div>
         </div>
     </div>
 </template>
-
 
 <style scoped>
 .layout-wrap {
@@ -77,8 +74,19 @@ onMounted(async () => {
     max-width: 78%;
 }
 
-.video-section {
+.video-grid {
     display: grid;
-    margin-left: 1.8rem
+    grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+.playlist-details {
+    margin-bottom: 20px;
+    /* Style your playlist details section as needed */
+}
+
+h2 {
+    color: white;
 }
 </style>
