@@ -1,41 +1,6 @@
 <script setup>
-import { reactive, onMounted } from 'vue';
-import api from '@/api/video_player';
+const props = defineProps(['videoInfo']);
 
-// let data = reactive({
-//     videoId: '67890', // 12345, 67890. 11223 있음 
-//     title: '',
-//     channelName: '',
-//     channelSubscribers: '',
-//     views: '',
-//     rating: 0,
-//     isSubscribed: false,
-//     explainText: '',
-//     tags: [],
-// });
-
-const getDataInfo = async () => {
-    try {
-        const videoList = await api.getVideoInfo();
-
-        if (Array.isArray(videoList)) {
-            const targetVideo = videoList.find(video => parseInt(video.videoId) === parseInt(data.videoId));
-            if (targetVideo) {
-                Object.assign(data, targetVideo);
-            } else {
-                alert("영상 ID가 잘못됨")
-                return;
-            }
-        }
-    } catch (error) {
-        console.error("영상 정보를 불러오는 중 오류가 발생했습니다:", error);
-        data.title = "정보를 불러오는 데 실패했습니다.";
-    }
-};
-
-onMounted(() => {
-    getDataInfo();
-});
 </script>
 
 <template>
@@ -44,10 +9,12 @@ onMounted(() => {
         <!-- 제목 + 버튼 한 줄 배치 -->
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
             <h1 class="video-title" style="margin: 0;">
-                {{ data.title }}
+                {{ props.videoInfo.title }}
             </h1>
             <div class="channel-actions" style="display: flex; gap: 8px;">
-                <button class="btn btn-subscribe">{{ data.isSubscribed ? '구독중' : '구독' }}</button>
+                <!-- <button class="btn btn-subscribe">{{ props.videoInfo.isSubscribed ? '구독중' : '구독' }}</button> -->
+                <button class="btn btn-subscribe">구독중</button>
+
                 <button class="action-btn">
                     <i class="fa-solid fa-envelope"></i>
                     메시지
@@ -57,8 +24,8 @@ onMounted(() => {
 
         <div class="channel-row">
             <div class="channel-info-vertical">
-                <span class="channel-name">{{ data.channelName }}</span>
-                <span class="subscriber-count">구독자 {{ data.channelSubscribers }}명</span>
+                <span class="channel-name">{{ props.videoInfo.channel.name }}</span>
+                <span class="subscriber-count">구독자 {{ props.videoInfo.Subscribers }}명</span>
             </div>
             <div class="channel-buttons">
                 <button class="action-btn together-btn" id="togetherBtn">
@@ -76,7 +43,7 @@ onMounted(() => {
 
     <!-- 별점 평가 시스템 -->
     <div class="rating-row">
-        <span class="current-rating">조회수 {{ data.views }}회 • 평균 {{ data.rating.toFixed(1) }}점</span>
+        <span class="current-rating">조회수 {{ props.videoInfo.views }}회 • 평균 {{ props.videoInfo.rating }}점</span>
         <div class="rating-right">
             <span class="rating-label">이 영상을 평가해주세요:</span>
             <div class="star-rating-interactive">
