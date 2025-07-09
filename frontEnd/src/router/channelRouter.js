@@ -24,6 +24,7 @@ const channelRoutes = [
             },
             {
                 path: '/channel/mychannel',
+                name: 'mychannel',
                 component: mychannel,
             },
             {
