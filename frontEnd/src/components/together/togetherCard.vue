@@ -1,49 +1,71 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { reactive, onMounted } from 'vue';
 
 const router = useRouter()
-// defineProps({
-//     title: String,
-//     host: String,
-//     togetherUrl: String
-// })
+const props = defineProps(['together']);
+const together = reactive({
+  together_id: 0,
+  title: '',
+  host_name: '',
+  thumb_nail: '',
+  max_join_people: 0,
+  join_people: 0,
+  total_play_time: "",
+  created: ""
+})
 
-// 방 참가하기 버튼 클릭 시 실행될 함수
+const getTogether = () => {
+  const data = props.together
+  
+  together.together_id = data.together_id
+  together.title = data.title
+  together.host_name = data.host_name
+  together.thumb_nail = data.thumb_nail
+  together.max_join_people = data.max_join_people
+  together.join_people = data.join_people
+  together.total_play_time = data.total_play_time
+  together.created = data.created
+}
+
 const joinRoom = () => {
-  // props로 받은 URL로 이동
-  if (true) {
-    router.push({ name: 'TogetherRoom', params: {id: 12}})
+  if (together.together_id !== 0) {
+    router.push({ name: 'togetherRoom', params: {id: together.together_id}})
   } else {
     console.log('URL이 제공되지 않았습니다.')
   }
 }
+
+onMounted(() => { 
+    getTogether();
+})
 </script>
 
 <template>
   <div class="room-card" @click="joinRoom">
     <div class="room-thumbnail">
-      <img src="https://via.placeholder.com/320x180" alt="동영상 썸네일" />
+      <img :src="together.thumb_nail" alt="동영상 썸네일" />
       <div class="room-status">
         <span class="live-indicator">LIVE</span>
         <span class="participant-count">
           <i class="fas fa-users"></i>
-          2/6
-        </span>
+          {{together.join_people}}/{{ together.max_join_people }}
+        </span> 
       </div>
-      <div class="video-duration">8:45</div>
+      <div class="video-duration">{{together.total_play_time}}</div>
     </div>
     <div class="room-info">
-      <h4 class="room-title">Together 모드 사용법 스터디</h4>
+      <h4 class="room-title">{{ together.title }}</h4>
       <p class="room-host">
         <i class="fas fa-crown"></i>
-        테크리뷰
+        {{together.host_name}}
       </p>
       <div class="room-meta">
-        <span class="room-type">
+        <!-- <span class="room-type">
           <i class="fas fa-lock"></i>
           친구만
-        </span>
-        <span class="room-created">1시간 전 생성</span>
+        </span> -->
+        <span class="room-created">{{together.created}}</span>
       </div>
       <div class="room-participants">
         <div class="participant-avatars">

@@ -1,6 +1,32 @@
 <script setup>
 import card from '@/components/together/TogetherCard.vue'
 import togetherSearch from '@/components/together/TogetherSearch.vue'
+import api from '@/api/together'
+
+import {ref, reactive, onMounted} from 'vue'
+import { useRoute } from 'vue-router'
+
+const searchContext = ref('');
+const route = useRoute()
+const togethers = reactive({
+    togethers: []
+})
+
+const getSearchTogethers = async () => {
+    const res = await api.getTogetherSearch(searchContext.value)
+    // const res = await api.getRandomTogetherList()
+    console.log(res)
+    if(res.state_code === 200) {
+        togethers.togethers.push(...res.data.togethers)
+    } else {
+        console.log("error");
+    }
+}
+
+onMounted(() => { 
+  searchContext.value = route.query.q;
+  getSearchTogethers()
+})
 </script>
 
 <template>
@@ -13,7 +39,7 @@ import togetherSearch from '@/components/together/TogetherSearch.vue'
             </div>
             <!-- 더미 데이터 시작 -->
             <div class="rooms-grid">
-                <card v-for="n in 10" :key="n" />
+                <card v-for="together in togethers.togethers" :together="together" />
             </div>
             <!-- 더미 데이터 종료 -->
         </div>
