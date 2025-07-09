@@ -1,7 +1,46 @@
 <script setup>
 import { useRouter } from 'vue-router';
+import { reactive } from 'vue';
 
+const headerActive = reactive({
+  video: true,
+  playlist: false,
+  community: false,
+  about: false
+})
 const router = useRouter()
+
+const clickVideo = () => {
+  headerActive.video = true;
+  headerActive.playlist = false;
+  headerActive.community = false;
+  headerActive.about = false;
+  router.push('/channel/videos')
+}
+
+const clickPlaylist = () => {
+  headerActive.video = false;
+  headerActive.playlist = true;
+  headerActive.community = false;
+  headerActive.about = false;
+  router.push('/channel/playlists')
+}
+
+const clickCommunity = () => {
+  headerActive.video = false;
+  headerActive.playlist = false;
+  headerActive.community = true;
+  headerActive.about = false;
+  router.push('/channel/community')
+}
+
+const clickAbout = () => {
+  headerActive.video = false;
+  headerActive.playlist = false;
+  headerActive.community = false;
+  headerActive.about = true;
+  router.push('/channel/about')
+}
 </script>
 
 <template>
@@ -9,19 +48,19 @@ const router = useRouter()
      <nav class="channel-nav">
 
 <div class="nav-container">
-    <button class="channel-nav-item active" data-tab="videos" @click="$router.push('/channel/videos')">
+    <button class="channel-nav-item" :class="{active: headerActive.video}" data-tab="videos" @click="clickVideo">
         <i class="fas fa-video"></i>
         동영상
     </button>
-    <button class="channel-nav-item" data-tab="playlists" @click="$router.push('/channel/playlists')">
+    <button class="channel-nav-item" :class="{active: headerActive.playlist}" data-tab="playlists" @click="clickPlaylist">
         <i class="fas fa-list"></i>
         플레이리스트
     </button>
-    <button class="channel-nav-item" data-tab="community" @click="$router.push('/channel/community')">
+    <button class="channel-nav-item" :class="{active: headerActive.community}" data-tab="community" @click="clickCommunity">
         <i class="fas fa-comments"></i>
         커뮤니티
     </button>
-    <button class="channel-nav-item" data-tab="about" @click="$router.push('/channel/about')">
+    <button class="channel-nav-item" :class="{active: headerActive.about}" data-tab="about" @click="clickAbout">
         <i class="fas fa-info-circle"></i>
         정보
     </button>
