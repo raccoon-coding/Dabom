@@ -15,11 +15,14 @@ export const signup = async (signupForm) => {
 }
 
 export const login = async (loginForm) => {
-    const requestUrl = `/api/auth/login`
+    // const requestUrl = `/api/auth/login`
+    const mockLoginRequestSuccess = `/api/login-success.json`
     let data = {}
 
-    await api.post(requestUrl, loginForm)
+    await api.get(mockLoginRequestSuccess)
         .then((response) => {
+            console.log(response)
+            console.log(response.data)
             data = response.data
         })
         .catch((error) => {
