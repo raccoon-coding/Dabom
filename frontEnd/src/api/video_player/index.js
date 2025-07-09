@@ -31,12 +31,13 @@ const getRecommendVideo = async (req) => {
     return data;
 }
 
-const GetVideo = async (req) => {
+const getVideo = async (req) => {
     let data = {};
-    let url = `/api/video-${req}.json`;
+    let url = `/api/video${req}.json`;
 
     await api.get(url, req)
         .then((res) => {
+            console.log(res)
             data = res.data;
         })
         .catch((error) => {
@@ -47,4 +48,4 @@ const GetVideo = async (req) => {
 }
 
 
-export default { getVideoInfo, getRecommendVideo, GetVideo }
+export default { getVideoInfo, getRecommendVideo, getVideo }

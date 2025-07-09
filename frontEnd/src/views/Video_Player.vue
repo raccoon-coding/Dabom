@@ -7,38 +7,24 @@ import { useRoute } from 'vue-router'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
 import api from '@/api/video_player'
+import VideoInfo from '@/entity/video/VideoInfo.js'
 
 const route = useRoute();
-console.log("비디오 아이디:", route.params.id)
+const videoId = route.params.id
 
-const videoData = reactive({
-    id: route.params.id,
-    title: '',
-    description: '',
-    tags: [],
-    views: 0,
-    likes: 0,
-    dislikes: 0,
-    comments: [],
-    channel: {
-        name: '',
-        avatarUrl: ''
-    },
-    uploadDate: ''
+const state = reactive({
+    videoInfo: new VideoInfo()
 })
 
 onMounted(async () => {
-    const data = await api.GetVideo(route.params.id);
-    if (data) {
-        console.log("비디오 데이터:", data);
-    } else {
-        console.error("비디오 데이터를 불러오는 데 실패했습니다.");
-        console.log("비디오 데이터:", data);
-    }
+    const data = await api.getVideo(videoId);
+    state.videoInfo = data
+    console.log(state.videoInfo)
+    console.log(state.videoInfo.videoUrl)
 });
 
-    
 </script>
+
 <template>
     <div class="video-container">
         <div class="video-player-section">
@@ -46,9 +32,7 @@ onMounted(async () => {
             <div class="main-content-column">
                 <div class="video-player-wrapper">
                     <!-- 실제 비디오 플레이어 -->
-                    <video id="mainVideoPlayer" class="video-player" controls>
-                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                            type="video/mp4">
+                    <video id="mainVideoPlayer" class="video-player" :src="state.videoInfo.videoUrl" controls>
                         Your browser does not support the video tag.
                     </video>
                 </div>
