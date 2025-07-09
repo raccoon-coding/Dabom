@@ -2,17 +2,17 @@
 import { reactive, onMounted } from 'vue';
 import api from '@/api/video_player';
 
-let data = reactive({
-    videoId: '67890', // 12345, 67890. 11223 있음 
-    title: '',
-    channelName: '',
-    channelSubscribers: '',
-    views: '',
-    rating: 0,
-    isSubscribed: false,
-    explainText: '',
-    tags: [],
-});
+// let data = reactive({
+//     videoId: '67890', // 12345, 67890. 11223 있음 
+//     title: '',
+//     channelName: '',
+//     channelSubscribers: '',
+//     views: '',
+//     rating: 0,
+//     isSubscribed: false,
+//     explainText: '',
+//     tags: [],
+// });
 
 const getDataInfo = async () => {
     try {
@@ -85,7 +85,7 @@ onMounted(() => {
                 <i class="fas fa-star" data-rating="3"></i>
                 <i class="fas fa-star" data-rating="4"></i>
                 <i class="fas fa-star" data-rating="5"></i>
-                
+
             </div>
         </div>
     </div>
