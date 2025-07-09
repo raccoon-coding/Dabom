@@ -136,8 +136,9 @@ const handleModalConfirm = () => {
 }
 
 const onSubmit = async () => {
-    // validateSignupForm() 
-    signupSuccessHandler()
+    if (validateSignupForm()) {
+        signupSuccessHandler()
+    }
 }
 
 </script>
