@@ -3,6 +3,7 @@ import playlist from "@/views/channel/subview/playlist/Playlist.vue"
 import channel from "@/views/channel/ChannelMainView.vue"
 import about from "@/views/channel/subview/About.vue"
 import mychannel from "@/views/channel/MychannelMainView.vue"
+import videos from "@/views/channel/subview/video/Video_Fix.vue"
 
 const channelRoutes = [
     {
@@ -11,7 +12,13 @@ const channelRoutes = [
         component: channel,
         children: [
             {
+                path: '/channel/videos',
+                name: 'videos',
+                component: videos,
+            },
+            {
                 path: '/channel/playlists',
+                name: 'playlist',
                 component: playlist,
             },
             {

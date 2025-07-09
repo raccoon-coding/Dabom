@@ -54,7 +54,7 @@ watch(
           <div class="profile-dropdown" v-if="state.isDropdownOpen">
             <RouterLink :to="{ name: 'mychannel' }" class="dropdown-item">내 채널</RouterLink>
             <RouterLink :to="{ name: 'message' }" class="dropdown-item">DM</RouterLink>
-            <RouterLink to="#" class="dropdown-item">플레이리스트</RouterLink>
+            <RouterLink :to="{ name: 'playlist'}" class="dropdown-item">플레이리스트</RouterLink>
             <a href="#" class="dropdown-item">로그아웃</a>
           </div>
         </div>
