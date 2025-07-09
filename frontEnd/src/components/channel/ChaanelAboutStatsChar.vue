@@ -1,67 +1,86 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
-import { Chart, registerables } from 'chart.js' // 차트 라이브러리 다운로드
-Chart.register(...registerables) // 차트 라이브러리 관리
+import { onMounted, ref, reactive, watch } from 'vue'
+import { computed } from 'vue'
+import { Chart, registerables } from 'chart.js'
+import api from '@/api/channel'
+Chart.register(...registerables)
 
-// 데이터 및 옵션 (원본과 동일)
-const statsBoxMax = {
-  subscribers: 325000, // 구독자
-  videos: 245,         // 245개
-  views: 8500000,      // 850만회
-  rating: 5            // 별점 최대 5점
-}
 
-const statsData = {
+const statsBoxMaxInfo = reactive({
+  subscribers: 0,
+  videos: 0,
+  views: 0,
+  rating: 0,
+})
+
+const statsDataInfo = reactive({
   subscribers: {
-    label: "월별 구독자 증가",
-    data: [12000, 1400, 1700, 21000, 100000, 3200, 3600, 4000, 4200, 4700, 4900, 125000],
-    color: "#ff6b6b",
-    unit: "명"
+    label: "",
+    data: [],
+    color: "",
+    unit: ""
   },
   videos: {
-    label: "월별 영상 업로드 수",
-    data: [10, 12, 15, 13, 160, 20, 17, 19, 21, 23, 20, 245],
-    color: "#ffa94d",
-    unit: "개"
+    label: "",
+    data: [],
+    color: "",
+    unit: ""
   },
   views: {
-    label: "월별 조회수",
-    data: [500000, 7000000, 800000, 900000, 1000000, 1200000, 1300000, 1500000, 1700000, 1800000, 1900000, 8100000],
-    color: "#4dabf7",
-    unit: "회"
+    label: "",
+    data: [],
+    color: "",
+    unit: ""
   },
   rating: {
-    label: "월별 평균 별점",
-    data: [0, 3, 3.9, 4.5, 4.6, 4.7, 4.6, 4.7, 2.1, 4.7, 4.7, 4.6],
-    color: "#fcc419",
-    unit: "점"
+    label: "",
+    data: [],
+    color: "",
+    unit: ""
   }
-}
+})
+
+onMounted(async () => {
+  const res = await api.getChannelInfo()
+  Object.assign(statsBoxMaxInfo, res.statsBoxMax)
+  Object.assign(statsDataInfo, res.statsData)
+  renderChart(activeType.value)
+}) 
+
+
+
+
+
 const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
 
-const statList = [
-  { type: 'subscribers', number: '12.5만', label: '구독자' },
-  { type: 'videos', number: '245', label: '동영상' },
-  { type: 'views', number: '850만', label: '총 조회수' },
-  { type: 'rating', number: '4.6', label: '평균 별점' }
-]
+const statList= computed(() =>[
+  { type: 'subscribers', number: statsBoxMaxInfo.subscribers, label: '구독자' },
+  { type: 'videos', number: statsBoxMaxInfo.videos, label: '동영상' },
+  { type: 'views', number: statsBoxMaxInfo.views, label: '총 조회수' },
+  { type: 'rating', number: statsBoxMaxInfo.rating, label: '평균 별점' }
+])
 
 const activeType = ref('subscribers')
 const chartCanvas = ref(null)
 let statsChart = null
 
-function getYMax(type) {
-  let yMax = statsBoxMax[type]
-  if (type !== 'rating') {
-    const pow = Math.pow(10, yMax.toString().length - 1)
-    yMax = Math.ceil(yMax / pow) * pow
+//y축 계산 함수 (병욱)
+//별점만 제외(병욱) 10단위, 100단위, 10,000단위 등으로 올림(가독성용)
+const getYMax = (type) => {
+  if (type === 'rating') {
+    return 5; // 별점은 5점 만점으로 고정
   }
+  let yMax = statsBoxMaxInfo[type]
+  const pow = Math.pow(10, yMax.toString().length - 1)
+  yMax = Math.ceil(yMax / pow) * pow
   return yMax
 }
 
-function renderChart(type) {
+
+//차트 생성
+const renderChart = (type) => {
   if (!chartCanvas.value) return
-  const info = statsData[type]
+  const info = statsDataInfo[type]
   if (statsChart) statsChart.destroy()
 
   statsChart = new Chart(chartCanvas.value.getContext('2d'), {
@@ -118,14 +137,12 @@ function renderChart(type) {
   })
 }
 
-function selectType(type) {
+const selectType = (type) => {
   activeType.value = type
 }
 
-onMounted(() => {
-  renderChart(activeType.value)
-})
-watch(activeType, (newType) => {
+
+watch(activeType, (newType) => { //사용자가 카드(구독자/동영상/조회수/평균별점) 중 하나를 클릭하면 activeType의 값이 바뀜
   renderChart(newType)
 })
 </script>

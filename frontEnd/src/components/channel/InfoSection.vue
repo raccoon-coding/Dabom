@@ -4,11 +4,11 @@
     <form class="channel-info-form">
       <label>
         채널 이름
-        <input type="text" value="크리에이티브 채널">
+        <input type="text" placeholder="크리에이티브 채널">
       </label>
       <label>
         채널 설명
-        <textarea rows="3">창작과 영감을 나누는 공간입니다.</textarea>
+        <textarea rows="3" placeholder="창작과 영감을 나누는 공간입니다."></textarea>
       </label>
       <label>
         채널 프로필 이미지
@@ -20,12 +20,12 @@
       </label>
       <label>
         연락처 이메일
-        <input type="email" value="creative@dabom.com">
+        <input type="email" placeholder="creative@dabom.com">
       </label>
       <label>
         소셜 링크
-        <input type="text" value="https://twitter.com/dabom">
-        <input type="text" value="https://instagram.com/dabom">
+        <input type="text" placeholder="https://twitter.com/dabom">
+        <input type="text" placeholder="https://instagram.com/dabom">
       </label>
       <button class="btn-save" type="submit"><i class="fas fa-save"></i> 저장</button>
     </form>
