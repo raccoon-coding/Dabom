@@ -1,41 +1,27 @@
 <script setup>
-import {ref, onMounted} from 'vue'
+import {ref, reactive, onMounted} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
 
-const searchUrl = '';
 const searchContext = ref('');
 const route = useRoute()
 const router = useRouter()
 
-const requset = {data: null};
+const requset = reactive({
+  togethers: []
+});
 
 const search = async () => {
-  router.push({ name: 'TogetherSearch', query: { q: searchContext.value } })
   if(!searchContext) {
     alert('검색어를 입력해주세요.')
     return
   }
 
-  try {
-    const response = await axios.get(searchUrl, {
-      data: searchContext.value
-    })
-
-    request.data = response.data
-
-    router.push({name: 'TogetherSearch', params: {context: request.data}})
-
-  }
-  catch(error) {
-    console.error(error)
-    alert('잘못된 검색어를 입력하셨거나, 서버 오류입니다. 잠시 뒤에 시도해주세요.')
-  }
+  router.push({name: 'togetherSearch', query: { q: searchContext.value }})
 }
 
 onMounted(() => { 
-  console.log(route.query); 
   searchContext.value = route.query.q;
+  console.log()
 })
 </script>
 
