@@ -1,3 +1,39 @@
+<script setup> 
+import { reactive } from 'vue';
+import api from "@/api/channel"
+
+const data = reactive({
+  title: '',
+  content: '',
+  open: '',
+  thumbnail_url: '',
+  video_url: ''
+})
+const props = defineProps({
+  isActive: Boolean
+})
+
+const uploadVideo = async(event) => {
+  // 파일 업로드일 경우
+  const file = event.target.files[0]
+  const formData = new FormData()
+  formData.append('video', file)
+  const res = await api.uploadVideo(formData)
+  data.video_url = res.video_url
+  if (res.success) alert(res.message)
+}
+
+const uploadThumbnail = async(event) => {
+   // 파일 업로드일 경우
+   const file = event.target.files[0]
+  const formData = new FormData()
+  formData.append('video', file)
+  const res = await api.uploadThumbnail(formData)
+  data.video_url = res.video_url
+  if (res.success) alert(res.message)
+}
+
+</script>
 <template>
   <section id="section-videos" class="dashboard-section" :class="{ active: isActive }">
     <h2 >동영상 관리</h2>
@@ -59,29 +95,7 @@
   </section>
 </template>
 
-<script setup> 
-import { reactive } from 'vue';
 
-const data = reactive({
-  title: '',
-  content: '',
-  open: '',
-  thumbnail_url: '',
-  video_url: ''
-})
-const props = defineProps({
-  isActive: Boolean
-})
-
-const uploadVideo = () => {
-  data.video_url = ''
-}
-
-const uploadThumbnail = () => {
-  data.thumbnail_url = ''
-}
-
-</script>
 <style scoped>
 @import url(@/assets/channel/mychannel);
 </style>

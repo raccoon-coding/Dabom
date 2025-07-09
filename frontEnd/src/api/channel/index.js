@@ -38,7 +38,7 @@ export const updatePlaylistItem = async (playlistedit) => {
     const requestUrl = `/api/channel_playlist_update.json`
     let data = {}
 
-    await api.post(requestUrl, playlistedit)
+    await api.get(requestUrl, playlistedit)
         .then((response) => {
             // console.log(response)
             data = response.data
@@ -65,7 +65,42 @@ export const deletePlaylistItem = async (playlistdelete) => {
     return data
 };
 
+export const uploadVideo = async (videoform) => {
+
+    const requestUrl = `/api/channel_uploadVideo.json`
+    let data = {}
+
+    await api.get(requestUrl, videoform)
+        .then((response) => {
+            // console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
+export const uploadThumbnail = async (Thumbnailform) => {
+
+    const requestUrl = `/api/channel_thumbnail.json`
+    let data = {}
+
+    await api.get(requestUrl, Thumbnailform)
+        .then((response) => {
+            // console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
 
 
 
-export default { getChannelChart, postChannelInfo, updatePlaylistItem, deletePlaylistItem }
+
+export default {
+    getChannelChart, postChannelInfo, updatePlaylistItem, deletePlaylistItem
+    , uploadVideo, uploadThumbnail
+}
