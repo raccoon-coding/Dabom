@@ -1,6 +1,12 @@
 <script setup>
+import { useRouter } from 'vue-router';
 
 const props = defineProps(['video'])
+const router = useRouter()
+
+const playVideo = () => {
+    router.push({ name: 'videoPlayer', params: { id: props.video.videoId } })
+}
 </script>
 
 <template>
@@ -9,7 +15,7 @@ const props = defineProps(['video'])
             <img src="@/assets/images/dabom2.png" alt="썸네일" />
             <div class="video-duration">{{ props.video.duration }}</div>
             <div class="video-overlay">
-                <button class="video-overlay__play-btn">
+                <button class="video-overlay__play-btn" @click="playVideo">
                     <i class="fas fa-play"></i>
                 </button>
                 <button class="video-overlay__together-btn" title="Together 모드로 시청">
