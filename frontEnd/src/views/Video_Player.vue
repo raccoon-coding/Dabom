@@ -5,23 +5,32 @@ import Video_Recommend from '../components/Video_Player/Video_Recommend.vue'
 import Video_Comment from '../components/Video_Player/Video_Comment.vue'
 import { useRoute } from 'vue-router'
 import { onMounted } from 'vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import api from '@/api/video_player'
 import VideoInfo from '@/entity/video/VideoInfo.js'
 
 const route = useRoute();
 const videoId = route.params.id
+const data = ref()
 
 const state = reactive({
     videoInfo: new VideoInfo()
 })
 
-onMounted(async () => {
-    const data = await api.getVideo(videoId);
-    state.videoInfo = data
+const getData = async () => {
+    data.value = await api.getVideo(videoId);
+    state.videoInfo = data.value
+}
+
+onMounted(() => {
+    getData();
     console.log(state.videoInfo)
     console.log(state.videoInfo.videoUrl)
 });
+
+
+console.log(state.videoInfo)
+
 
 </script>
 
@@ -36,9 +45,9 @@ onMounted(async () => {
                         Your browser does not support the video tag.
                     </video>
                 </div>
-                <Video_Main_Info></Video_Main_Info>
-                <Video_Tag_Explain></Video_Tag_Explain>
-                <Video_Comment></Video_Comment>
+                <Video_Main_Info :videoInfo="state.videoInfo"></Video_Main_Info>
+                <Video_Tag_Explain :videoInfo="state.videoInfo"></Video_Tag_Explain>
+                <Video_Comment ></Video_Comment>
             </div>
             <!-- Right Sidebar -->
             <div class="recommended-sidebar">

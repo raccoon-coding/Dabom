@@ -1,7 +1,22 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import ChatList from '../components/Message/ChatList.vue'
 import ChatWindow from '../components/Message/ChatWindow.vue'
+import Login from "@/stores/useMemberStore";
+import { useRouter } from 'vue-router'
+
+const loginStore = Login();
+onMounted(() => {
+  // 로그인 상태 확인
+  if (!loginStore.checkLogin) {
+    const router = useRouter();
+    router.push('/login');
+  }
+  else {
+    console.log("로그인 상태입니다.");
+  }
+});
+
 
 const currentChatId = ref('1')
 const chatData = ref({
@@ -111,6 +126,8 @@ function handleSendMessage(messageText) {
       />
     </div>
   </div>
+
+
 
 </template>
 
