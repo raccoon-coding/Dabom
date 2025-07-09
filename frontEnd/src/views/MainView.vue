@@ -5,93 +5,18 @@ import VideoSectionComp from '@/components/videos/VideoSectionComp.vue';
 import { onMounted, reactive } from 'vue';
 import api from '@/api/video'
 
+const state = reactive({
+    popularVideos: []
+})
 
-const popularVideos = [
-    {
-        id: '1',
-        title: '병욱님의 키보드 탐구',
-        thumbnailUrl: '@/assets/images/dabom2.png',
-        duration: '12:34',
-        channel: {
-            name: '알리 매니아',
-            avatarUrl: '@/assets/images/dabom2.png',
-        },
-        rating: 4.2,
-        views: 12,
-        uploadedAt: 2,
-    },
-    {
-        id: '2',
-        title: '병욱님의 키보드 탐구',
-        thumbnailUrl: '@/assets/images/dabom2.png',
-        duration: '12:34',
-        channel: {
-            name: '알리 매니아',
-            avatarUrl: '@/assets/images/dabom2.png',
-        },
-        rating: 4.2,
-        views: 12,
-        uploadedAt: 2,
-    },
-    {
-        id: '3',
-        title: '병욱님의 키보드 탐구',
-        thumbnailUrl: '@/assets/images/dabom2.png',
-        duration: '12:34',
-        channel: {
-            name: '알리 매니아',
-            avatarUrl: '@/assets/images/dabom2.png',
-        },
-        rating: 4.2,
-        views: 12,
-        uploadedAt: 2,
-    },
-    {
-        id: '4',
-        title: '병욱님의 키보드 탐구',
-        thumbnailUrl: '@/assets/images/dabom2.png',
-        duration: '12:34',
-        channel: {
-            name: '알리 매니아',
-            avatarUrl: '@/assets/images/dabom2.png',
-        },
-        rating: 4.2,
-        views: 12,
-        uploadedAt: 2,
-    },
-    {
-        id: '5',
-        title: '병욱님의 키보드 탐구',
-        thumbnailUrl: '@/assets/images/dabom2.png',
-        duration: '12:34',
-        channel: {
-            name: '알리 매니아',
-            avatarUrl: '@/assets/images/dabom2.png',
-        },
-        rating: 4.2,
-        views: 12,
-        uploadedAt: 2,
-    },
-
-]
-
-// const state = reactive({
-//     popularVideos: []
-// })
-
-// const getVideoList = async () => {
-//     await api.getVideoList()
-//         .then((data) => {
-//             console.log(data)
-//             state.popularVideos = data
-//         })
-//         .catch((error) => {
-//             console.error(error)
-//         })
-// }
-// onMounted(() => {
-//     getVideoList()
-// })
+const getVideoList = async () => {
+    const result = await api.getVideoList()
+    state.popularVideos = result
+    console.log(state.popularVideos)
+}
+onMounted(() => {
+    getVideoList()
+})
 </script>
 
 <template>
@@ -100,10 +25,8 @@ const popularVideos = [
         <div class="main-content">
             <BannerComp />
             <div class="video-section">
-                <!-- <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="state.popularVideos" /> -->
-                <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="popularVideos" />
-                <VideoSectionComp :title="'추천영상'" :icon="'fas fa-fire'" :videos="popularVideos" />
-                <VideoSectionComp :title="'dfkjshjdfkdjslfhad'" :icon="'fas fa-fire'" :videos="popularVideos" />
+                <!-- <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="popularVideos" /> -->
+                <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="state.popularVideos" />
             </div>
         </div>
     </div>

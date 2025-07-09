@@ -19,7 +19,7 @@ export default defineConfig({
     proxy: {
       // API 요청을 백엔드 서버로 프록시
       '/api': {
-        target: 'http://3.35.27.169',
+        target: 'http://15.164.216.253',
         changeOrigin: true,
         secure: false
       }

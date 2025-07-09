@@ -1,6 +1,5 @@
 <script setup>
 import VideoCardComp from '@/components/videos/VideoCardComp.vue'
-import { defineProps } from 'vue'
 
 const props = defineProps(['title', 'icon', 'videos'])
 </script>
