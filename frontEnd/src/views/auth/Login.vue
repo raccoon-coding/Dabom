@@ -2,9 +2,9 @@
 import { reactive } from 'vue';
 import LoginForm from '@/entity/auth/LoginForm';
 import api from '@/api/auth'
-import { useRouter } from 'vue-router';
+import useMemberStore from '@/stores/useMemberStore';
 
-const router = useRouter();
+const memberStore = useMemberStore();
 const form = reactive({
     loginForm: new LoginForm()
 })
@@ -18,15 +18,13 @@ const togglePassword = () => {
 }
 
 const login = async () => {
-    // TODO: 삭제
-    console.log("로그인 이벤트")
     const data = await api.login(form.loginForm)
     if (data.status !== 200) {
         alert("로그인 실패.")
         return
     }
-
-    router.push({ name: 'main' });
+    memberStore.setWithEncrypt()
+    window.location.href = '/'
 }
 </script>
 

@@ -12,7 +12,6 @@ const state = reactive({
 const getVideoList = async () => {
     const result = await api.getVideoList()
     state.popularVideos = result
-    console.log(state.popularVideos)
 }
 onMounted(() => {
     getVideoList()

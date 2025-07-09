@@ -1,8 +1,10 @@
 <script setup>
 import { reactive, watch } from 'vue';
 import { useRoute } from 'vue-router'
+import useMemberStore from '@/stores/useMemberStore';
 
 const route = useRoute()
+const memberStore = useMemberStore();
 const state = reactive({
   isDropdownOpen: false
 })
@@ -39,7 +41,7 @@ watch(
     <!---->
 
     <div class="header-right">
-      <div v-if="!isLoggedIn" class="login-menu">
+      <div v-if="!memberStore.checkLogin()" class="login-menu">
         <RouterLink :to="{ name: 'login' }" class="login-item">로그인</RouterLink>
         <RouterLink :to="{ name: 'signup' }" class="login-item">회원가입</RouterLink>
       </div>
