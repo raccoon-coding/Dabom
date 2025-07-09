@@ -3,7 +3,7 @@ import api from "@/plugins/axiosinterceptor";
 
 const getVideoInfo = async (req) => {
     let data = {}
-    const requestUrl = `api/video-list2.json`
+    const requestUrl = `/api/video-list2.json`
 
     await api.get(requestUrl, req)
         .then((res) => {
@@ -31,6 +31,20 @@ const getRecommendVideo = async (req) => {
     return data;
 }
 
+const GetVideo = async (req) => {
+    let data = {};
+    let url = `/api/video-${req}.json`;
+
+    await api.get(url, req)
+        .then((res) => {
+            data = res.data;
+        })
+        .catch((error) => {
+            data = error.data;
+        });
+
+    return data;
+}
 
 
-export default { getVideoInfo, getRecommendVideo }
+export default { getVideoInfo, getRecommendVideo, GetVideo }
