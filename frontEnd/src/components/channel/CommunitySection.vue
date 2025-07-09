@@ -4,7 +4,7 @@
     <button class="btn-create"><i class="fas fa-pen"></i> 새 게시글 작성</button>
     <div class="community-posts-manage">
       <div class="community-post-manage">
-        <textarea>안녕하세요! 새로운 기능 피드백 부탁드려요 :)</textarea>
+        <textarea placeholder="안녕하세요 새로운 기능 피드백 부탁드려요 :)"></textarea>
         <div class="community-actions">
           <button class="btn-edit"><i class="fas fa-edit"></i> 편집</button>
           <button class="btn-delete"><i class="fas fa-trash"></i> 삭제</button>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="community-post-manage">
-        <textarea>별점 시스템에 대해 어떻게 생각하시나요?</textarea>
+        <textarea placeholder="별점 시스템에 대해 어떻게 생각하시나요?"></textarea>
         <div class="community-actions">
           <button class="btn-edit"><i class="fas fa-edit"></i> 편집</button>
           <button class="btn-delete"><i class="fas fa-trash"></i> 삭제</button>

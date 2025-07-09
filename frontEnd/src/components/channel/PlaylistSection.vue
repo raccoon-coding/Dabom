@@ -16,8 +16,8 @@
           <tr>
             <td><img src="https://via.placeholder.com/80x50" alt="썸네일"></td>
             <td>
-              <input type="text" value="DaBom 완전 정복">
-              <div class="edit-meta">설명: <input type="text" value="DaBom 시리즈"></div>
+              <input type="text" placeholder="DaBom 완전 정복">
+              <div class="edit-meta">설명: <input type="text" placeholder="DaBom 시리즈"></div>
             </td>
             <td>
               <span class="video-count">12</span>
@@ -32,8 +32,8 @@
           <tr>
             <td><img src="https://via.placeholder.com/80x50" alt="썸네일"></td>
             <td>
-              <input type="text" value="Together 모드 활용">
-              <div class="edit-meta">설명: <input type="text" value="함께 보기 가이드"></div>
+              <input type="text" placeholder="Together 모드 활용">
+              <div class="edit-meta">설명: <input type="text" placeholder="함께 보기 가이드"></div>
             </td>
             <td>
               <span class="video-count">8</span>
