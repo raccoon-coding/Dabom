@@ -33,12 +33,12 @@ export const postChannelInfo = async () => {
     return data
 };
 
-export const postPlaylistEdit = async (playlistedit) => {
+export const updatePlaylistItem = async (playlistedit) => {
 
-    const requestUrl = `/api/channel_playlist_delete.json`
+    const requestUrl = `/api/channel_playlist_update.json`
     let data = {}
 
-    await api.get(requestUrl, playlistedit)
+    await api.post(requestUrl, playlistedit)
         .then((response) => {
             // console.log(response)
             data = response.data
@@ -49,7 +49,7 @@ export const postPlaylistEdit = async (playlistedit) => {
     return data
 };
 
-export const deletePlaylist = async (playlistdelete) => {
+export const deletePlaylistItem = async (playlistdelete) => {
 
     const requestUrl = `/api/channel_playlist_delete.json`
     let data = {}
@@ -68,4 +68,4 @@ export const deletePlaylist = async (playlistdelete) => {
 
 
 
-export default { getChannelChart, postChannelInfo, postPlaylistEdit, deletePlaylist }
+export default { getChannelChart, postChannelInfo, updatePlaylistItem, deletePlaylistItem }
