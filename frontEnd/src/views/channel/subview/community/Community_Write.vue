@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref, reactive, watch } from 'vue'
+import api from '@/api/community_write';
 
 const title = ref('');
 const content = ref('');
@@ -22,6 +23,21 @@ function submitPost() {
   console.log('Content:', content.value);
   console.log('Image URL:', imageUrl.value);
 }
+
+const writeForm = reactive({
+    title: "",
+    content: "",
+    imageUrl: "",
+    memberId: "",
+    channelId: "",
+    tags: [],
+    category: ""
+})
+
+onMounted(async () => {
+  const res = await api.playlist_show(writeForm)
+  Object.assign(writeForm, res.writeForm)
+}) 
 </script>
 
 <template>

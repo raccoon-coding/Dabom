@@ -21,23 +21,28 @@ const playlist_videos = [
     },
 ]
 
-// const state = reactive({
-//     playlist_videos: []
-// })
+const playlistForm = reactive({
+    id: '',
+    title: '',
+    thumbnailUrl: '',
+    duration: '',
+    channel: {
+        name: '',
+        avatarUrl: '',
+    },
+    rating: '',
+    views: '',
+    uploadedAt: '',
+})
 
-// const getVideoList = async () => {
-//     await api.getVideoList()
-//         .then((data) => {
-//             console.log(data)
-//             state.playlist_videos = data
-//         })
-//         .catch((error) => {
-//             console.error(error)
-//         })
-// }
-// onMounted(() => {
-//     getVideoList()
-// })
+onMounted(async () => {
+  const res = await api.playlist_show(playlistForm)
+  Object.assign(playlistForm, res.playlistForm)
+  // renderChart(activeType.value)
+}) 
+
+ 
+
 </script>
 
 <template>
