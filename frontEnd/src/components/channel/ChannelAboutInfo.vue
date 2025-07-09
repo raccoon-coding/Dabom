@@ -13,7 +13,7 @@ import ChannelAboutStats from './ChannelAboutStats.vue';
       창작자와 시청자가 더 깊이 소통할 수 있는 방법을 제시합니다.
     </p>
 
-    <h4>주요 콘텐츠</h4>
+    <h4>채널 소개</h4>
     <ul>
       <li>DaBom 플랫폼 사용법 및 가이드</li>
       <li>Together 모드 활용 팁</li>

@@ -50,14 +50,14 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'PlaylistSection',
-  props: {
-    isActive: Boolean
-  }
-}
+
+<script setup>
+const props = defineProps({
+  isActive: Boolean
+})
 </script>
+
+
 <style scoped>
 @import url(@/assets/channel/mychannel);
 </style>

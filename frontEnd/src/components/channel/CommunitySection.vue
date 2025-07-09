@@ -23,13 +23,10 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'CommunitySection',
-  props: {
-    isActive: Boolean
-  }
-}
+<script setup>
+const props = defineProps({
+  isActive: Boolean
+})
 </script>
 <style scoped>
 @import url(@/assets/channel/mychannel);
