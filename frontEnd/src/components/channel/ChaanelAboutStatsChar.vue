@@ -41,7 +41,7 @@ const statsDataInfo = reactive({
 })
 
 onMounted(async () => {
-  const res = await api.getChannelInfo()
+  const res = await api.getChannelChart()
   Object.assign(statsBoxMaxInfo, res.statsBoxMax)
   Object.assign(statsDataInfo, res.statsData)
   renderChart(activeType.value)
@@ -90,13 +90,13 @@ const renderChart = (type) => {
       datasets: [{
         label: info.label,
         data: info.data,
-        backgroundColor: info.color + '22',
-        borderColor: info.color,
+        backgroundColor: '#fa5500 + 22',
+        borderColor: '#fa5500',
         borderWidth: 2,
         tension: 0.38,
         pointRadius: 5,
         pointHoverRadius: 8,
-        pointBackgroundColor: info.color,
+        pointBackgroundColor: '#fa5500',
         fill: false,
       }]
     },

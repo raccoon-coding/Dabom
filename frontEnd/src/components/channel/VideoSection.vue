@@ -1,5 +1,5 @@
 <template>
-  <section id="section-videos" class="dashboard-section" :class="{ active: isActive }">
+  mp<section id="section-videos" class="dashboard-section" :class="{ active: isActive }">
     <h2 >동영상 관리</h2>
     <button class="btn-upload"><i class="fas fa-upload"></i> 동영상 업로드</button>
     <div class="video-manage-list">
@@ -80,13 +80,11 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'VideoSection',
-  props: {
-    isActive: Boolean
-  }
-}
+<script setup> 
+const props = defineProps({
+  isActive: Boolean
+})
+
 </script>
 <style scoped>
 @import url(@/assets/channel/mychannel);
