@@ -5,7 +5,7 @@ import about from "@/views/channel/subview/About.vue"
 import mychannel from "@/views/channel/MychannelMainView.vue"
 
 import videos from "@/views/channel/subview/video/Video_Fix.vue"
-=======
+
 import community_write from "@/views/channel/subview/community/Community_Write.vue"
 
 
