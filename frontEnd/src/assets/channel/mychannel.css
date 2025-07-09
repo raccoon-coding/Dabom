@@ -234,6 +234,23 @@ button {
     margin: 0 0.18rem;
 }
 
+.div-upload {
+     width: 150px;
+  height: 30px;
+  background: var(--primary-color);
+  /* border: 1px solid rgb(77,77,77); */
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+   &:hover {
+    background-color: var(--hover-color);
+    color: #fff;
+  }
+}
+
 .btn-upload,
 .btn-create,
 .btn-save {
