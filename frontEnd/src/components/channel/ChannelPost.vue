@@ -4,7 +4,7 @@ import channelCommentModal from '@/components/channel/ChannelCommentModal.vue';
 import likeBtn from '@/components/channel/LikeBtn.vue';
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { getChannelBoardDetail, getBoardComments } from '@/api/channel';
+import { getChannelBoardDetail, getBoardComments, createBoardComment } from '@/api/channel';
 
 const route = useRoute();
 const post = ref({});
@@ -29,6 +29,13 @@ const fetchPostDetail = async () => {
         console.log('댓글 목록:', comments.value);
     } catch (error) {
         console.error('데이터 로딩 실패:', error);
+        // 에러 시 임시 데이터 설정
+        post.value = {
+            title: "제목입니다.",
+            contents: "안녕하세요! 새로운 Together 모드 업데이트에 대한 피드백을 받고 있습니다. 어떤 기능을 추가했으면 좋겠는지 댓글로 알려주세요! 🎉",
+            createAt: "3시간 전",
+            authorName: "test02"
+        };
     } finally {
         loading.value = false;
     }
@@ -38,16 +45,27 @@ const fetchComments = async () => {
     try {
         const commentsResponse = await getBoardComments(postId);
         comments.value = commentsResponse;
+        console.log('받은 댓글 데이터:', commentsResponse);
     } catch (error) {
         console.error('댓글 로딩 실패:', error);
         comments.value = [];
     }
 };
 
-const handleCommentCreated = () => {
-    // 댓글 작성 후 목록 새로고침
-    fetchComments();
-    showCommentModal.value = false;
+const handleCommentCreated = async (commentText) => {
+    try {
+        const response = await createBoardComment(postId, { content: commentText });
+        if (response.code === 200) {
+            alert('댓글이 작성되었습니다.');
+            await fetchComments(); // 댓글 목록 새로고침
+            showCommentModal.value = false;
+        } else {
+            throw new Error(response.message || '댓글 작성에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('댓글 작성 실패:', error);
+        alert('댓글 작성에 실패했습니다.');
+    }
 };
 
 const handleCommentDeleted = () => {
@@ -94,8 +112,9 @@ onMounted(() => {
     
     <!-- 댓글 목록 -->
     <div class="comments-section">
+        <h3 class="comments-title">댓글 {{ comments.length }}개</h3>
         <div v-if="comments.length === 0" class="no-comments">
-            댓글이 없습니다.
+            댓글이 없습니다. 첫 번째 댓글을 작성해보세요!
         </div>
         <channelComment 
             v-else

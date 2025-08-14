@@ -128,15 +128,31 @@ export const getChannelBoardDetail = async (boardIdx) => {
     return data;
 };
 
-// 댓글 목록 조회 API (백엔드에 구현 필요)
+// 댓글 목록 조회 API 수정
 export const getBoardComments = async (boardIdx) => {
-    const requestUrl = `/comment/list/${boardIdx}`;
+    const requestUrl = `http://localhost:8080/comment/list/${boardIdx}`;
     let data = [];
 
     await api.get(requestUrl)
         .then((response) => {
             console.log('댓글 목록 응답:', response.data);
-            data = response.data.data.content || response.data.data || [];
+
+            if (response.data.code === 200) {
+                const responseData = response.data.data;
+
+                // 응답이 배열인지 단일 객체인지 확인
+                if (Array.isArray(responseData)) {
+                    data = responseData;
+                } else if (responseData && typeof responseData === 'object') {
+                    // 단일 객체인 경우 배열로 변환
+                    data = [responseData];
+                } else if (responseData && responseData.content) {
+                    // content 배열이 있는 경우
+                    data = responseData.content;
+                } else {
+                    data = [];
+                }
+            }
         })
         .catch((error) => {
             console.error('댓글 목록 조회 에러:', error);
