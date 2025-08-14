@@ -17,9 +17,14 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      '/oauth2': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false
+      },
       // API 요청을 백엔드 서버로 프록시
       '/api': {
-        target: 'http://api.daaabom.kro.kr',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false
       }

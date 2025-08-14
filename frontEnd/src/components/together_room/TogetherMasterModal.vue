@@ -4,7 +4,7 @@ import ModalCloseButton from "@/components/together_room/ModalCloseButton.vue"
 
 const emits = defineEmits(['close_modal'])
 
-const closeMasterModal = () => {
+const closeMasterModal = () => {q
     emits('close_modal')
 }
 </script>
