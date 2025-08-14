@@ -26,6 +26,25 @@ const login = async () => {
     memberStore.setWithEncrypt()
     window.location.href = '/'
 }
+
+const doGoogleLogin = async () => {
+  showSocialLoginPopup()
+}
+
+const showSocialLoginPopup = () => {
+  const popupHeight = 500;
+  const popupWidth = 500;
+  const left = (window.screen.width - popupWidth) / 2;
+  const top = (window.screen.height - popupHeight) / 2;
+
+  const popupOptions = `height=${popupHeight},width=${popupWidth},left=${left},top=${top},scrollbars=yes,resizable=yes`;
+
+  openPopup(popupOptions);
+};
+
+const openPopup = async (options) => {
+  window.open("http://localhost:5174/oauth2/authorization/google", "_blank", options);
+};
 </script>
 
 <template>
@@ -82,7 +101,7 @@ const login = async () => {
                     <button class="social-icon-btn naver" title="naver">
                         <span>N</span>
                     </button>
-                    <button class="social-icon-btn google" title="google">
+                    <button class="social-icon-btn google" title="google" @click="doGoogleLogin">
                         <i class="fab fa-google"></i>
                     </button>
                     <button class="social-icon-btn apple" title="apple">
