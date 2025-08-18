@@ -32,8 +32,8 @@ onMounted(() => {
     </div>
 
     <div class="community-posts">
-        <div v-if="loading">로딩 중...</div>
-        <div v-else-if="posts.length === 0">게시글이 없습니다.</div>
+        <div v-if="loading" class="loading-text">로딩 중...</div>
+        <div v-else-if="posts.length === 0" class="no-posts-text">게시글이 없습니다.</div>
         <ChannelPostCard 
             v-else
             v-for="post in posts" 
@@ -45,5 +45,13 @@ onMounted(() => {
 </template>
 
 <style scoped>
-    @import url('@/assets/channel/communityHeader.css');
+@import url('@/assets/channel/communityHeader.css');
+
+.loading-text,
+.no-posts-text {
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    font-size: 2rem;
+}
 </style>
