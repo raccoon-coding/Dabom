@@ -142,7 +142,7 @@ export const getChannelBoardDetail = async (boardIdx) => {
 
 // 댓글 목록 조회 API 수정
 export const getBoardComments = async (boardIdx) => {
-    const requestUrl = `http://localhost:8080/channel/board/comment/list/${boardIdx}`;
+    const requestUrl = `http://localhost:8080/api/channel/board/comment/list/${boardIdx}`;
     let data = [];
 
     await api.get(requestUrl)
@@ -175,7 +175,7 @@ export const getBoardComments = async (boardIdx) => {
 
 // 댓글 검색 정렬
 export const getBoardCommentsSorted = async (boardIdx, sortBy = 'oldest') => {
-    const requestUrl = `http://localhost:8080/channel/board/comment/list/${boardIdx}/sorted`;
+    const requestUrl = `http://localhost:8080/api/channel/board/comment/list/${boardIdx}/sorted`;
     let data = [];
 
     await api.get(requestUrl, { params: { sort: sortBy } })
@@ -193,7 +193,7 @@ export const getBoardCommentsSorted = async (boardIdx, sortBy = 'oldest') => {
 };
 
 export const getBoardCommentsPagedSorted = async (boardIdx, page = 0, size = 10, sortBy = 'oldest') => {
-    const requestUrl = `http://localhost:8080/channel/board/comment/list/${boardIdx}/paged`;
+    const requestUrl = `http://localhost:8080/api/channel/board/comment/list/${boardIdx}/paged`;
     let data = {};
 
     await api.get(requestUrl, {
@@ -219,7 +219,7 @@ export const getBoardCommentsPagedSorted = async (boardIdx, page = 0, size = 10,
 
 // 댓글 작성 API
 export const createBoardComment = async (boardIdx, commentData) => {
-    const requestUrl = `http://localhost:8080/channel/board/comment/create/${boardIdx}`;
+    const requestUrl = `http://localhost:8080/api/channel/board/comment/create/${boardIdx}`;
     let data = {};
 
     await api.post(requestUrl, commentData)
