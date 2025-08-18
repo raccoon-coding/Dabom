@@ -104,10 +104,6 @@ export const getChannelBoardList = async () => {
         console.log('API 호출 시작:', requestUrl);
         const response = await api.get(requestUrl);
 
-        console.log('API 전체 응답:', response);
-        console.log('API 응답 데이터:', response.data);
-        console.log('API 응답 상태:', response.status);
-
         if (response.data.code === 200) {
             data = response.data.data.content || response.data.data;
             console.log('추출된 데이터:', data);
@@ -115,10 +111,7 @@ export const getChannelBoardList = async () => {
             console.log('응답 코드가 200이 아님:', response.data.code);
         }
     } catch (error) {
-        console.error('API 에러 상세:', error);
-        console.error('에러 메시지:', error.message);
-        console.error('에러 응답:', error.response);
-        console.error('에러 요청:', error.request);
+
         data = [];
     }
 
@@ -253,7 +246,7 @@ export const deleteBoardComment = async (commentIdx) => {
 
 // 게시글 삭제 API 추가
 export const deleteChannelBoard = async (boardIdx) => {
-    const requestUrl = `http://localhost/channel/board/delete/${boardIdx}`;
+    const requestUrl = `http://localhost:8080/channel/board/delete/${boardIdx}`;
     let data = {};
 
     await api.delete(requestUrl)
@@ -270,7 +263,7 @@ export const deleteChannelBoard = async (boardIdx) => {
 
 // 게시글 수정 API 추가
 export const updateChannelBoard = async (boardIdx, boardData) => {
-    const requestUrl = `http://localhost/channel/board/update/${boardIdx}`;
+    const requestUrl = `http://localhost:8080/channel/board/update/${boardIdx}`;
     let data = {};
 
     await api.put(requestUrl, boardData)
