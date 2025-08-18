@@ -2,12 +2,19 @@
 import { reactive, watch } from 'vue';
 import { useRoute } from 'vue-router'
 import useMemberStore from '@/stores/useMemberStore';
+import api from '@/api/auth'
 
 const route = useRoute()
 const memberStore = useMemberStore();
 const state = reactive({
   isDropdownOpen: false
 })
+
+const logoutMember = async () => {
+  const data = await api.logout()
+  memberStore.removeWithEncrypt()
+  window.location.href = '/'
+}
 
 const toggleDropdown = () => {
   state.isDropdownOpen = !state.isDropdownOpen;
@@ -55,7 +62,7 @@ watch(
             <RouterLink :to="{ name: 'mychannel' }" class="dropdown-item">내 채널</RouterLink>
             <RouterLink :to="{ name: 'message' }" class="dropdown-item">DM</RouterLink>
             <RouterLink :to="{ name: 'playlist'}" class="dropdown-item">플레이리스트</RouterLink>
-            <a href="#" class="dropdown-item">로그아웃</a>
+            <a href="#" class="dropdown-item" @click="logoutMember">로그아웃</a>
           </div>
         </div>
       </div>

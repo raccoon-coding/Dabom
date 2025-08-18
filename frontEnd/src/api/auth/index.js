@@ -30,6 +30,22 @@ export const login = async (loginForm) => {
     return data
 }
 
+export const logout = async () => {
+  const requestUrl = `/api/member/logout`
+  let data = {}
+
+  await api.get(requestUrl)
+    .then((response) => {
+      console.log(response)
+      console.log(response.data)
+      data = response.data
+    })
+    .catch((error) => {
+      data = error.data
+    })
+  return data
+}
+
 export const checkEmailExists = async (email) => {
     const requestUrl = `/api/member/exists/email`
     let data = {}
@@ -57,4 +73,4 @@ export const checkChannelNameExists = async (channelName) => {
 };
 
 
-export default { signup, login, checkEmailExists, checkChannelNameExists }
+export default { signup, login, logout, checkEmailExists, checkChannelNameExists }
