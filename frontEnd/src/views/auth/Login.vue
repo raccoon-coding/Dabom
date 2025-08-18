@@ -19,7 +19,8 @@ const togglePassword = () => {
 
 const login = async () => {
     const data = await api.login(form.loginForm)
-    if (data.status !== 200) {
+    console.log(data)
+    if (data.code !== 200) {
         alert("로그인 실패.")
         return
     }
@@ -43,7 +44,14 @@ const showSocialLoginPopup = () => {
 };
 
 const openPopup = async (options) => {
-  window.open("http://localhost:5174/oauth2/authorization/google", "_blank", options);
+  window.open("http://localhost:8080/oauth2/authorization/google", "_blank", options);
+  window.addEventListener("message", (event) => {
+    console.log(event.data)
+    if(event.data === 'true') {
+      window.location.href = '/';
+      memberStore.setWithEncrypt()
+    }
+  })
 };
 </script>
 

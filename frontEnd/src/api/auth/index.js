@@ -2,7 +2,7 @@ import api from "@/plugins/axiosinterceptor";
 
 
 export const signup = async (signupForm) => {
-    const requestUrl = `/api/auth/signup`
+    const requestUrl = `/api/member/signup`
     let data = {}
     await api.post(requestUrl, signupForm)
         .then((response) => {
@@ -15,11 +15,10 @@ export const signup = async (signupForm) => {
 }
 
 export const login = async (loginForm) => {
-    // const requestUrl = `/api/auth/login`
-    const mockLoginRequestSuccess = `/api/login-success.json`
+    const requestUrl = `/api/member/login`
     let data = {}
 
-    await api.get(mockLoginRequestSuccess)
+    await api.post(requestUrl, loginForm)
         .then((response) => {
             console.log(response)
             console.log(response.data)
@@ -32,11 +31,9 @@ export const login = async (loginForm) => {
 }
 
 export const checkEmailExists = async (email) => {
-    // const requestUrl = `/api/auth/exists/email`
-    const mockResponseDataSuccess = `/api/email-check-success.json`
-    const mockResponseDataFailure = `/api/email-check-failure.json`
+    const requestUrl = `/api/member/exists/email`
     let data = {}
-    await api.get(mockResponseDataSuccess)
+    await api.post(requestUrl, email)
         .then((response) => {
             data = response.data
         })
@@ -47,11 +44,9 @@ export const checkEmailExists = async (email) => {
 };
 
 export const checkChannelNameExists = async (channelName) => {
-    // const requestUrl = `/api/auth/exists/channel`
-    const mockResponseDataSuccess = `/api/channel-check-success.json`
-    const mockResponseDataFailure = `/api/channel-check-failure.json`
+    const requestUrl = `/api/member/exists/channel`
     let data = {}
-    await api.get(mockResponseDataSuccess)
+    await api.post(requestUrl, channelName)
         .then((response) => {
             data = response.data
         })

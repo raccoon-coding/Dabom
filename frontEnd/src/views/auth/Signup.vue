@@ -22,6 +22,10 @@ const state = reactive({
     signupRedirectTimeoutId: null,
 })
 
+const checkEmail = reactive({
+  email: ''
+})
+
 const togglePassword = () => {
     state.showPassword = !state.showPassword;
 }
@@ -40,8 +44,8 @@ const checkEmailExists = async (email) => {
         form.signupForm.isEmailChecked = null;
         return
     }
-
-    const result = await api.checkEmailExists(email)
+    checkEmail.email = email
+    const result = await api.checkEmailExists(checkEmail)
     console.log(result.data)
     form.signupForm.isEmailChecked = !result.data.isDuplicate
 }
@@ -135,7 +139,9 @@ const handleModalConfirm = () => {
     router.push({ name: 'login' });
 }
 
-const onSubmit = async () => {
+const signUp = async () => {
+  const result = await api.signup(form.signupForm)
+  console.log(result)
     if (validateSignupForm()) {
         signupSuccessHandler()
     }
@@ -154,7 +160,7 @@ const onSubmit = async () => {
             </div>
 
             <!-- signup form -->
-            <form action="#" class="signup-form" id="signupForm" @submit.prevent="onSubmit">
+            <form action="#" class="signup-form" id="signupForm" @submit.prevent="onSubmit()">
                 <div class="form-step active" id="step1">
                     <div class="form-group">
                         <label for="email">이메일 *</label>
@@ -262,7 +268,7 @@ const onSubmit = async () => {
                     </div> -->
 
                     <div class="form-navigation">
-                        <button type="submit" class="btn-signup" id="submitSignup" @click="onSubmit()">회원가입</button>
+                        <button type="submit" class="btn-signup" id="submitSignup" @click="signUp()">회원가입</button>
                     </div>
                 </div>
             </form>
