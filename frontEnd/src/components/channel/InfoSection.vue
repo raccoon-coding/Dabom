@@ -1,6 +1,7 @@
 <script setup>
 import { reactive } from 'vue'
 import api from '@/api/channel'
+import imageApi from '@/api/image'
 
 // props 선언 (defineProps 사용)
 const props = defineProps({
@@ -25,6 +26,19 @@ const onSubmit = async() => {
   Object.assign(channelInfoForm, res)
   alert('저장되었습니다!')
 }
+
+const onImageChange = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  try {
+    const res = await imageApi.imageUpload(file, "profile")
+    console.log("서버 응답:", res)
+  } catch (err) {
+    console.error("이미지 업로드 실패:", err)
+  }
+}
+
+
 </script>
 
 <template>
