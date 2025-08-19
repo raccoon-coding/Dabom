@@ -29,9 +29,6 @@ const handleSubmitComment = async () => {
     try {
         const commentData = {
             content: commentText.value.trim(),
-            // 필요한 경우 다른 필드들 추가
-            // authorName: '사용자명',
-            // parentCommentId: props.parentCommentId
         };
 
         const response = await createBoardComment(props.postId, commentData);
