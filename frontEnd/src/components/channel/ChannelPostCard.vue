@@ -22,7 +22,7 @@ const clickPost = () => {
 
 <template>
 <div class="community-post">
-    <div class="posts"> <!-- 오타 수정: "post"s -> "posts" -->
+    <div class="posts"> 
         <div class="post-header">
             <div class="post-author">
                 <img src="https://via.placeholder.com/40" alt="채널" class="author-avatar">
@@ -46,11 +46,11 @@ const clickPost = () => {
     <div class="post-actions">
         <button class="post-action-btn like-btn" @click="clickLikeBtn">
             <i class="fas fa-heart"></i>
-            124 <!-- 실제로는 postData에서 가져와야 함 -->
+            124 
         </button>
         <button class="post-action-btn comment-btn" @click="clickPost">
             <i class="fas fa-comment"></i>
-            {{ postData.commentCount }} <!-- 실제로는 postData에서 가져와야 함 -->
+            {{ postData.commentCount }} 
         </button>
     </div>
     <div v-if="commentModal" @click.stop>

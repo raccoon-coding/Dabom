@@ -71,8 +71,7 @@ const fetchPostDetail = async () => {
 
 
 // 댓글 로드 (무한 스크롤) - 추가 로딩 시에만 딜레이
-// 댓글 로드 (무한 스크롤) - 추가 로딩 시에만 딜레이
-// 댓글 로드 (무한 스크롤) - 추가 로딩 시에만 딜레이
+
 const loadComments = async (page = 0, reset = false) => {
     if (isLoadingMore.value && !reset) return
     
@@ -313,7 +312,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- 댓글 작성 폼 (유튜브 스타일) -->
+        <!-- 댓글 작성 폼 -->
         <div class="comment-form">
           <div class="comment-input-container">
             <img src="https://via.placeholder.com/40" alt="내 프로필" class="comment-user-avatar">
