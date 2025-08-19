@@ -118,10 +118,6 @@ export const getChannelBoardList = async () => {
         console.log('API 호출 시작:', requestUrl);
         const response = await api.get(requestUrl);
 
-        console.log('API 전체 응답:', response);
-        console.log('API 응답 데이터:', response.data);
-        console.log('API 응답 상태:', response.status);
-
         if (response.data.code === 200) {
             data = response.data.data.content || response.data.data;
             console.log('추출된 데이터:', data);
@@ -129,15 +125,44 @@ export const getChannelBoardList = async () => {
             console.log('응답 코드가 200이 아님:', response.data.code);
         }
     } catch (error) {
-        console.error('API 에러 상세:', error);
-        console.error('에러 메시지:', error.message);
-        console.error('에러 응답:', error.response);
-        console.error('에러 요청:', error.request);
+
         data = [];
     }
 
     return data;
 };
+
+export const getChannelBoardListPaged = async (page = 0, size = 10, sort = 'oldest') => {
+    const requestUrl = `http://localhost:8080/channel/board/list`;
+    let data = {};
+
+    try {
+        console.log('무한 스크롤 API 호출:', requestUrl, { page, size, sort });
+        const response = await api.get(requestUrl, {
+            params: {
+                page: page,
+                size: size,
+                sort: sort
+            }
+        });
+
+        console.log('무한 스크롤 응답:', response.data);
+
+        if (response.data.code === 200) {
+            data = response.data.data; // SliceBaseResponse<ChannelBoardReadResponseDto>
+            console.log('추출된 페이지 데이터:', data);
+        } else {
+            console.log('응답 코드가 200이 아님:', response.data.code);
+            data = { content: [], hasNext: false, totalCount: 0 };
+        }
+    } catch (error) {
+        console.error('무한 스크롤 API 오류:', error);
+        data = { content: [], hasNext: false, totalCount: 0 };
+    }
+
+    return data;
+};
+
 export const getChannelBoardDetail = async (boardIdx) => {
     const requestUrl = `http://localhost:8080/channel/board/read/${boardIdx}`;
     let data = {};
@@ -156,7 +181,7 @@ export const getChannelBoardDetail = async (boardIdx) => {
 
 // 댓글 목록 조회 API 수정
 export const getBoardComments = async (boardIdx) => {
-    const requestUrl = `http://localhost:8080/channel/board/comment/list/${boardIdx}`;
+    const requestUrl = `http://localhost:8080/api/channel/board/comment/list/${boardIdx}`;
     let data = [];
 
     await api.get(requestUrl)
@@ -189,7 +214,7 @@ export const getBoardComments = async (boardIdx) => {
 
 // 댓글 검색 정렬
 export const getBoardCommentsSorted = async (boardIdx, sortBy = 'oldest') => {
-    const requestUrl = `http://localhost:8080/channel/board/comment/list/${boardIdx}/sorted`;
+    const requestUrl = `http://localhost:8080/api/channel/board/comment/list/${boardIdx}/sorted`;
     let data = [];
 
     await api.get(requestUrl, { params: { sort: sortBy } })
@@ -207,7 +232,7 @@ export const getBoardCommentsSorted = async (boardIdx, sortBy = 'oldest') => {
 };
 
 export const getBoardCommentsPagedSorted = async (boardIdx, page = 0, size = 10, sortBy = 'oldest') => {
-    const requestUrl = `http://localhost:8080/channel/board/comment/list/${boardIdx}/paged`;
+    const requestUrl = `http://localhost:8080/api/channel/board/comment/list/${boardIdx}/paged`;
     let data = {};
 
     await api.get(requestUrl, {
@@ -233,7 +258,7 @@ export const getBoardCommentsPagedSorted = async (boardIdx, page = 0, size = 10,
 
 // 댓글 작성 API
 export const createBoardComment = async (boardIdx, commentData) => {
-    const requestUrl = `http://localhost:8080/channel/board/comment/create/${boardIdx}`;
+    const requestUrl = `http://localhost:8080/api/channel/board/comment/create/${boardIdx}`;
     let data = {};
 
     await api.post(requestUrl, commentData)
@@ -267,13 +292,13 @@ export const deleteBoardComment = async (commentIdx) => {
 
 // 게시글 삭제 API 추가
 export const deleteChannelBoard = async (boardIdx) => {
-    const requestUrl = `http://localhost/channel/board/delete/${boardIdx}`;
+    const requestUrl = `http://localhost:8080/channel/board/delete/${boardIdx}`;
     let data = {};
 
-    await api.delete(requestUrl)
+    await api.get(requestUrl) // DELETE가 아닌 GET 사용
         .then((response) => {
-            console.log('게시글 삭제 응답:', response.data);
-            data = response.data;
+            console.log('게시글 삭제 응답:', response);
+            data = { code: 200, success: true }; // 백엔드가 void 반환하므로 성공 표시
         })
         .catch((error) => {
             console.error('게시글 삭제 에러:', error);
@@ -284,10 +309,18 @@ export const deleteChannelBoard = async (boardIdx) => {
 
 // 게시글 수정 API 추가
 export const updateChannelBoard = async (boardIdx, boardData) => {
-    const requestUrl = `http://localhost/channel/board/update/${boardIdx}`;
+    const requestUrl = `http://localhost:8080/channel/board/update`;
+
+    // 백엔드 DTO에 맞게 데이터 구조 수정
+    const updateData = {
+        boardIdx: boardIdx,
+        title: boardData.title,
+        contents: boardData.contents
+    };
+
     let data = {};
 
-    await api.put(requestUrl, boardData)
+    await api.post(requestUrl, updateData) // PUT이 아닌 POST 사용
         .then((response) => {
             console.log('게시글 수정 응답:', response.data);
             data = response.data;
@@ -321,5 +354,5 @@ export default {
     getChannelChart, getChannelInfo, updateChannelInfo, updatePlaylistItem, deletePlaylistItem,
     uploadVideo, uploadThumbnail, getChannelBoardList, getChannelBoardDetail,
     getBoardComments, createBoardComment, deleteBoardComment,
-    deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted
+    deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted, getChannelBoardListPaged
 }
