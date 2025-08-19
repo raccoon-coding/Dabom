@@ -1,6 +1,7 @@
 <script setup>
-import { reactive } from 'vue'
+import { onMounted, reactive } from 'vue'
 import api from '@/api/channel'
+import { almostWhole } from 'chart.js/helpers'
 import imageApi from '@/api/image'
 
 // props 선언 (defineProps 사용)
@@ -22,7 +23,8 @@ const channelInfoForm = reactive({
 
 // 저장 이벤트 함수
 const onSubmit = async() => {
-  const res = await api.postChannelInfo()
+  const res = await api.updateChannelInfo(channelInfoForm)
+  console.log(res)
   Object.assign(channelInfoForm, res)
   alert('저장되었습니다!')
 }
@@ -38,7 +40,14 @@ const onImageChange = async (event) => {
   }
 }
 
-
+onMounted(async () => {
+  const result = await api.getChannelInfo()
+  console.log(result)
+  channelInfoForm.id = result.data.id
+  channelInfoForm.name = result.data.name
+  channelInfoForm.content = result.data.content
+  channelInfoForm.email = result.data.email
+})
 </script>
 
 <template>
