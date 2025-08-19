@@ -17,12 +17,26 @@ export const getChannelChart = async () => {
     return data
 };
 
-export const postChannelInfo = async () => {
+export const getChannelInfo = async () => {
+  const requestUrl = `/api/member/info`
+  let data = {}
 
-    const requestUrl = `/api/channel_info.json`
+  await api.get(requestUrl)
+    .then((response) => {
+      // console.log(response)
+      data = response.data
+    })
+    .catch((error) => {
+      data = error.data
+    })
+  return data
+};
+
+export const updateChannelInfo = async (channelInfoForm) => {
+    const requestUrl = `/api/member/update`
     let data = {}
 
-    await api.get(requestUrl,)
+    await api.patch(requestUrl, channelInfoForm)
         .then((response) => {
             // console.log(response)
             data = response.data
@@ -304,7 +318,7 @@ export const createChannelBoard = async (boardData) => {
 
 // export default에 추가
 export default {
-    getChannelChart, postChannelInfo, updatePlaylistItem, deletePlaylistItem,
+    getChannelChart, getChannelInfo, updateChannelInfo, updatePlaylistItem, deletePlaylistItem,
     uploadVideo, uploadThumbnail, getChannelBoardList, getChannelBoardDetail,
     getBoardComments, createBoardComment, deleteBoardComment,
     deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted
