@@ -1,0 +1,479 @@
+<script setup>
+import { ref, reactive } from 'vue'
+import api from '@/api/video'
+
+const props = defineProps(['visible'])
+const emit = defineEmits(['close', 'complete'])
+
+// 상태
+const step = ref(1)
+const fileInput = ref(null)
+const uploadedFileId = ref(null)
+const videoPreviewUrl = ref(null)
+
+const form = reactive({
+  title: '',
+  description: '',
+  isPublic: false
+})
+
+// 파일 업로드 함수 (실제 API 호출)
+const uploadFile = async (file) => {
+  api.uploadVideo(file)
+  // 실제 API 호출 예시
+  // const response = await fetch('/api/videos/upload', {
+  //   method: 'POST',
+  //   body: formData
+  // })
+  // return await response.json()
+
+  // 임시 시뮬레이션
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve({
+        fileId: 'temp_' + Date.now(),
+        previewUrl: URL.createObjectURL(file)
+      })
+    }, 1500)
+  })
+}
+
+// 파일 선택
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+const handleFileSelect = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  // Step 2로 이동
+  step.value = 2
+
+  try {
+    // 파일 업로드 API 호출
+    const uploadResult = await uploadFile(file)
+    uploadedFileId.value = uploadResult.fileId
+    videoPreviewUrl.value = uploadResult.previewUrl
+  } catch (error) {
+    console.error('파일 업로드 실패:', error)
+    // 에러 처리
+  }
+}
+
+// 메타데이터 저장
+const saveMetadata = async () => {
+  try {
+    const metadata = {
+      fileId: uploadedFileId.value,
+      title: form.title.trim(),
+      description: form.description.trim(),
+      isPublic: form.isPublic
+    }
+
+    // 메타데이터 매핑 API 호출
+    // await fetch('/api/videos/metadata', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(metadata)
+    // })
+
+    emit('complete', metadata)
+    resetAndClose()
+  } catch (error) {
+    console.error('저장 실패:', error)
+  }
+}
+
+// 초기화 및 닫기
+const resetAndClose = () => {
+  step.value = 1
+  uploadedFileId.value = null
+  videoPreviewUrl.value = null
+  form.title = ''
+  form.description = ''
+  form.isPublic = true
+  emit('close')
+}
+
+const closeModal = () => {
+  resetAndClose()
+}
+
+const handleOverlayClick = () => {
+  closeModal()
+}
+</script>
+
+<template>
+  <div v-if="visible" class="modal-overlay" @click="handleOverlayClick">
+    <div class="modal" @click.stop>
+
+      <!-- Step 1: 파일 선택 -->
+      <div v-if="step === 1" class="file-select-step">
+        <div class="modal-header">
+          <h3>비디오 업로드</h3>
+          <button @click="closeModal" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="upload-area" @click="triggerFileInput">
+            <input
+                ref="fileInput"
+                type="file"
+                accept="video/*"
+                @change="handleFileSelect"
+                style="display: none"
+            />
+
+            <div class="upload-placeholder">
+              <i class="fas fa-video"></i>
+              <h4>비디오 파일 선택</h4>
+              <p>MP4, AVI, MOV 등의 형식</p>
+              <button class="upload-btn">파일 선택</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: 메타데이터 입력 -->
+      <div v-else class="metadata-step">
+        <div class="modal-header">
+          <h3>비디오 정보 입력</h3>
+          <button @click="closeModal" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="content-grid">
+            <!-- 비디오 미리보기 -->
+            <div class="video-preview">
+              <div class="preview-container">
+                <video v-if="videoPreviewUrl" :src="videoPreviewUrl" controls></video>
+                <div v-else class="loading-preview">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <p>업로드 중...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 메타데이터 폼 -->
+            <div class="metadata-form">
+              <div class="form-group">
+                <label for="title">제목 *</label>
+                <input
+                    id="title"
+                    type="text"
+                    v-model="form.title"
+                    placeholder="동영상을 설명하는 제목 추가"
+                    maxlength="100"
+                />
+                <small class="char-count">{{ form.title.length }}/100</small>
+              </div>
+
+              <div class="form-group">
+                <label for="description">설명</label>
+                <textarea
+                    id="description"
+                    v-model="form.description"
+                    placeholder="시청자에게 동영상에 대해 설명해 주세요."
+                    rows="8"
+                    maxlength="500"
+                    style="resize: none"
+                ></textarea>
+                <small class="char-count">{{ form.description.length }}/500</small>
+              </div>
+
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" v-model="form.isPublic" />
+                  <span class="checkmark"></span>
+                  <span>공개 설정</span>
+                </label>
+                <small class="form-help">체크하면 모든 사용자가 볼 수 있습니다</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button @click="closeModal" class="btn-cancel">취소</button>
+          <button
+              @click="saveMetadata"
+              :disabled="!form.title.trim()"
+              class="btn-save"
+          >
+            완료
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: var(--text-primary);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: var(--font-lg);
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  border-radius: 6px;
+  transition: var(--transition);
+}
+
+.close-btn:hover {
+  background-color: var(--hover-color);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: var(--spacing-lg);
+}
+
+/* Step 1: 파일 선택 */
+.upload-area {
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: var(--spacing-xl);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.upload-area:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(250, 85, 0, 0.05);
+}
+
+.upload-placeholder i {
+  font-size: 3rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+.upload-placeholder h4 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.upload-placeholder p {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.upload-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.upload-btn:hover {
+  background-color: #ff3838;
+}
+
+/* Step 2: 메타데이터 입력 */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+}
+
+.preview-container {
+  background-color: var(--background-color);
+  border-radius: 8px;
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.preview-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.loading-preview {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.loading-preview i {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* 폼 스타일 */
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: var(--font-sm);
+}
+
+input, textarea {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  font-size: var(--font-sm);
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.char-count {
+  display: block;
+  text-align: right;
+  color: var(--text-secondary);
+  font-size: var(--font-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.checkbox-label {
+  display: flex !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  color: var(--text-secondary) !important;
+  font-size: var(--font-sm) !important;
+}
+
+.checkbox-label input[type="checkbox"] {
+  display: none !important;
+}
+
+.checkmark {
+  width: 20px !important;
+  height: 20px !important;
+  background-color: var(--hover-color) !important;
+  border: 2px solid var(--border-color) !important;
+  border-radius: 4px !important;
+  margin-right: 0.5rem !important;
+  position: relative !important;
+  transition: var(--transition) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.checkbox-label input:checked + .checkmark {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.checkbox-label input:checked + .checkmark::after {
+  content: '' !important;
+  width: 6px !important;
+  height: 10px !important;
+  border: solid white !important;
+  border-width: 0 2px 2px 0 !important;
+  transform: rotate(45deg) !important;
+  display: block !important;
+}
+
+.form-help {
+  display: block;
+  margin-top: var(--spacing-xs);
+  color: var(--text-secondary);
+  font-size: var(--font-xs);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-cancel, .btn-save {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-cancel {
+  background-color: var(--hover-color);
+  color: var(--text-primary);
+}
+
+.btn-save {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal {
+    width: 95%;
+  }
+}
+</style>

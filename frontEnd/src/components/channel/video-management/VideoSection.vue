@@ -1,24 +1,17 @@
 <script setup>
 import {ref} from 'vue'
-import VideoCardComp from "@/components/videos/VideoCardComp.vue"
+import VideoListComp from "@/components/channel/video-management/VideoListComp.vue";
+import VideoUploadModal from "@/components/channel/video-management/VideoUploadModal.vue";
 
-const props = defineProps({
-  isActive: {
-    type: Boolean,
-    default: false
-  }
-})
-
-// 반응형 데이터
-// 반응형 데이터
 const videos = ref([
-  // VideoCardComponent 구조에 맞춘 예시 데이터
   {
     videoId: 1,
     title: '프로젝트 소개 영상',
     duration: '2:00',
+    description: '아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어',
     rating: 4.2,
     views: '1.2K',
+    isVisibility: true,
     uploadedAt: 5,
     channel: {
       name: '개발팀 채널'
@@ -32,9 +25,29 @@ const videos = ref([
   {
     videoId: 2,
     title: '튜토리얼 영상',
+    description: '아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어',
     duration: '5:00',
     rating: 4.8,
     views: '2.5K',
+    isVisibility: false,
+    uploadedAt: 10,
+    channel: {
+      name: '교육팀 채널'
+    },
+    // 추가 관리용 데이터
+    fileName: '튜토리얼 영상.mp4',
+    thumbnail: '/thumbnails/video2.jpg',
+    size: 52428800,
+    uploadDate: new Date('2024-01-10')
+  },
+  {
+    videoId: 3,
+    title: '그냥 개쩌는 영상',
+    description: '미쳤음',
+    duration: '12:34',
+    rating: 5,
+    views: '65.5M',
+    isVisibility: false,
     uploadedAt: 10,
     channel: {
       name: '교육팀 채널'
@@ -47,38 +60,16 @@ const videos = ref([
   }
 ])
 
+const props = defineProps({
+  isActive: {
+    type: Boolean,
+    default: false
+  }
+})
 const showUploadModal = ref(false)
 const uploadFiles = ref([])
-const isDragOver = ref(false)
 const isUploading = ref(false)
 const uploadProgress = ref(0)
-const fileInput = ref(null)
-
-// 모달 제어
-const openUploadModal = () => {
-  showUploadModal.value = true
-}
-
-const closeUploadModal = () => {
-  showUploadModal.value = false
-  uploadFiles.value = []
-  uploadProgress.value = 0
-  isUploading.value = false
-}
-
-// 파일 선택
-const triggerFileInput = () => {
-  fileInput.value.click()
-}
-
-const handleFileSelect = (e) => {
-  const files = Array.from(e.target.files)
-  uploadFiles.value = [...uploadFiles.value, ...files]
-}
-
-const removeFile = (index) => {
-  uploadFiles.value.splice(index, 1)
-}
 
 // 업로드 처리
 const uploadVideos = async () => {
@@ -109,6 +100,35 @@ const uploadVideos = async () => {
   }
 }
 
+// 비디오 액션들
+const playVideo = (video) => {
+  console.log('비디오 재생:', video)
+  // 비디오 플레이어 모달 또는 새 탭에서 재생
+}
+
+const editVideo = (video) => {
+  console.log('비디오 편집:', video)
+  // 편집 모달 열기
+}
+
+const deleteVideo = (videoId) => {
+  if (confirm('정말로 이 비디오를 삭제하시겠습니까?')) {
+    videos.value = videos.value.filter(v => v.id !== videoId)
+    // 실제로는 API 호출: await axios.delete(`/api/videos/${videoId}`)
+  }
+}
+// 모달 제어
+const openUploadModal = () => {
+  showUploadModal.value = true
+}
+
+const closeUploadModal = () => {
+  showUploadModal.value = false
+  uploadFiles.value = []
+  uploadProgress.value = 0
+  isUploading.value = false
+}
+
 const uploadSingleVideo = async (file) => {
   // 실제 API 호출 로직
   const formData = new FormData()
@@ -129,42 +149,7 @@ const refreshVideoList = async () => {
   // videos.value = response.data
 }
 
-// 비디오 액션들
-const playVideo = (video) => {
-  console.log('비디오 재생:', video)
-  // 비디오 플레이어 모달 또는 새 탭에서 재생
-}
 
-const editVideo = (video) => {
-  console.log('비디오 편집:', video)
-  // 편집 모달 열기
-}
-
-const deleteVideo = (videoId) => {
-  if (confirm('정말로 이 비디오를 삭제하시겠습니까?')) {
-    videos.value = videos.value.filter(v => v.id !== videoId)
-    // 실제로는 API 호출: await axios.delete(`/api/videos/${videoId}`)
-  }
-}
-
-// 유틸리티 함수들
-const formatDuration = (seconds) => {
-  const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
-  return `${mins}:${secs.toString().padStart(2, '0')}`
-}
-
-const formatFileSize = (bytes) => {
-  if (bytes === 0) return '0 B'
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
-}
-
-const formatDate = (date) => {
-  return new Intl.DateTimeFormat('ko-KR').format(date)
-}
 </script>
 
 <template>
@@ -178,100 +163,12 @@ const formatDate = (date) => {
       </button>
     </div>
 
-    <!-- 비디오 리스트 -->
-    <div class="video-list" v-if="videos.length > 0">
-      <div v-for="video in videos" :key="video.videoId" class="video-wrapper">
-        <VideoCardComp :video="video"/>
-        <!-- 관리 버튼들을 VideoCard 위에 오버레이 -->
-        <div class="video-actions">
-          <button @click="editVideo(video)" class="action-btn" title="편집">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button @click="deleteVideo(video.videoId)" class="action-btn delete" title="삭제">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 빈 상태 -->
-    <div v-else class="empty-state">
-      <i class="icon-video-empty"></i>
-      <h3>업로드된 비디오가 없습니다</h3>
-      <p>첫 번째 비디오를 업로드해보세요</p>
-      <button @click="openUploadModal" class="upload-btn-empty">
-        비디오 업로드
-      </button>
-    </div>
-
-    <!-- 업로드 모달 -->
-    <div v-if="showUploadModal" class="modal-overlay" @click="closeUploadModal">
-      <div class="modal" @click.stop>
-        <div class="modal-header">
-          <h3>비디오 업로드</h3>
-          <button @click="closeUploadModal" class="close-btn">
-            <i class="icon-close"></i>
-          </button>
-        </div>
-
-        <div class="modal-body">
-          <!-- 드래그 앤 드롭 영역 -->
-          <div class="upload-area" :class="{ 'drag-over': isDragOver }" @click="triggerFileInput">
-            <input
-                ref="fileInput"
-                type="file"
-                accept="video/*"
-                multiple
-                @change="handleFileSelect"
-                style="display: none"
-            />
-
-            <div v-if="!uploadFiles.length" class="upload-placeholder">
-              <i class="icon-upload"></i>
-              <h4>비디오 파일을 선택하세요</h4>
-              <p>MP4, AVI, MOV 등의 형식을 지원합니다</p>
-            </div>
-
-            <!-- 선택된 파일들 -->
-            <div v-else class="selected-files">
-              <div v-for="(file, index) in uploadFiles" :key="index" class="file-item">
-                <div class="file-info">
-                  <i class="icon-video"></i>
-                  <div>
-                    <p class="file-name">{{ file.name }}</p>
-                    <p class="file-size">{{ formatFileSize(file.size) }}</p>
-                  </div>
-                </div>
-                <button @click="removeFile(index)" class="remove-file">
-                  <i class="icon-close"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 업로드 진행률 -->
-          <div v-if="isUploading" class="upload-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" :style="{ width: uploadProgress + '%' }"></div>
-            </div>
-            <p>업로드 중... {{ uploadProgress }}%</p>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button @click="closeUploadModal" class="btn-cancel">취소</button>
-          <button
-              @click="uploadVideos"
-              :disabled="!uploadFiles.length || isUploading"
-              class="btn-upload"
-          >
-            {{ isUploading ? '업로드 중...' : '업로드' }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <VideoListComp :videos="videos"/>
+    <VideoUploadModal :visible="showUploadModal" @close="closeUploadModal"/>
   </section>
 </template>
+
+
 
 <style scoped>
 .dashboard-section {
@@ -448,46 +345,6 @@ const formatDate = (date) => {
   color: white;
 }
 
-/* 빈 상태 */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-secondary);
-}
-
-.empty-state i {
-  font-size: 64px;
-  margin-bottom: 1rem;
-  opacity: 0.3;
-  color: var(--text-secondary);
-}
-
-.empty-state h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.2rem;
-  color: var(--text-primary);
-}
-
-.empty-state p {
-  margin: 0 0 1.5rem 0;
-}
-
-.upload-btn-empty {
-  padding: 0.75rem 1.5rem;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: var(--transition);
-}
-
-.upload-btn-empty:hover {
-  background: #ff3838;
-  transform: translateY(-2px);
-}
 
 /* 모달 */
 .modal-overlay {
