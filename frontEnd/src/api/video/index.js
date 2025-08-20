@@ -16,5 +16,22 @@ export const getVideoList = async () => {
     return data
 };
 
+export const uploadVideo = async (file) => {
+    const url = `/api/videos/upload`
+    let data = {}
 
-export default { getVideoList }
+    const formData = new FormData()
+    formData.append('video', file)
+
+    await api.post(url, formData)
+        .then((response) => {
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
+
+export default { getVideoList, uploadVideo }
