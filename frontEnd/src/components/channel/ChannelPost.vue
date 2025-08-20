@@ -25,7 +25,7 @@ const post = reactive({
 const comments = ref([])
 const sortBy = ref('oldest') // 댓글 정렬 기준
 const showSortDropdown = ref(false) // 드롭다운 표시 여부
-const sortDropdownRef = ref(null) // 드롭다운 DOM 참조
+const sortDropdownRef = ref(null) 
 const totalCommentCount = ref(0)
 
 // 무한 스크롤 상태
@@ -37,6 +37,7 @@ const observerTarget = ref(null)
 let observer = null
 
 // 게시글 상세 조회
+
 const fetchPostDetail = async () => {
     loading.value = true
     try {
@@ -52,7 +53,7 @@ const fetchPostDetail = async () => {
         })
         
         // 댓글 목록 조회 (첫 페이지)
-        await loadComments(0, true)git 
+        await loadComments(0, true)
         
     } catch (error) {
         console.error('게시글 로딩 실패:', error)
