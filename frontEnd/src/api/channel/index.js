@@ -97,7 +97,7 @@ export const uploadThumbnail = async (Thumbnailform) => {
     return data
 };
 export const getChannelBoardList = async () => {
-    const requestUrl = `http://localhost:8080/channel/board/list`;
+    const requestUrl = `/api/channel/board/list`;
     let data = [];
 
     try {
@@ -119,7 +119,7 @@ export const getChannelBoardList = async () => {
 };
 
 export const getChannelBoardListPaged = async (page = 0, size = 10, sort = 'oldest') => {
-    const requestUrl = `http://localhost:8080/channel/board/list`;
+    const requestUrl = `/api/channel/board/list`;
     let data = {};
 
     try {
@@ -150,7 +150,7 @@ export const getChannelBoardListPaged = async (page = 0, size = 10, sort = 'olde
 };
 
 export const getChannelBoardDetail = async (boardIdx) => {
-    const requestUrl = `http://localhost:8080/channel/board/read/${boardIdx}`;
+    const requestUrl = `/api/channel/board/read/${boardIdx}`;
     let data = {};
 
     await api.get(requestUrl)
@@ -167,7 +167,7 @@ export const getChannelBoardDetail = async (boardIdx) => {
 
 // 댓글 목록 조회 API 수정
 export const getBoardComments = async (boardIdx) => {
-    const requestUrl = `http://localhost:8080/api/channel/board/comment/list/${boardIdx}`;
+    const requestUrl = `/api/channel/board/comment/list/${boardIdx}`;
     let data = [];
 
     await api.get(requestUrl)
@@ -200,7 +200,7 @@ export const getBoardComments = async (boardIdx) => {
 
 // 댓글 검색 정렬
 export const getBoardCommentsSorted = async (boardIdx, sortBy = 'oldest') => {
-    const requestUrl = `http://localhost:8080/api/channel/board/comment/list/${boardIdx}/sorted`;
+    const requestUrl = `/api/channel/board/comment/list/${boardIdx}/sorted`;
     let data = [];
 
     await api.get(requestUrl, { params: { sort: sortBy } })
@@ -218,7 +218,7 @@ export const getBoardCommentsSorted = async (boardIdx, sortBy = 'oldest') => {
 };
 
 export const getBoardCommentsPagedSorted = async (boardIdx, page = 0, size = 10, sortBy = 'oldest') => {
-    const requestUrl = `http://localhost:8080/api/channel/board/comment/list/${boardIdx}/paged`;
+    const requestUrl = `/api/channel/board/comment/list/${boardIdx}/paged`;
     let data = {};
 
     await api.get(requestUrl, {
@@ -244,7 +244,7 @@ export const getBoardCommentsPagedSorted = async (boardIdx, page = 0, size = 10,
 
 // 댓글 작성 API
 export const createBoardComment = async (boardIdx, commentData) => {
-    const requestUrl = `http://localhost:8080/api/channel/board/comment/create/${boardIdx}`;
+    const requestUrl = `/api/channel/board/comment/create/${boardIdx}`;
     let data = {};
 
     await api.post(requestUrl, commentData)
@@ -278,7 +278,7 @@ export const deleteBoardComment = async (commentIdx) => {
 
 // 게시글 삭제 API 추가
 export const deleteChannelBoard = async (boardIdx) => {
-    const requestUrl = `http://localhost:8080/channel/board/delete/${boardIdx}`;
+    const requestUrl = `/api/channel/board/delete/${boardIdx}`;
     let data = {};
 
     await api.get(requestUrl) // DELETE가 아닌 GET 사용
@@ -295,7 +295,7 @@ export const deleteChannelBoard = async (boardIdx) => {
 
 // 게시글 수정 API 추가
 export const updateChannelBoard = async (boardIdx, boardData) => {
-    const requestUrl = `http://localhost:8080/channel/board/update`;
+    const requestUrl = `/api/channel/board/update`;
 
     // 백엔드 DTO에 맞게 데이터 구조 수정
     const updateData = {
@@ -320,7 +320,7 @@ export const updateChannelBoard = async (boardIdx, boardData) => {
 
 // 게시글 작성 API 추가
 export const createChannelBoard = async (boardData) => {
-    const requestUrl = `http://localhost:8080/channel/board/register`;
+    const requestUrl = `/api/channel/board/register`;
     let data = {};
 
     await api.post(requestUrl, boardData)

@@ -52,7 +52,7 @@ const fetchPostDetail = async () => {
         })
         
         // 댓글 목록 조회 (첫 페이지)
-        await loadComments(0, true)
+        await loadComments(0, true)git 
         
     } catch (error) {
         console.error('게시글 로딩 실패:', error)
