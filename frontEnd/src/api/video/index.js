@@ -21,8 +21,7 @@ export const uploadVideo = async (file) => {
     let data = {}
 
     const formData = new FormData()
-    formData.append('video', file)
-
+    formData.append('file', file)
     await api.post(url, formData)
         .then((response) => {
             data = response.data
@@ -33,5 +32,21 @@ export const uploadVideo = async (file) => {
     return data
 };
 
+export const uploadVideoMetadata = async (videoId, metadata) => {
+    const url = `/api/videos/metadata/${videoId}`
+    let data = {}
 
-export default { getVideoList, uploadVideo }
+    await api.post(url, metadata)
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.response?.data || { error: '메타데이터 저장 실패' }
+        })
+
+    return data
+}
+
+
+export default { getVideoList, uploadVideo, uploadVideoMetadata }
