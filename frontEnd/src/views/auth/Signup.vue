@@ -26,6 +26,10 @@ const checkEmail = reactive({
   email: ''
 })
 
+const checkChannelName = reactive({
+  channelName: ''
+})
+
 const togglePassword = () => {
     state.showPassword = !state.showPassword;
 }
@@ -46,7 +50,6 @@ const checkEmailExists = async (email) => {
     }
     checkEmail.email = email
     const result = await api.checkEmailExists(checkEmail)
-    console.log(result.data)
     form.signupForm.isEmailChecked = !result.data.isDuplicate
 }
 
@@ -60,8 +63,8 @@ const checkChannelNameExists = async (channelName) => {
         form.signupForm.isChannelChecked = null;
         return
     }
-
-    const result = await api.checkChannelNameExists(channelName)
+    checkChannelName.channelName = channelName
+    const result = await api.checkChannelNameExists(checkChannelName)
     form.signupForm.isChannelChecked = !result.data.isDuplicate
 }
 
