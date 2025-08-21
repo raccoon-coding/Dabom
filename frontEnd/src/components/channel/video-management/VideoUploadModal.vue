@@ -8,10 +8,10 @@ const emit = defineEmits(['close', 'complete'])
 // 상태
 const step = ref(1)
 const fileInput = ref(null)
-const uploadedFileId = ref(null)
 const videoPreviewUrl = ref(null)
 
-const form = reactive({
+const metadata = reactive({
+  idx: null,
   title: '',
   description: '',
   isPublic: false
@@ -19,23 +19,10 @@ const form = reactive({
 
 // 파일 업로드 함수 (실제 API 호출)
 const uploadFile = async (file) => {
-  api.uploadVideo(file)
-  // 실제 API 호출 예시
-  // const response = await fetch('/api/videos/upload', {
-  //   method: 'POST',
-  //   body: formData
-  // })
-  // return await response.json()
+  const videoIdx = await api.uploadVideo(file)
+  const previewUrl = URL.createObjectURL(file)
 
-  // 임시 시뮬레이션
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        fileId: 'temp_' + Date.now(),
-        previewUrl: URL.createObjectURL(file)
-      })
-    }, 1500)
-  })
+  return {videoIdx, previewUrl}
 }
 
 // 파일 선택
@@ -53,7 +40,7 @@ const handleFileSelect = async (event) => {
   try {
     // 파일 업로드 API 호출
     const uploadResult = await uploadFile(file)
-    uploadedFileId.value = uploadResult.fileId
+    metadata.idx = uploadResult.videoIdx
     videoPreviewUrl.value = uploadResult.previewUrl
   } catch (error) {
     console.error('파일 업로드 실패:', error)
@@ -64,19 +51,7 @@ const handleFileSelect = async (event) => {
 // 메타데이터 저장
 const saveMetadata = async () => {
   try {
-    const metadata = {
-      fileId: uploadedFileId.value,
-      title: form.title.trim(),
-      description: form.description.trim(),
-      isPublic: form.isPublic
-    }
-
-    // 메타데이터 매핑 API 호출
-    // await fetch('/api/videos/metadata', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(metadata)
-    // })
+    const data = await api.uploadVideoMetadata(metadata.idx, metadata)
 
     emit('complete', metadata)
     resetAndClose()
@@ -88,11 +63,11 @@ const saveMetadata = async () => {
 // 초기화 및 닫기
 const resetAndClose = () => {
   step.value = 1
-  uploadedFileId.value = null
+  metadata.idx = null
   videoPreviewUrl.value = null
-  form.title = ''
-  form.description = ''
-  form.isPublic = true
+  metadata.title = ''
+  metadata.description = ''
+  metadata.isPublic = true
   emit('close')
 }
 
@@ -167,29 +142,29 @@ const handleOverlayClick = () => {
                 <input
                     id="title"
                     type="text"
-                    v-model="form.title"
+                    v-model="metadata.title"
                     placeholder="동영상을 설명하는 제목 추가"
                     maxlength="100"
                 />
-                <small class="char-count">{{ form.title.length }}/100</small>
+                <small class="char-count">{{ metadata.title.length }}/100</small>
               </div>
 
               <div class="form-group">
                 <label for="description">설명</label>
                 <textarea
                     id="description"
-                    v-model="form.description"
+                    v-model="metadata.description"
                     placeholder="시청자에게 동영상에 대해 설명해 주세요."
                     rows="8"
                     maxlength="500"
                     style="resize: none"
                 ></textarea>
-                <small class="char-count">{{ form.description.length }}/500</small>
+                <small class="char-count">{{ metadata.description.length }}/500</small>
               </div>
 
               <div class="form-group">
                 <label class="checkbox-label">
-                  <input type="checkbox" v-model="form.isPublic" />
+                  <input type="checkbox" v-model="metadata.isPublic" />
                   <span class="checkmark"></span>
                   <span>공개 설정</span>
                 </label>
@@ -203,7 +178,7 @@ const handleOverlayClick = () => {
           <button @click="closeModal" class="btn-cancel">취소</button>
           <button
               @click="saveMetadata"
-              :disabled="!form.title.trim()"
+              :disabled="!metadata.title.trim()"
               class="btn-save"
           >
             완료
