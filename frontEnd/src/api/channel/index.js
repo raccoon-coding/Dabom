@@ -18,18 +18,18 @@ export const getChannelChart = async () => {
 };
 
 export const getChannelInfo = async () => {
-  const requestUrl = `/api/member/info`
-  let data = {}
+    const requestUrl = `/api/member/info`
+    let data = {}
 
-  await api.get(requestUrl)
-    .then((response) => {
-      // console.log(response)
-      data = response.data
-    })
-    .catch((error) => {
-      data = error.data
-    })
-  return data
+    await api.get(requestUrl)
+        .then((response) => {
+            // console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
 };
 
 export const updateChannelInfo = async (channelInfoForm) => {
@@ -295,7 +295,7 @@ export const deleteChannelBoard = async (boardIdx) => {
     const requestUrl = `/api/channel/board/delete/${boardIdx}`;
     let data = {};
 
-    await api.get(requestUrl) // DELETE가 아닌 GET 사용
+    await api.delete(requestUrl) // DELETE가 아닌 GET 사용
         .then((response) => {
             console.log('게시글 삭제 응답:', response);
             data = { code: 200, success: true }; // 백엔드가 void 반환하므로 성공 표시
@@ -311,7 +311,7 @@ export const deleteChannelBoard = async (boardIdx) => {
 export const updateChannelBoard = async (boardIdx, boardData) => {
     const requestUrl = `/api/channel/board/update`;
 
-    // 백엔드 DTO에 맞게 데이터 구조 수정
+
     const updateData = {
         boardIdx: boardIdx,
         title: boardData.title,
