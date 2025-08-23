@@ -112,6 +112,7 @@ const handleSortChange = (newSort) => {
 const handleEdit = (post) => {
   post.isEditing = !post.isEditing;
   if (post.isEditing) {
+    post.editIdx = post.idx;
     post.editTitle = post.title;
     post.editContent = post.contents;
   }
@@ -154,6 +155,7 @@ const handleSaveEdit = async (post) => {
 
   try {
     const response = await updateChannelBoard(post.idx, {
+      idx: post.idx,
       title: post.editTitle.trim(),
       contents: post.editContent.trim()
     });

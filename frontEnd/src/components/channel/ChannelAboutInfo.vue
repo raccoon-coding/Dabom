@@ -1,42 +1,109 @@
-<script setup>
-import ChannelAboutStats from './ChannelAboutStats.vue';
+<script>
+import ChannelAboutStats from './ChannelAboutStats.vue'
+import { onMounted, reactive } from 'vue'  
+import api from '@/api/channel'
 
+export default {
+  name: 'ChannelAbout',
+  components: {
+    ChannelAboutStats
+  },
+  setup() {  
+    // 채널 정보 데이터 선언
+    const channelInfo = reactive({
+      id: "",
+      name: '크리에이티브 채널',
+      content: '작성된 내용이 없습니다.',
+      image: '',
+      email: 'creative@dabom.com',
+      sns01: '',
+      sns02: '',
+      website: 'null'
+    })
 
+    // 채널 정보 불러오기
+    onMounted(async () => {
+      try {
+        const result = await api.getChannelInfo()
+        console.log('채널 정보:', result)
+        
+        // 서버 데이터로 업데이트 (기본값이 있으면 유지)
+        channelInfo.id = result.data.id || channelInfo.id
+        channelInfo.name = result.data.name || channelInfo.name
+        channelInfo.content = result.data.content || channelInfo.content
+        channelInfo.email = result.data.email || channelInfo.email
+        channelInfo.image = result.data.image || channelInfo.image
+        channelInfo.sns01 = result.data.sns01 || channelInfo.sns01
+        channelInfo.sns02 = result.data.sns02 || channelInfo.sns02
+        channelInfo.website = result.data.website || channelInfo.website
+      } catch (error) {
+        console.error('채널 정보 불러오기 실패:', error)
+        // 에러 시 기본값 유지
+      }
+    })
+
+    return {
+      channelInfo
+    }
+  }
+}
 </script>
 
 <template>
- <div class="about-section">
-    <h3>채널 소개</h3>
-    <p>
-      크리에이티브 채널은 DaBom 플랫폼에서 창작과 영감을 나누는 공간입니다.
-      우리는 기존의 스트리밍 서비스와는 다른 혁신적인 기능들을 통해
-      창작자와 시청자가 더 깊이 소통할 수 있는 방법을 제시합니다.
-    </p>
+  <div class="about-section">
+    <!-- 채널 이름 동적 표시 -->
+    <h3>{{ channelInfo.name }} 의 채널</h3>
+    
+    <!-- 채널 설명 동적 표시 -->
+    <p>{{ channelInfo.content }}</p>
 
-    <h4>채널 소개</h4>
+    <h4>주요 콘텐츠</h4>
     <ul>
-      <li>DaBom 플랫폼 사용법 및 가이드</li>
-      <li>Together 모드 활용 팁</li>
-      <li>별점 시스템 소개</li>
-      <li>창작자-시청자 소통 방법</li>
-      <li>플랫폼 업데이트 소식</li>
+      <li>작성된 내용이 없습니다</li>
     </ul>
 
     <h3>연락처</h3>
     <div class="contact-info">
-      <p><i class="fas fa-envelope"></i> creative@dabom.com</p>
-      <p><i class="fas fa-globe"></i> www.creative-channel.dabom</p>
-      <div class="social-links">
+      <!-- 이메일 동적 표시 -->
+      <p v-if="channelInfo.email">
+        <i class="fas fa-envelope"></i> {{ channelInfo.email }}
+      </p>
+      
+      <!-- 웹사이트 (있는 경우에만 표시) -->
+      <p v-if="channelInfo.website">
+        <i class="fas fa-globe"></i> {{ channelInfo.website }}
+      </p>
+      
+      <!-- 소셜 링크 (데이터가 있는 경우에만 표시) -->
+      <div class="social-links" v-if="channelInfo.sns01 || channelInfo.sns02">
+        <a v-if="channelInfo.sns01" :href="channelInfo.sns01" target="_blank">
+          <i class="fab fa-twitter" v-if="channelInfo.sns01.includes('twitter')"></i>
+          <i class="fab fa-instagram" v-else-if="channelInfo.sns01.includes('instagram')"></i>
+          <i class="fab fa-youtube" v-else-if="channelInfo.sns01.includes('youtube')"></i>
+          <i class="fas fa-link" v-else></i>
+        </a>
+        <a v-if="channelInfo.sns02" :href="channelInfo.sns02" target="_blank">
+          <i class="fab fa-twitter" v-if="channelInfo.sns02.includes('twitter')"></i>
+          <i class="fab fa-instagram" v-else-if="channelInfo.sns02.includes('instagram')"></i>
+          <i class="fab fa-youtube" v-else-if="channelInfo.sns02.includes('youtube')"></i>
+          <i class="fas fa-link" v-else></i>
+        </a>
+      </div>
+      
+      <!-- 기본 소셜 링크 (서버 데이터가 없는 경우) -->
+      <div class="social-links" v-else>
         <a href="#"><i class="fab fa-twitter"></i></a>
         <a href="#"><i class="fab fa-instagram"></i></a>
         <a href="#"><i class="fab fa-youtube"></i></a>
       </div>
     </div>
   </div>
+  
+  <!-- 통계 섹션 (주석 해제 시 사용) -->
   <!-- <div class="stat-div">
     <h2 class="stat">통계</h2>
     <ChannelAboutStats />
-  </div>   -->
+  </div> -->
 </template>
 
 <style scoped>
@@ -62,51 +129,65 @@ import ChannelAboutStats from './ChannelAboutStats.vue';
   color: #fa5500;
   margin-bottom: 1rem;
 }
+
 .about-section h4 {
   color: #fa5500;
   font-size: 1.1rem;
   margin: 1.2rem 0 0.4rem 0;
   font-weight: 600;
 }
+
 .about-section p {
   font-size: 1.03rem;
   line-height: 1.6;
   color: #e5eaee;
   margin-bottom: 1.1rem;
 }
+
 .about-section ul {
   padding-left: 1.2rem;
   margin-bottom: 1.5rem;
 }
+
 .about-section li {
   margin-bottom: 0.4rem;
   color: #fff9f3;
   line-height: 1.7;
 }
+
 .contact-info p {
   display: flex;
   align-items: center;
   gap: 0.7rem;
   margin-bottom: 0.3rem;
 }
+
 .contact-info i {
   color: #fa5500;
   font-size: 1.1rem;
   width: 22px;
 }
+
 .social-links {
   margin-top: 0.8rem;
 }
+
 .social-links a {
   margin-right: 1rem;
   color: #fa5500;
   font-size: 1.4rem;
   transition: color 0.2s;
+  text-decoration: none;
 }
+
 .social-links a:hover {
   color: #ff9740;
 }
+
 @media (max-width: 600px) {
-  .about-section { padding: 1rem; font-size: 0.97rem; }
+  .about-section { 
+    padding: 1rem; 
+    font-size: 0.97rem; 
+  }
 }
 </style>

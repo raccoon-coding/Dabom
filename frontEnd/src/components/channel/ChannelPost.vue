@@ -17,7 +17,7 @@ const post = reactive({
     idx: 0,
     title: '',
     contents: '',
-    createAt: '',
+    createdAt: '',
     commentCount: 0
 })
 
@@ -48,7 +48,7 @@ const fetchPostDetail = async () => {
             idx: response.idx || 0,
             title: response.title || '제목 없음',
             contents: response.contents || '내용 없음',
-            createAt: response.createAt || '시간 정보 없음',
+            createdAt: response.createdAt || '시간 정보 없음',
             commentCount: response.commentCount || 0
         })
         
@@ -62,7 +62,7 @@ const fetchPostDetail = async () => {
             idx: 0,
             title: '게시글을 불러올 수 없습니다',
             contents: '네트워크 오류가 발생했습니다.',
-            createAt: '',
+            createdAt: '',
             commentCount: 0
         })
     } finally {
@@ -269,7 +269,7 @@ onUnmounted(() => {
           <img src="https://via.placeholder.com/40" alt="채널" class="author-avatar">
           <div class="author-info">
             <span class="author-name">크리에이티브 채널</span>
-            <span class="post-time">{{ post.createAt }}</span>
+            <span class="post-time">{{ post.createdAt }}</span>
           </div>
         </div>
         <h1 class="post-title">{{ post.title }}</h1>
