@@ -31,7 +31,7 @@ const playVideo = () => {
             </div>
             <div class="video-details">
                 <h4 class="video-title">{{ props.video.title }}</h4>
-                <p class="channel-name">{{ props.video.channel.name }}</p>
+                <p class="channel-name">{{ props.video.channel.name || 내채널}}</p>
                 <div class="video-meta">
                     <div class="star-rating">
 
@@ -40,10 +40,10 @@ const playVideo = () => {
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="far fa-star"></i>
-                        <span class="rating-score">{{ props.video.rating }}</span>
+                        <span class="rating-score">{{ props.video.rating || 0}}</span>
                     </div>
-                    <span class="view-count">{{ props.video.views }}</span>
-                    <span class="upload-time">{{ props.video.uploadedAt }}일 전</span>
+                    <span class="view-count">{{ props.video.views || 0 }}</span>
+                    <span class="upload-time">{{ props.video.uploadedAt || 0}}일 전</span>
                 </div>
             </div>
         </div>
