@@ -35,13 +35,13 @@ const handleBackdropClick = (event) => {
 const saveTogetherRoom = async () => {
   let res = await api.saveTogether(roomBody);
   if(res.code === 200) {
-    return res.togetherIdx;
+    return res.data.togetherIdx;
   }
 }
 
 // 방 만들기 버튼 클릭 시 데이터 전송
-const sendApi = () => {
-  let idx = saveTogetherRoom()
+const sendApi = async () => {
+  let idx = await saveTogetherRoom()
   alert("방을 생성했습니다.")
   closeModal()
   router.push({ name: 'togetherRoom', params: {id: idx}})

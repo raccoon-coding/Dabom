@@ -227,6 +227,39 @@ export const deleteTogether = async (togetherIdx) => {
     return data
 };
 
-export default { getRandomTogetherList, getTogetherListInMember, searchTogether,
+export const kickTogetherMember = async (togetherIdx, memberIdx) => {
+    const requestUrl = `/api/together/` + togetherIdx + "/kick"
+    let data = {}
+    const json = {
+        "kickedMemberIdx": memberIdx
+    }
+
+    await api.delete(requestUrl, {data: json})
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
+export const getMembersByMaster = async (togetherIdx) => {
+    const requestUrl = `/api/together/` + togetherIdx + "/master"
+    let data = {}
+
+    await api.get(requestUrl)
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
+export default { getRandomTogetherList, getTogetherListInMember, searchTogether, getMembersByMaster,
   joinTogether, joinOpenTogether, joinTogetherWithCode, saveTogether, leaveTogether, deleteTogether,
-    changeTogetherTitle, changeTogetherMaxMember, changeTogetherIsOpen, changeTogetherVideo}
+    changeTogetherTitle, changeTogetherMaxMember, changeTogetherIsOpen, changeTogetherVideo, kickTogetherMember}
