@@ -1,3 +1,5 @@
+// video.index js
+
 import api from "@/plugins/axiosinterceptor";
 
 
@@ -36,7 +38,7 @@ export const uploadVideoMetadata = async (videoId, metadata) => {
     const url = `/api/videos/metadata/${videoId}`
     let data = {}
 
-    await api.post(url, metadata)
+    await api.patch(url, metadata)
         .then((response) => {
             console.log(response)
             data = response.data

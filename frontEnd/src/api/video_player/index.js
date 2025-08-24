@@ -1,3 +1,5 @@
+// video-player index.js
+
 import api from "@/plugins/axiosinterceptor";
 
 
@@ -31,14 +33,15 @@ const getRecommendVideo = async (req) => {
     return data;
 }
 
-const getVideo = async (req) => {
+const getVideoById = async (videoId) => {
     let data = {};
-    let url = `/api/video${req}.json`;
+    const requestUrl = `/api/videos/${videoId}`;
+    // let url = /api/video${req}.json;
 
-    await api.get(url, req)
-        .then((res) => {
-            console.log(res)
-            data = res.data;
+    await api.get(requestUrl)
+        .then((response) => {
+            console.log(response)
+            data = response.data;
         })
         .catch((error) => {
             data = error.data;
@@ -48,4 +51,4 @@ const getVideo = async (req) => {
 }
 
 
-export default { getVideoInfo, getRecommendVideo, getVideo }
+export default { getVideoInfo, getRecommendVideo, getVideoById }
