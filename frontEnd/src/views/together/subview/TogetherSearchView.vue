@@ -1,5 +1,5 @@
 <script setup>
-import card from '@/components/together/TogetherCard.vue'
+import TogetherCard from '@/components/together/TogetherCard.vue'
 import togetherSearch from '@/components/together/TogetherSearch.vue'
 import api from '@/api/together'
 
@@ -39,7 +39,7 @@ onMounted(() => {
             </div>
             <!-- 더미 데이터 시작 -->
             <div class="rooms-grid">
-                <card v-for="together in togethers.togethers" :together="together" />
+                <together-card v-for="together in togethers.togethers" :together="together" />
             </div>
             <!-- 더미 데이터 종료 -->
         </div>

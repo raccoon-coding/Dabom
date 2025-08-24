@@ -18,12 +18,12 @@ const together = reactive({
 const getTogether = () => {
   const data = props.together
   
-  together.together_id = data.together_id
+  together.together_id = data.togetherIdx
   together.title = data.title
-  together.host_name = data.host_name
+  together.host_name = data.master.name
   together.thumb_nail = data.thumb_nail
-  together.max_join_people = data.max_join_people
-  together.join_people = data.join_people
+  together.max_join_people = data.maxMemberNum
+  together.join_people = data.joinMemberNumber
   together.total_play_time = data.total_play_time
   together.created = data.created
 }

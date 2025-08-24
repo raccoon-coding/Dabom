@@ -31,6 +31,21 @@ export const getTogetherListInMember = async () => {
   return data
 };
 
+export const getTogetherListInMaster = async () => {
+    const requestUrl = `/api/together/my_room`
+    let data = {}
+
+    await api.get(requestUrl)
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
 export const searchTogether = async (body) => {
     const requestUrl = `/api/together/search`
     let data = {}
@@ -95,6 +110,9 @@ export const joinOpenTogether = async (togetherIdx) => {
 export const joinTogetherWithCode = async (togetherIdx, code) => {
   const requestUrl = `/api/together/` + togetherIdx + `/code`
   let data = {}
+  const json = {
+      "code": code
+  }
 
   await api.post(requestUrl, code)
     .then((response) => {
@@ -105,6 +123,78 @@ export const joinTogetherWithCode = async (togetherIdx, code) => {
       data = error.data
     })
   return data
+};
+
+export const changeTogetherTitle = async (togetherIdx, body) => {
+    const requestUrl = `/api/together/` + togetherIdx + `/change/title`
+    const json = {
+        "title": body
+    }
+    let data = {}
+
+    await api.patch(requestUrl, json)
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
+export const changeTogetherMaxMember = async (togetherIdx, body) => {
+    const requestUrl = `/api/together/` + togetherIdx + `/change/max_number`
+    let data = {}
+    const json = {
+        "maxMember": body
+    }
+
+    await api.patch(requestUrl, json)
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
+export const changeTogetherIsOpen = async (togetherIdx, body) => {
+    const requestUrl = `/api/together/` + togetherIdx + `/change/open`
+    let data = {}
+    const json = {
+        "isOpen": body
+    }
+
+    await api.patch(requestUrl, json)
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
+export const changeTogetherVideo = async (togetherIdx, body) => {
+    const requestUrl = `/api/together/` + togetherIdx + `/change/video`
+    let data = {}
+    const json = {
+        "videoUrl": body
+    }
+
+    await api.patch(requestUrl, json)
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
 };
 
 export const leaveTogether = async (togetherIdx) => {
@@ -122,5 +212,21 @@ export const leaveTogether = async (togetherIdx) => {
   return data
 };
 
+export const deleteTogether = async (togetherIdx) => {
+    const requestUrl = `/api/together/` + togetherIdx
+    let data = {}
+
+    await api.delete(requestUrl)
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
 export default { getRandomTogetherList, getTogetherListInMember, searchTogether,
-  joinTogether, joinOpenTogether, joinTogetherWithCode, saveTogether, leaveTogether }
+  joinTogether, joinOpenTogether, joinTogetherWithCode, saveTogether, leaveTogether, deleteTogether,
+    changeTogetherTitle, changeTogetherMaxMember, changeTogetherIsOpen, changeTogetherVideo}
