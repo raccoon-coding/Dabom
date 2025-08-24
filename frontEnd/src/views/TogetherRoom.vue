@@ -4,7 +4,8 @@ import TogetherRoomChat from '@/components/together_room/TogetherRoomChat.vue';
 import TogetherRoomNavigator from '@/components/together_room/TogetherRoomNavigator.vue';
 import Video_Player_Component from '@/components/Video_Player/Video_Player_Component.vue';
 
-import {reactive} from 'vue'
+import {onMounted, reactive, ref} from 'vue'
+import {useRoute} from "vue-router";
 
 const stateModal = reactive({
     chatModal: false,
