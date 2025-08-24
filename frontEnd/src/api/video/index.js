@@ -1,3 +1,5 @@
+// video.index js
+
 import api from "@/plugins/axiosinterceptor";
 
 export const getVideoList = async (page = 0, size = 10, keyword = '') => {
@@ -18,6 +20,7 @@ export const uploadVideo = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
+
     try {
         const response = await api.post(url, formData);
         data = response.data;
@@ -25,6 +28,7 @@ export const uploadVideo = async (file) => {
         console.error('비디오 업로드 실패:', error);
         data = error.response?.data || { error: '업로드 실패' };
     }
+
 
     return data;
 };
@@ -46,3 +50,5 @@ export const uploadVideoMetadata = async (videoId, metadata) => {
 };
 
 export default { getVideoList, uploadVideo, uploadVideoMetadata };
+
+

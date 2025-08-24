@@ -1,15 +1,30 @@
 <script setup>
-import {ref} from 'vue'
-import axios from 'axios'
+import {onMounted, reactive} from 'vue'
+import {useRouter} from "vue-router";
+import api from '@/api/together'
 
-const props = defineProps({
-  visible: {
-    type: Boolean,
-    default: false
-  }
-})
+const router = useRouter()
+const props = defineProps(['visible', 'together'])
 // Events 정의[17][20]
 const emit = defineEmits(['close'])
+let initialData = {};
+const roomBody = reactive({
+  together_id: 0,
+  title: "",
+  videoUrl: "",
+  maxMemberNumber: "",
+  isOpen: "true"
+})
+
+const getTogether = () => {
+  const data = props.together
+  console.log(data)
+
+  roomBody.together_id = data.together_id
+  roomBody.title = data.title
+  roomBody.maxMemberNumber = data.max_join_people
+  roomBody.isOpen = data.isOpen
+}
 
 // 모달 닫기 함수
 const closeModal = () => {
@@ -23,12 +38,67 @@ const handleBackdropClick = (event) => {
   }
 }
 
-// 방 만들기 버튼 클릭 시 데이터 전송
-const sendApi = () => {
-  alert("방을 생성했습니다.")
-  // 전송 API 작성 및 데이터 받기
-  // redirect 함수 작성
+const updateTogetherTitle = async () => {
+  let res = await api.changeTogetherTitle(roomBody.together_id, roomBody.title);
+  return res.code === 200;
 }
+
+const updateTogetherMaxMember = async () => {
+  let res = await api.changeTogetherMaxMember(roomBody.together_id, roomBody.maxMemberNumber);
+  return res.code === 200;
+}
+
+const updateTogetherIsOpen = async () => {
+  let res = await api.changeTogetherIsOpen(roomBody.together_id, roomBody.isOpen);
+  return res.code === 200;
+}
+
+const updateTogetherVideo = async () => {
+  let res = await api.changeTogetherVideo(roomBody.together_id, roomBody.videoUrl);
+  return res.code === 200;
+}
+
+// 방 만들기 버튼 클릭 시 데이터 전송
+const sendApi = async () => {
+  let isChanged = false;
+
+  // 제목 변경 확인
+  if (roomBody.title !== initialData.title) {
+    await updateTogetherTitle();
+    isChanged = true;
+  }
+
+  // 최대 인원 변경 확인
+  if (roomBody.maxMemberNumber !== initialData.maxMemberNumber) {
+    await updateTogetherMaxMember();
+    isChanged = true;
+  }
+
+  // 공개 여부 변경 확인
+  if (roomBody.isOpen !== initialData.isOpen) {
+    await updateTogetherIsOpen();
+    isChanged = true;
+  }
+
+  // 비디오 URL 변경 확인
+  if (roomBody.videoUrl !== initialData.videoUrl) {
+    await updateTogetherVideo();
+    isChanged = true;
+  }
+
+  if (isChanged) {
+    alert("방을 수정했습니다.")
+    closeModal()
+    router.go(0)
+  } else {
+    alert("변경사항이 없습니다.")
+  }
+}
+
+onMounted(() => {
+  getTogether()
+  initialData = { ...roomBody }
+})
 </script>
 
 <template>
@@ -42,7 +112,7 @@ const sendApi = () => {
     <div class="modal-overlay" @click="closeModal"></div>
     <div class="modal-content">
       <div class="modal-header">
-        <h3><i class="fas fa-plus"></i> Together 방 만들기</h3>
+        <h3><i class="fas fa-plus"></i> Together 수정 </h3>
         <button class="modal-close" @click="closeModal">
           <i class="fas fa-times"></i>
         </button>
@@ -58,6 +128,7 @@ const sendApi = () => {
             required
             maxlength="50"
             placeholder="방 이름을 입력하세요"
+            v-model="roomBody.title"
           />
           <div class="char-count"><span>0</span>/50</div>
         </div>
@@ -69,6 +140,7 @@ const sendApi = () => {
             id="videoUrl"
             type="url"
             placeholder="함께 볼 동영상 URL을 입력하세요 (선택사항)"
+            v-model="roomBody.videoUrl"
           />
           <div class="help-text">나중에 방에서 동영상을 선택할 수도 있습니다</div>
         </div>
@@ -80,6 +152,7 @@ const sendApi = () => {
             id="maxUser"
             type="text"
             placeholder="Together 최대 인원 수를 입력하세요"
+            v-model="roomBody.maxMemberNumber"
           />
         </div>
 
@@ -88,7 +161,7 @@ const sendApi = () => {
           <label>방 공개 설정</label>
           <div class="radio-group">
             <label class="radio-item">
-              <input type="radio" name="roomPrivacy" value="public" checked />
+              <input type="radio" name="roomPrivacy" value="true" v-model="roomBody.isOpen" />
               <span class="radio-mark"></span>
               <div class="radio-content">
                 <strong>공개 방</strong>
@@ -96,7 +169,7 @@ const sendApi = () => {
               </div>
             </label>
             <label class="radio-item">
-              <input type="radio" name="roomPrivacy" value="friends" />
+              <input type="radio" name="roomPrivacy" value="false" v-model="roomBody.isOpen" />
               <span class="radio-mark"></span>
               <div class="radio-content">
                 <strong>비공개 방</strong>
@@ -111,7 +184,7 @@ const sendApi = () => {
           <button type="button" class="btn-cancel" @click="closeModal">취소</button>
           <button type="submit" class="btn-create" @click="sendApi">
             <i class="fas fa-plus"></i>
-            방 만들기
+            수정 완료
           </button>
         </div>
       </form>

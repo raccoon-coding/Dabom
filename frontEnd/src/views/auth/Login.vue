@@ -182,7 +182,7 @@ const openPopup = async (options) => {
 /* .login-form { */
 /* width: 100%;
     max-width: 600px;
-    background-color: var(--card-bg);
+    background-color: var(--TogetherCard-bg);
     padding: 2.5rem;
     border-radius: 20px;
     border: 1px solid var(--border-color);

@@ -1,8 +1,8 @@
 <script setup>
 import togetherSearch from '@/components/together/TogetherSearch.vue'
-import card from '@/components/together/TogetherCard.vue'
-import myTogetherCard from '@/components/together/MyTogetherCard.vue'
-import optionCard from '@/components/together/TogetherOptionCard.vue'
+import TogetherCard from '@/components/together/TogetherCard.vue'
+import MyTogetherCard from '@/components/together/MyTogetherCard.vue'
+import TogetherOptionCard from '@/components/together/TogetherOptionCard.vue'
 import api from '@/api/together'
 
 import { reactive, onMounted } from 'vue'
@@ -11,9 +11,22 @@ const togethers = reactive({
     togethers: []
 })
 
+const myTogethers = reactive({
+  togethers: []
+})
+
+const getMyTogethers = async () => {
+  const res = await api.getRandomTogetherList()
+  if(res.code === 200) {
+    myTogethers.togethers.push(...res.data.togethers)
+  } else {
+    console.log("error");
+  }
+}
+
 const getTogethers = async () => {
     const res = await api.getRandomTogetherList()
-    if(res.state_code === 200) {
+    if(res.code === 200) {
         togethers.togethers.push(...res.data.togethers)
     } else {
         console.log("error");
@@ -22,6 +35,7 @@ const getTogethers = async () => {
 
 onMounted(() => { 
     getTogethers();
+    getMyTogethers();
 })
 </script>
 
@@ -30,7 +44,7 @@ onMounted(() => {
         <togetherSearch />  
         <!-- Together Room Options -->
         <div class="room-options">
-            <optionCard />
+            <TogetherOptionCard />
         </div>
         <!-- Active Rooms -->
         <div class="active-rooms">
@@ -39,7 +53,7 @@ onMounted(() => {
             </div>
             <!-- 더미 데이터 시작 -->
             <div class="rooms-grid">
-                <card v-for="together in togethers.togethers" :together="together" />
+                <together-card v-for="together in togethers.togethers" :together="together" />
             </div>
             <!-- 더미 데이터 종료 -->
         </div>
@@ -50,7 +64,7 @@ onMounted(() => {
             </div>
             <!-- 더미 데이터 시작 -->
             <div class="my-rooms-list">
-                <myTogetherCard v-for="n in 5" :key="n" />
+                <MyTogetherCard v-for="together in myTogethers.togethers" :together="together" />
             </div>
             <!-- 더미 데이터 종료 -->
         </div>
