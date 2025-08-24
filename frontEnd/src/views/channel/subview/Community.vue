@@ -77,7 +77,6 @@ const setupObserver = () => {
             rootMargin: '100px'
         });
         observer.observe(observerTarget.value);
-        console.log('Infinite Scroll Observer 설정 완료');
     }
 };
 
