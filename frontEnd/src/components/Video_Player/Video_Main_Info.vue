@@ -24,7 +24,7 @@ const props = defineProps(['videoInfo']);
 
         <div class="channel-row">
             <div class="channel-info-vertical">
-                <span class="channel-name">{{ props.videoInfo.channel.name }}</span>
+                <span class="channel-name">{{ props.videoInfo.channel?.name }}</span>
                 <span class="subscriber-count">구독자 {{ props.videoInfo.Subscribers }}명</span>
             </div>
             <div class="channel-buttons">

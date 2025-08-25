@@ -1,10 +1,16 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineProps, watch } from 'vue'
 import { getComments, postComment, deleteComment } from '@/api/videocomment/'
+
+const props = defineProps({
+  videoId: {
+    type: [String, Number],
+    required: true
+  }
+})
 
 const commentText = ref('')
 const comments = ref([])
-const videoId = 123 // 예시 ID
 const currentUser = ref(null) // 현재 사용자 정보
 const sortOrder = ref('newest') // 정렬 기준: newest, popular, oldest
 const page = ref(0) // 현재 페이지
@@ -12,6 +18,8 @@ const pageSize = 10 // 페이지당 댓글 수
 const hasMore = ref(true) // 추가 댓글 여부
 
 const loadComments = async (reset = false) => {
+  if (!props.videoId) return; // videoId가 없으면 실행하지 않음
+
   if (reset) {
     page.value = 0
     comments.value = []
@@ -27,13 +35,19 @@ const loadComments = async (reset = false) => {
       sortParam = 'likes,desc'
     }
 
-    const response = await getComments(videoId, {
+    const response = await getComments(props.videoId, {
       page: page.value,
       size: pageSize,
       sort: sortParam
     })
-    comments.value = reset ? response.content : [...comments.value, ...response.content]
-    hasMore.value = !response.last
+    
+    if (response && response.data) {
+        comments.value = reset ? response.data.content : [...comments.value, ...response.data.content]
+        hasMore.value = !response.data.last
+    } else {
+        comments.value = []
+        hasMore.value = false
+    }
   } catch (error) {
     comments.value = []
     hasMore.value = false
@@ -47,7 +61,7 @@ const submitComment = async () => {
     return
   }
   try {
-    await postComment({ content: commentText.value }, { params: { videoIdx: videoId } })
+    await postComment(props.videoId, { content: commentText.value })
     commentText.value = ''
     loadComments(true)
   } catch (error) {
@@ -76,8 +90,16 @@ const changeSortOrder = () => {
   loadComments(true)
 }
 
+// videoId가 변경될 때마다 댓글을 다시 불러오도록 설정
+watch(() => props.videoId, (newVideoId) => {
+  if (newVideoId) {
+    loadComments(true);
+  }
+}, { immediate: true });
+
+
 onMounted(() => {
-  loadComments()
+  // 이제 watcher가 초기 로딩을 처리합니다.
   currentUser.value = { id: 1 } // 실제 인증 시스템에서 사용자 ID 설정
 })
 </script>
