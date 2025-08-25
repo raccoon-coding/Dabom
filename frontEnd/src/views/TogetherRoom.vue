@@ -29,6 +29,7 @@ const stateModal = reactive({
 const subscribed = ref(false)
 const togetherIdx = ref('')
 const isMaster = ref(false)
+const joinMember = ref("")
 const testUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
 
 // api로 Master 확인 후, 데이터 내려주기
@@ -68,6 +69,9 @@ const connectWebSocket = () => {
           const data = JSON.parse(msg.body)
           console.log(data)
           message.messages.push(data)
+          if(data.users !== joinMember.value) {
+            joinMember.value = data.users
+          }
         } catch(e) {
           console.error("메시지 파싱 실패", e)
         }
@@ -127,6 +131,7 @@ onMounted(() => {
     :isMaster="isMaster"
     :socket="socket"
     :messages="message.messages"
+    :joinMember="joinMember"
     @close_modal="closeChatModal()"
     @open_master_modal="openMasterModal"
   />
