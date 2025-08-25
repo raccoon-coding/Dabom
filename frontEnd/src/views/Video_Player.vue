@@ -18,8 +18,8 @@ const state = reactive({
 })
 
 const getData = async () => {
-    data.value = await api.getVideo(videoId);
-    state.videoInfo = data.value
+    data.value = await api.getVideoById(videoId);
+    state.videoInfo = data.value.data
 }
 
 onMounted(() => {
@@ -47,7 +47,7 @@ console.log(state.videoInfo)
                 </div>
                 <Video_Main_Info :videoInfo="state.videoInfo"></Video_Main_Info>
                 <Video_Tag_Explain :videoInfo="state.videoInfo"></Video_Tag_Explain>
-                <Video_Comment ></Video_Comment>
+                <Video_Comment :video-id="videoId"></Video_Comment>
             </div>
             <!-- Right Sidebar -->
             <div class="recommended-sidebar">
