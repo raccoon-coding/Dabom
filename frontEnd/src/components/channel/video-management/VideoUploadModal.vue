@@ -17,7 +17,6 @@ const metadata = reactive({
   isPublic: false
 })
 
-// 파일 업로드 함수 (실제 API 호출)
 const uploadFile = async (file) => {
   const videoIdx = await api.uploadVideo(file)
   const previewUrl = URL.createObjectURL(file)
@@ -40,11 +39,12 @@ const handleFileSelect = async (event) => {
   try {
     // 파일 업로드 API 호출
     const uploadResult = await uploadFile(file)
+    console.log(uploadResult)
     metadata.idx = uploadResult.videoIdx
     videoPreviewUrl.value = uploadResult.previewUrl
   } catch (error) {
-    console.error('파일 업로드 실패:', error)
     // 에러 처리
+    console.error('파일 업로드 실패:', error)
   }
 }
 

@@ -20,13 +20,12 @@ export const uploadVideo = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
-
     try {
         const response = await api.post(url, formData);
         data = response.data;
     } catch (error) {
         console.error('비디오 업로드 실패:', error);
-        data = error.response?.data || { error: '업로드 실패' };
+        data = error.response?.data || {error: '업로드 실패'};
     }
 
 
@@ -38,17 +37,19 @@ export const uploadVideoMetadata = async (videoId, metadata) => {
     let data = {};
 
     try {
-        const response = await api.patch(url, metadata); // POST -> PATCH로 변경 (컨트롤러에 맞춤)
+        const response = await api.patch(url, metadata, {
+            timeout: 0,
+        });
         console.log(response);
         data = response.data;
     } catch (error) {
         console.error('메타데이터 저장 실패:', error);
-        data = error.response?.data || { error: '메타데이터 저장 실패' };
+        data = error.response?.data || {error: '메타데이터 저장 실패'};
     }
 
     return data;
 };
 
-export default { getVideoList, uploadVideo, uploadVideoMetadata };
+export default {getVideoList, uploadVideo, uploadVideoMetadata};
 
 
