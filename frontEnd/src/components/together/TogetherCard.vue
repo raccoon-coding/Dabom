@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { reactive, onMounted } from 'vue';
+import api from '@/api/together/'
 
 const router = useRouter()
 const props = defineProps(['together']);
@@ -28,9 +29,13 @@ const getTogether = () => {
   together.created = data.created
 }
 
-const joinRoom = () => {
+const joinRoom = async () => {
   if (together.together_id !== 0) {
-    router.push({ name: 'togetherRoom', params: {id: together.together_id}})
+    let res = await api.joinTogether(together.together_id);
+    if(res !== 200) {
+      await api.joinOpenTogether(together.together_id);
+    }
+    await router.push({ name: 'togetherRoom', params: {id: together.together_id}})
   } else {
     console.log('URL이 제공되지 않았습니다.')
   }
