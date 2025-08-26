@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, defineProps, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { getComments, postComment, deleteComment } from '@/api/videocomment/'
 
 const props = defineProps({

@@ -50,6 +50,28 @@ export const uploadVideoMetadata = async (videoId, metadata) => {
     return data;
 };
 
-export default {getVideoList, uploadVideo, uploadVideoMetadata};
+export const getPresignedUrl = async (fileInfo) => {
+    const requestUrl = `/api/videos/presigned`
+
+    try {
+        const response = await api.post(requestUrl, fileInfo)
+        return response.data
+    } catch (error) {
+        console.error('Presigned URL 요청 실패:', error)
+        throw error
+    }
+}
+
+export const uploadToPresignedUrl = async (presignedUrl, file) => {
+    const axiosResponse = await api.put(presignedUrl, file, {
+        headers: {
+            'Content-Type': file.type
+        }
+    });
+    return axiosResponse
+}
+
+
+export default {getVideoList, uploadVideo, uploadVideoMetadata, getPresignedUrl, uploadToPresignedUrl};
 
 
