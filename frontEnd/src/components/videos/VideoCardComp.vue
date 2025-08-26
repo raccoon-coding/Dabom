@@ -7,6 +7,10 @@ const router = useRouter()
 const playVideo = () => {
     router.push({ name: 'videoPlayer', params: { id: props.video.videoId } })
 }
+
+const goToChannel = () => {
+    router.push(`/channel/${props.video.channel.name}`);
+}
 </script>
 
 <template>
@@ -26,7 +30,7 @@ const playVideo = () => {
 
         <!-- 비디오 정보 -->
         <div class="video-info">
-            <div class="channel-avatar">
+            <div class="channel-avatar" @click="goToChannel">
                 <img src="@/assets/images/dabom2.png" alt="채널이미지" />
             </div>
             <div class="video-details">
@@ -111,6 +115,15 @@ const playVideo = () => {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+}
+
+.channel-avatar {
+    cursor: pointer; /* 마우스 올리면 포인터로 변경 */
+    transition: transform 0.2s ease;
+}
+
+.channel-avatar:hover {
+    transform: scale(1.05); /* 살짝 확대 효과 */
 }
 
 .video-details {
