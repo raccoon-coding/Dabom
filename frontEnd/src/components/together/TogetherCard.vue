@@ -47,7 +47,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="room-card" @click="joinRoom">
+  <div class="room-card">
     <div class="room-thumbnail">
       <img :src="together.thumb_nail" alt="동영상 썸네일" />
       <div class="room-status">

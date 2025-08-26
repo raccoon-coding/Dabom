@@ -3,20 +3,22 @@ import TogetherCard from '@/components/together/TogetherCard.vue'
 import togetherSearch from '@/components/together/TogetherSearch.vue'
 import api from '@/api/together'
 
-import {ref, reactive, onMounted} from 'vue'
+import {reactive, onMounted} from 'vue'
 import { useRoute } from 'vue-router'
 
-const searchContext = ref('');
+const searchContext = reactive({
+  search: ''
+});
 const route = useRoute()
 const togethers = reactive({
     togethers: []
 })
 
 const getSearchTogethers = async () => {
-    const res = await api.getTogetherSearch(searchContext.value)
+    const res = await api.searchTogether(searchContext)
     // const res = await api.getRandomTogetherList()
     console.log(res)
-    if(res.state_code === 200) {
+    if(res.code === 200) {
         togethers.togethers.push(...res.data.togethers)
     } else {
         console.log("error");
@@ -24,7 +26,7 @@ const getSearchTogethers = async () => {
 }
 
 onMounted(() => { 
-  searchContext.value = route.query.q;
+  searchContext.search = route.query.q;
   getSearchTogethers()
 })
 </script>

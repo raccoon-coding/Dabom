@@ -292,4 +292,5 @@ export const isMaster = async (togetherIdx) => {
 
 export default { getRandomTogetherList, getTogetherListInMember, searchTogether, getMembersByMaster, getTogetherInfo,
   joinTogether, joinOpenTogether, joinTogetherWithCode, saveTogether, leaveTogether, deleteTogether, isMaster,
-    changeTogetherTitle, changeTogetherMaxMember, changeTogetherIsOpen, changeTogetherVideo, kickTogetherMember}
+    changeTogetherTitle, changeTogetherMaxMember, changeTogetherIsOpen, changeTogetherVideo, kickTogetherMember,
+  getTogetherListInMaster}

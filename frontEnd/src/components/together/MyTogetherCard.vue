@@ -6,7 +6,7 @@ import DeleteTogetherModal from "@/components/together/DeleteTogetherModal.vue";
 import api from '@/api/together/'
 
 const router = useRouter()
-const props = defineProps(['together']);
+const props = defineProps(['together', 'isMaster']);
 const together = reactive({
   together_id: 0,
   title: '',
@@ -64,7 +64,12 @@ const joinRoom = () => {
 }
 
 const deleteTogether = async () => {
-  let res = await api.deleteTogether(together.together_id);
+  let res
+  if(props.isMaster) {
+    res = await api.deleteTogether(together.together_id);
+  } else {
+    res = await api.leaveTogether(together.together_id);
+  }
   console.log(res)
   if(res.code === 200) {
     closeDeleteModal()
@@ -83,7 +88,7 @@ onMounted(() => {
     <div class="room-info">
       <h4>{{ together.title }}</h4>
       <p>{{ together.isOpen ? '공개 방' : '비공개 방' }} • {{ together.join_people }}/{{ together.max_join_people }} 명 참가중</p>
-      <span class="room-code">
+      <span class="room-code" v-if="props.isMaster">
         초대 코드: <strong>ABC123</strong>
         <button class="btn-copy-code" data-code="ABC123">
           <i class="fas fa-copy"></i>
@@ -91,7 +96,7 @@ onMounted(() => {
       </span>
     </div>
     <div class="room-actions">
-      <button class="btn-manage" @click="openUpdateRoomModal">
+      <button class="btn-manage" @click="openUpdateRoomModal" v-if="props.isMaster">
         <i class="fas fa-cog"></i>
         관리
       </button>
