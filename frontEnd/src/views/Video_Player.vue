@@ -8,6 +8,7 @@ import { onMounted, reactive, ref, onUnmounted } from 'vue'
 import Hls from 'hls.js'
 import api from '@/api/video_player'
 import video from "@/api/video/index.js"
+import Video_Player_Component from "@/components/Video_Player/Video_Player_Component.vue";
 
 const route = useRoute()
 const videoId = route.params.id
@@ -26,10 +27,7 @@ const videoInfo = reactive({
 
 const getData = async () => {
   const result = await api.getVideoById(videoId)
-
-  // videoInfo에 데이터 할당
   Object.assign(videoInfo, result.data) // 또는 result 구조에 맞게 수정
-
   // 데이터 로드 후 HLS 플레이어 초기화
   if (videoInfo.savedPath) {
     initHlsPlayer()
@@ -40,7 +38,7 @@ const initHlsPlayer = () => {
   if (!videoPlayer.value || !videoInfo.savedPath) return
 
   const video = videoPlayer.value
-  const videoUrl = `http://localhost:8080${videoInfo.savedPath}`
+  const videoUrl = videoInfo.savedPath
 
   // 기존 HLS 인스턴스 정리
   if (hls) {
@@ -83,11 +81,7 @@ onUnmounted(() => {
       <!-- Left Column -->
       <div class="main-content-column">
         <div class="video-player-wrapper">
-          <!-- 실제 비디오 플레이어 -->
-<!--          <video id="mainVideoPlayer" class="video-player" :src="videoInfo.savedPath" controls>-->
-<!--            Your browser does not support the video tag.-->
-<!--          </video>-->
-
+<!--          <Video_Player_Component :video_url="videoInfo.savedPath" :is_open_modal="stateModal.chatModal" />-->
           <video
               ref="videoPlayer"
               class="video-player"

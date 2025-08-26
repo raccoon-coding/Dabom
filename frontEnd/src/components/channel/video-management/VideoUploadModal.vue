@@ -1,7 +1,6 @@
 <script setup>
-import { ref, reactive } from 'vue'
-import api, {uploadToPresignedUrl} from '@/api/video'
-import axios from "axios";
+import {reactive, ref} from 'vue'
+import api from '@/api/video'
 
 const props = defineProps(['visible'])
 const emit = defineEmits(['close', 'complete'])
@@ -17,6 +16,13 @@ const fileInfo = reactive({
   contentType: ''
 })
 
+const s3VideoInfo = reactive({
+  videoIdx: '',
+  uploadUrl: '',
+  s3Key: '',
+  expiresIn: ''
+})
+
 const metadata = reactive({
   idx: null,
   title: '',
@@ -26,18 +32,16 @@ const metadata = reactive({
 
 
 const uploadFile = async (file) => {
-  fileInfo.originalFilename = file.name
-  fileInfo.fileSize = file.size
-  fileInfo.contentType = file.type
+  [fileInfo.originalFilename, fileInfo.fileSize, fileInfo.contentType] = [file.name, file.size, file.type]
 
-  const presignedUrl = await api.getPresignedUrl(fileInfo);
-  const uploadUrl = presignedUrl.data?.uploadUrl
+  const presignedUrlResponse = await api.getPresignedUrl(fileInfo);
+  const s3VideoInfo = presignedUrlResponse.data;
 
-  let axiosResponse = await api.uploadToPresignedUrl(uploadUrl, file); // ㅇ니ㅏ런ㅇ미ㅏㅓㅁㅇㄴ리ㅏㅓㅇㅁㄴ리ㅏ
-  // const videoIdx = await api.uploadVideo(file)
-  const videoIdx = 1
+  let axiosResponse = await api.uploadToPresignedUrl(s3VideoInfo.uploadUrl, file);
+
+  const videoIdx = s3VideoInfo.videoIdx;
   const previewUrl = URL.createObjectURL(file)
-  //
+
   return {videoIdx, previewUrl}
 }
 
@@ -56,9 +60,10 @@ const handleFileSelect = async (event) => {
   try {
     // 파일 업로드 API 호출
     const uploadResult = await uploadFile(file)
-    console.log(uploadResult)
-    metadata.idx = uploadResult.videoIdx
-    videoPreviewUrl.value = uploadResult.previewUrl
+
+    const { videoIdx, previewUrl } = uploadResult
+    metadata.idx = videoIdx
+    videoPreviewUrl.value = previewUrl
   } catch (error) {
     // 에러 처리
     console.error('파일 업로드 실패:', error)
@@ -69,7 +74,6 @@ const handleFileSelect = async (event) => {
 const saveMetadata = async () => {
   try {
     const data = await api.uploadVideoMetadata(metadata.idx, metadata)
-
     emit('complete', metadata)
     resetAndClose()
   } catch (error) {
@@ -181,7 +185,7 @@ const handleOverlayClick = () => {
 
               <div class="form-group">
                 <label class="checkbox-label">
-                  <input type="checkbox" v-model="metadata.isPublic" />
+                  <input type="checkbox" v-model="metadata.isPublic"/>
                   <span class="checkmark"></span>
                   <span>공개 설정</span>
                 </label>
