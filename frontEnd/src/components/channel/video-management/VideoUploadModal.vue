@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import api from '@/api/video'
+import api, {uploadToPresignedUrl} from '@/api/video'
+import axios from "axios";
 
 const props = defineProps(['visible'])
 const emit = defineEmits(['close', 'complete'])
@@ -10,6 +11,12 @@ const step = ref(1)
 const fileInput = ref(null)
 const videoPreviewUrl = ref(null)
 
+const fileInfo = reactive({
+  originalFilename: '',
+  fileSize: '',
+  contentType: ''
+})
+
 const metadata = reactive({
   idx: null,
   title: '',
@@ -17,10 +24,20 @@ const metadata = reactive({
   isPublic: false
 })
 
-const uploadFile = async (file) => {
-  const videoIdx = await api.uploadVideo(file)
-  const previewUrl = URL.createObjectURL(file)
 
+const uploadFile = async (file) => {
+  fileInfo.originalFilename = file.name
+  fileInfo.fileSize = file.size
+  fileInfo.contentType = file.type
+
+  const presignedUrl = await api.getPresignedUrl(fileInfo);
+  const uploadUrl = presignedUrl.data?.uploadUrl
+
+  let axiosResponse = await api.uploadToPresignedUrl(uploadUrl, file); // ㅇ니ㅏ런ㅇ미ㅏㅓㅁㅇㄴ리ㅏㅓㅇㅁㄴ리ㅏ
+  // const videoIdx = await api.uploadVideo(file)
+  const videoIdx = 1
+  const previewUrl = URL.createObjectURL(file)
+  //
   return {videoIdx, previewUrl}
 }
 

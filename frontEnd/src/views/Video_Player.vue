@@ -26,7 +26,6 @@ const videoInfo = reactive({
 
 const getData = async () => {
   const result = await api.getVideoById(videoId)
-  console.log(result)
 
   // videoInfo에 데이터 할당
   Object.assign(videoInfo, result.data) // 또는 result 구조에 맞게 수정
@@ -54,7 +53,7 @@ const initHlsPlayer = () => {
     hls.attachMedia(video)
 
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      console.log('HLS 비디오 로드 완료')
+      console.log("load hls..")
     })
 
     hls.on(Hls.Events.ERROR, (event, data) => {

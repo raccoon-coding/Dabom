@@ -3,7 +3,6 @@
 import api from "@/plugins/axiosinterceptor";
 
 const getVideoById = async (videoId) => {
-    console.log(videoId)
     let data = {};
     const requestUrl = `/api/videos/${videoId}`;
     // let url = /api/video${req}.json;
