@@ -13,7 +13,7 @@ const memberInfo = reactive({
 })
 
 const kickMember = async () => {
-  await api.kickTogetherMember(togetherIdx, memberInfo.memberIdx)
+  await api.kickTogetherMember(togetherIdx.value, memberInfo.memberIdx)
 }
 
 const getMemberInfo = () => {

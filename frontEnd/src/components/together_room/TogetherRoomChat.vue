@@ -2,16 +2,20 @@
 import Message from '@/components/together_room/TogetherRoomChatMessage.vue'
 import ModalCloseButton from '@/components/together_room/ModalCloseButton.vue'
 import settingBtn from "@/components/together_room/SettingBtn.vue"
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const togetherIdx = ref("")
 const writeMessage = ref("")
-const props = defineProps(['isMaster', 'socket', 'messages', 'joinMember'])
+const props = defineProps(['isMaster', 'socket', 'messages', 'joinMember', 'userIdx'])
 const emits = defineEmits(['close_modal', 'open_master_modal'])
+const chatMessagesRef = ref(null);
 
 const sendMessage = () => {
+  if(writeMessage.value === ""){
+    return;
+  }
   console.log(writeMessage.value)
   props.socket.send(`/app/together/${togetherIdx.value}`, {}, writeMessage.value);
   writeMessage.value = ""
@@ -24,6 +28,18 @@ const closeChatModal = () => {
 const openMasterModal = () => {
     emits('open_master_modal')
 }
+
+watch(
+  () => props.messages.length,
+  async () => {
+    await nextTick(); // DOM 렌더링 대기
+    const el = chatMessagesRef.value;
+    if (el) {
+      el.scrollTop = el.scrollHeight; // 스크롤을 아래로
+    }
+  }
+);
+
 onMounted(() => {
   togetherIdx.value = route.params.id;
 })
@@ -43,15 +59,12 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="chat-messages" id="chatMessages">
+        <div class="chat-messages" id="chatMessages"  ref="chatMessagesRef">
           <Message
             v-for="msg in props.messages"
-            :sender="msg.name"
-            :message="msg.message"
-            :isJoin="msg.isJoin"
-            :date="msg.now"
+            :message="msg"
+            :userIdx="props.userIdx"
           />
-<!--            <Message v-for="i in 10" />-->
         </div>
 
         <div class="chat-input-container">
