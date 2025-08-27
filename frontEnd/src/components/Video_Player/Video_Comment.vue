@@ -20,6 +20,8 @@ const hasMore = ref(true) // 추가 댓글 여부
 const loadComments = async (reset = false) => {
   if (!props.videoId) return; // videoId가 없으면 실행하지 않음
 
+  console.log(props.videoId);
+
   if (reset) {
     page.value = 0
     comments.value = []
@@ -56,11 +58,20 @@ const loadComments = async (reset = false) => {
 }
 
 const submitComment = async () => {
+  console.log('submitComment 호출됨, videoId:', props.videoId) // 디버깅용
+  
+  if (!props.videoId) {
+    alert('비디오 ID가 없습니다.')
+    return
+  }
+  
   if (!commentText.value.trim()) {
     alert('댓글을 입력해주세요.')
     return
   }
+  
   try {
+    console.log('postComment 호출 전, videoId:', props.videoId) // 디버깅용
     await postComment(props.videoId, { content: commentText.value })
     commentText.value = ''
     loadComments(true)
