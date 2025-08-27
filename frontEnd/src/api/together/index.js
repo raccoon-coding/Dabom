@@ -107,14 +107,14 @@ export const joinOpenTogether = async (togetherIdx) => {
   return data
 };
 
-export const joinTogetherWithCode = async (togetherIdx, code) => {
-  const requestUrl = `/api/together/` + togetherIdx + `/code`
+export const joinTogetherWithCode = async (code) => {
+  const requestUrl = `/api/together/code`
   let data = {}
   const json = {
       "code": code
   }
 
-  await api.post(requestUrl, code)
+  await api.post(requestUrl, json)
     .then((response) => {
       console.log(response)
       data = response.data

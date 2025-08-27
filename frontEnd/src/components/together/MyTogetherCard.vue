@@ -1,12 +1,12 @@
 <script setup>
-import {useRouter} from "vue-router";
-import {onMounted, reactive, ref} from "vue";
-import UpdateTogetherModal from "@/components/together/UpdateTogetherModal.vue";
-import DeleteTogetherModal from "@/components/together/DeleteTogetherModal.vue";
+import { useRouter } from 'vue-router'
+import { onMounted, reactive, ref } from 'vue'
+import UpdateTogetherModal from '@/components/together/UpdateTogetherModal.vue'
+import DeleteTogetherModal from '@/components/together/DeleteTogetherModal.vue'
 import api from '@/api/together/'
 
 const router = useRouter()
-const props = defineProps(['together', 'isMaster']);
+const props = defineProps(['together', 'isMaster'])
 const together = reactive({
   together_id: 0,
   title: '',
@@ -14,16 +14,17 @@ const together = reactive({
   thumb_nail: '',
   max_join_people: 0,
   join_people: 0,
-  total_play_time: "",
-  created: "",
-  isOpen: ""
+  total_play_time: '',
+  created: '',
+  isOpen: '',
+  code: '',
 })
-const showUpdateModal = ref(false);
+const showUpdateModal = ref(false)
 const deleteContext = {
-  title: "투게더 삭제하기",
-  message: "정말로 삭제하시겠습니까?"
+  title: '투게더 삭제하기',
+  message: '정말로 삭제하시겠습니까?',
 }
-const deleteModal = ref(false);
+const deleteModal = ref(false)
 
 const openDeleteModal = () => {
   deleteModal.value = true
@@ -53,11 +54,12 @@ const getTogether = () => {
   together.total_play_time = data.total_play_time
   together.created = data.created
   together.isOpen = data.isOpen
+  together.code = data.code
 }
 
 const joinRoom = () => {
   if (together.together_id !== 0) {
-    router.push({ name: 'togetherRoom', params: {id: together.together_id}})
+    router.push({ name: 'togetherRoom', params: { id: together.together_id } })
   } else {
     console.log('URL이 제공되지 않았습니다.')
   }
@@ -65,32 +67,40 @@ const joinRoom = () => {
 
 const deleteTogether = async () => {
   let res
-  if(props.isMaster) {
-    res = await api.deleteTogether(together.together_id);
+  if (props.isMaster) {
+    res = await api.deleteTogether(together.together_id)
   } else {
-    res = await api.leaveTogether(together.together_id);
+    res = await api.leaveTogether(together.together_id)
   }
   console.log(res)
-  if(res.code === 200) {
+  if (res.code === 200) {
     closeDeleteModal()
     router.push('/together')
   }
 }
 
+const copyCode = () => {
+  navigator.clipboard.writeText(together.code)
+}
+
 onMounted(() => {
   getTogether()
 })
-
 </script>
 
 <template>
   <div class="my-room-item">
     <div class="room-info">
       <h4>{{ together.title }}</h4>
-      <p>{{ together.isOpen ? '공개 방' : '비공개 방' }} • {{ together.join_people }}/{{ together.max_join_people }} 명 참가중</p>
+      <p>
+        {{ together.isOpen ? '공개 방' : '비공개 방' }} • {{ together.join_people }}/{{
+          together.max_join_people
+        }}
+        명 참가중
+      </p>
       <span class="room-code" v-if="props.isMaster">
-        초대 코드: <strong>ABC123</strong>
-        <button class="btn-copy-code" data-code="ABC123">
+        초대 코드: <strong>{{ together.code }}</strong>
+        <button class="btn-copy-code" @click="copyCode">
           <i class="fas fa-copy"></i>
         </button>
       </span>
@@ -110,13 +120,18 @@ onMounted(() => {
       </button>
     </div>
   </div>
-  <DeleteTogetherModal v-if="deleteModal" :title="deleteContext.title" :message="deleteContext.message"
-                       @close="closeDeleteModal" @confirm="deleteTogether"></DeleteTogetherModal>
+  <DeleteTogetherModal
+    v-if="deleteModal"
+    :title="deleteContext.title"
+    :message="deleteContext.message"
+    @close="closeDeleteModal"
+    @confirm="deleteTogether"
+  ></DeleteTogetherModal>
   <UpdateTogetherModal
-      v-if="showUpdateModal"
-      :visible="showUpdateModal"
-      :together="together"
-      @close="closeUpdateModal"
+    v-if="showUpdateModal"
+    :visible="showUpdateModal"
+    :together="together"
+    @close="closeUpdateModal"
   />
 </template>
 

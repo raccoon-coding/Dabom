@@ -5,7 +5,7 @@ import TogetherRoomNavigator from '@/components/together_room/TogetherRoomNaviga
 import Video_Player_Component from '@/components/Video_Player/Video_Player_Component.vue'
 
 import Stomp from 'stompjs'
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/api/together/'
 
@@ -31,8 +31,7 @@ const stateModal = reactive({
 const subscribed = ref(false)
 const isMaster = ref(false)
 const joinMember = ref("")
-const testUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-// const testUrl =  'https://videos.pexels.com/video-files/8063940/8063940-uhd_1440_2732_30fps.mp4'
+const testUrl = 'https://s3.ap-northeast-2.amazonaws.com/raccoon.aws.s3/encoder/sample/playlist.m3u8'
 
 const getTogetherInfo = async () => {
   let res = await api.getTogetherInfo(togetherInfo.togetherIdx)
@@ -64,11 +63,9 @@ const connectWebSocket = () => {
   client.connect(
     {},
     (frame) => {
-      console.log('연결 됐을 때 ')
       socket.value.subscribe(`/topic/together/${togetherInfo.togetherIdx}`, (msg) => {
         try {
           const data = JSON.parse(msg.body)
-          console.log(data)
           message.messages.push(data)
           if(data.users !== joinMember.value) {
             joinMember.value = data.users
@@ -104,6 +101,12 @@ onMounted(() => {
   getIsMaster()
   connectWebSocket()
 })
+
+onUnmounted(() => {
+  if (socket.value) {
+    socket.value.disconnect()
+  }
+})
 </script>
 
 <template>
@@ -117,7 +120,8 @@ onMounted(() => {
     <!-- Video Container -->
     <div class="video-container" :class="{ 'modal-open': stateModal.chatModal }">
       <div class="video-player">
-        <Video_Player_Component :video_url="testUrl" :is_open_modal="stateModal.chatModal" />
+        <Video_Player_Component v-if="subscribed" :video_url="testUrl" :socket="socket"
+                                :togetherIdx="togetherInfo.togetherIdx" :isMaster="isMaster"/>
       </div>
     </div>
   </div>

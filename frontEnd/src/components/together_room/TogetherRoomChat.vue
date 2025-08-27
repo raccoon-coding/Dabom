@@ -16,7 +16,6 @@ const sendMessage = () => {
   if(writeMessage.value === ""){
     return;
   }
-  console.log(writeMessage.value)
   props.socket.send(`/app/together/${togetherIdx.value}`, {}, writeMessage.value);
   writeMessage.value = ""
 }
