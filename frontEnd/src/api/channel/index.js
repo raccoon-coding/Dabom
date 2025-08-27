@@ -349,10 +349,25 @@ export const createChannelBoard = async (boardData) => {
     return data;
 };
 
+const ChannelBoardLikes = async (idx) => {
+    let data = {};
+    let url = `/api/likes/channelBoard/${idx}`;
+
+    await api.get(url)
+        .then((res) => {
+            data = res.data;
+        })
+        .catch((error) => {
+            data = error.data;
+        });
+
+    return data;
+}
+
 // export default에 추가
 export default {
     getChannelChart, getChannelInfo, updateChannelInfo, updatePlaylistItem, deletePlaylistItem,
     uploadVideo, uploadThumbnail, getChannelBoardList, getChannelBoardDetail,
     getBoardComments, createBoardComment, deleteBoardComment,
-    deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted, getChannelBoardListPaged
+    deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted, getChannelBoardListPaged, ChannelBoardLikes
 }

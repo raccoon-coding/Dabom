@@ -30,7 +30,7 @@ export default {
         // 서버 데이터로 업데이트 (기본값이 있으면 유지)
         channelInfo.id = result.data.id || channelInfo.id
         channelInfo.name = result.data.name || channelInfo.name
-        channelInfo.content = result.data.content || channelInfo.content
+        channelInfo.content = result.data.content || channelInfo.content 
         channelInfo.email = result.data.email || channelInfo.email
         channelInfo.image = result.data.image || channelInfo.image
         channelInfo.sns01 = result.data.sns01 || channelInfo.sns01
