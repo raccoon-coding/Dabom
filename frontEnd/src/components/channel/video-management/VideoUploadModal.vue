@@ -27,7 +27,8 @@ const metadata = reactive({
   idx: null,
   title: '',
   description: '',
-  isPublic: false
+  isPublic: false,
+  videoTag: null,
 })
 
 
@@ -184,6 +185,27 @@ const handleOverlayClick = () => {
               </div>
 
               <div class="form-group">
+                <label for="videoTag">카테고리 *</label>
+                <select
+                    id="videoTag"
+                    v-model="metadata.videoTag"
+                    class="select-box"
+                >
+                  <option value="" disabled>카테고리를 선택하세요</option>
+                  <option value="ENTERTAINMENT">엔터테인먼트</option>
+                  <option value="EDUCATION">교육</option>
+                  <option value="GAMING">게임</option>
+                  <option value="LIFESTYLE">라이프스타일</option>
+                  <option value="MUSIC">음악</option>
+                  <option value="SPORTS">스포츠</option>
+                  <option value="NEWS">뉴스·시사</option>
+                  <option value="TECH">과학·기술</option>
+                  <option value="TRAVEL">여행</option>
+                  <option value="REVIEW">리뷰·쇼핑</option>
+                </select>
+              </div>
+
+              <div class="form-group">
                 <label class="checkbox-label">
                   <input type="checkbox" v-model="metadata.isPublic"/>
                   <span class="checkmark"></span>
@@ -229,7 +251,7 @@ const handleOverlayClick = () => {
   border-radius: 12px;
   width: 90%;
   max-width: 800px;
-  max-height: 90vh;
+  max-height: 100vh;
   overflow-y: auto;
   color: var(--text-primary);
 }
@@ -460,6 +482,22 @@ input:focus, textarea:focus {
 .btn-save:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.select-box {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  font-size: var(--font-sm);
+  cursor: pointer;
+}
+
+.select-box:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 /* 반응형 */
