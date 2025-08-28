@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getChannelBoardDetail, getBoardCommentsPagedSorted, createBoardComment } from '@/api/channel'
+import { getChannelBoardDetail, getBoardCommentsPagedSorted, createBoardComment, BoardCommentLikes } from '@/api/channel'
 
 // props 및 라우터
 const route = useRoute()
@@ -11,6 +11,34 @@ const postId = route.params.id
 const loading = ref(false)
 const newCommentText = ref('') // 댓글 작성 텍스트
 const isCommentFocused = ref(false) // 댓글 입력 필드 포커스 상태
+const likingComments = ref(new Set())
+
+const handleCommentLike = async (commentIdx) => {
+    if (likingComments.value.has(commentIdx)) return
+    
+    try {
+        likingComments.value.add(commentIdx)
+        const response = await BoardCommentLikes(commentIdx)
+        
+        if (response === true || (response && response.data === true) || (response && response.code === 200)) {
+            const targetComment = comments.value.find(comment => comment.idx === commentIdx)
+            
+            if (targetComment) {
+                targetComment.isLikes = !targetComment.isLikes
+                
+                if (targetComment.isLikes) {
+                    targetComment.likesCount = (targetComment.likesCount || 0) + 1
+                } else {
+                    targetComment.likesCount = Math.max(0, (targetComment.likesCount || 0) - 1)
+                }
+            }
+        }
+    } catch (error) {
+        console.error('댓글 좋아요 처리 오류:', error)
+    } finally {
+        likingComments.value.delete(commentIdx)
+    }
+}
 
 // 게시글 데이터 (reactive 사용)
 const post = reactive({
@@ -80,7 +108,6 @@ const loadComments = async (page = 0, reset = false) => {
     try {
         console.log(`댓글 로드: page=${page}, reset=${reset}, sort=${sortBy.value}`)
         
-        // 🔥 무한 스크롤 추가 로딩 시에만 딜레이 (첫 로딩은 즉시)
         if (page > 0 && !reset) { 
             await new Promise(resolve => setTimeout(resolve, 2000))  // 2초로 변경
         }
@@ -88,7 +115,6 @@ const loadComments = async (page = 0, reset = false) => {
         const response = await getBoardCommentsPagedSorted(postId, page, pageSize, sortBy.value)
         console.log('댓글 응답:', response)
         
-        // 🔥 이 부분 추가! 전체 댓글 개수 업데이트
         if (reset || page === 0) {
             totalCommentCount.value = response.totalCount || post.commentCount || 0
         }
@@ -102,7 +128,6 @@ const loadComments = async (page = 0, reset = false) => {
         hasNext.value = response.hasNext
         currentPage.value = page
         
-        // 🔥 Observer 재설정도 추가
         if (reset) {
             setTimeout(() => {
                 if (observer) observer.disconnect()
@@ -364,8 +389,8 @@ onUnmounted(() => {
                 <span class="comment-time">{{ comment.createdAt }}</span>
                 <!-- 수정됨 표시 -->
                 <span v-if="comment.isModified" class="modified-badge">
-                  <i class="fas fa-edit"></i>
-                  수정됨
+                  <!-- <i class="fas fa-edit"></i> -->
+                  <!-- 수정됨 -->
                 </span>
               </div>
               <div class="comment-content">
@@ -373,16 +398,26 @@ onUnmounted(() => {
               </div>
               <!-- 수정 시간 표시 (수정된 댓글인 경우) -->
               <div v-if="comment.isModified" class="comment-modified-info">
-                수정된 시간: {{ comment.updatedAt }}
+                <!-- 수정된 시간: {{ comment.updatedAt }} -->
               </div>
               <!-- 댓글 액션 버튼들 -->
               <div class="comment-actions-bar">
-                <button class="comment-action-btn">
-                  <i class="fas fa-thumbs-up"></i>
-                </button>
-                <button class="comment-action-btn">
-                  <i class="fas fa-thumbs-down"></i>
-                </button>
+                <button 
+    class="comment-action-btn like-btn"
+    :class="{ 
+        'liked': comment.isLikes,
+        'processing': likingComments.has(comment.idx)
+    }"
+    :disabled="likingComments.has(comment.idx)"
+    @click="handleCommentLike(comment.idx)"
+>
+    <i 
+        class="fas fa-thumbs-up" 
+        :style="{ color: comment.isLikes ? '#3b82f6' : '#888' }"
+    ></i>
+    <span v-if="comment.likesCount > 0">{{ comment.likesCount }}</span>
+</button>
+                
                 <button class="comment-action-btn">답글</button>
               </div>
             </div>
