@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, reactive } from 'vue'
 import api from '@/api/channel'
-import { almostWhole } from 'chart.js/helpers'
 import imageApi from '@/api/image'
 
 // props 선언 (defineProps 사용)

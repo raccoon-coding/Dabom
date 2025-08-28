@@ -2,11 +2,10 @@
 import { ref, onMounted, watch, onUnmounted } from 'vue';
 import { getChannelBoardListPaged, deleteChannelBoard, updateChannelBoard, createChannelBoard } from '@/api/channel';
 
-// 컴포넌트 import
-import PostCard from './community/PostCard.vue';
-import CreatePostModal from './community/CreatePostModal.vue';
-import SortDropdown from './community/SortDropdown.vue';
-import InfiniteScrollTrigger from './community/InfiniteScrollTrigger.vue';
+
+import PostCard from '@/components/channel/community-management/PostCard.vue';
+import CreatePostModal from '@/components/channel/community-management/CreatePostModal.vue';
+import SortDropdown from '@/components/channel/community-management/SortDropdown.vue';
 
 const props = defineProps({
   isActive: Boolean

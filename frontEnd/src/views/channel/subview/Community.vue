@@ -1,5 +1,5 @@
 <script setup>
-import ChannelPostCard from '@/components/channel/ChannelPostCard.vue';
+import ChannelPostCard from '@/components/channel/community/ChannelPostCard.vue';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { getChannelBoardListPaged } from '@/api/channel'; 
 
