@@ -1,13 +1,18 @@
 <script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 import api from '@/api/together'
 import CreateTogetherModal from '@/components/together/CreateTogetherModal.vue'
+import Modal from '@/components/main/Modal.vue'
 
 const showModal = ref(false)
-const joinRoomUrl = ''
+const showErrorModal = ref(false)
+const errorMessage = ref('')
 const inviteCode = ref('') // 초대 코드 바인딩
-const router = useRouter() // 라우터 인스턴스
+const errorTitle = 'Together 에러'
+
+const closeErrorModal = () => {
+  showErrorModal.value = false
+}
 
 const openCreateRoomModal = () => {
   showModal.value = true
@@ -19,13 +24,17 @@ const closeModal = () => {
 
 const joinRoom = async () => {
   if (!inviteCode.value) {
-    alert('초대 코드를 입력하세요.')
+    errorMessage.value = '초대 코드를 입력하세요.'
+    showErrorModal.value = true
     return
   }
+
   const response = await api.joinTogetherWithCode(inviteCode.value)
+  console.log(response)
   if(response.code !== 200) {
-    console.error(error)
-    alert('유효하지 않은 초대 코드이거나 서버 오류입니다.')
+    console.error(response.message)
+    errorMessage.value = response.message
+    showErrorModal.value = true
   } else {
     const roomId = response.data.togetherIdx
     window.location.href = `/together/${roomId}`
@@ -66,6 +75,7 @@ const joinRoom = async () => {
   </div>
   <!-- 모달 컴포넌트 조건부 렌더링 -->
   <CreateTogetherModal v-if="showModal" :visible="showModal" @close="closeModal" />
+  <Modal v-if="showErrorModal" @confirm="closeErrorModal" :title="errorTitle" :message="errorMessage"  />
 </template>
 
 <style scoped>

@@ -75,7 +75,7 @@ const deleteTogether = async () => {
   console.log(res)
   if (res.code === 200) {
     closeDeleteModal()
-    router.push('/together')
+    window.location.reload();
   }
 }
 
