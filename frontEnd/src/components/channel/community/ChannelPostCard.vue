@@ -1,5 +1,4 @@
 <script setup>
-import channelCommentModal from '@/components/channel/ChannelCommentModal.vue';
 import { useRouter } from 'vue-router';
 import { reactive, ref } from 'vue';
 import api from '@/api/channel';
@@ -14,7 +13,6 @@ const props = defineProps({
 const router = useRouter();
 const isProcessing = ref(false);
 
-// postData를 로컬 상태로 복사하여 반응성 확보
 const localPost = reactive({
     ...props.postData
 });
@@ -38,7 +36,6 @@ const clickLikeBtn = async (idx) => {
                 }
             }
         } else {
-            console.log('사용 가능한 함수들:', Object.keys(api));
         }
     } catch (error) {
         console.error('좋아요 처리 오류:', error);

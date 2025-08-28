@@ -3,14 +3,12 @@ import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getChannelBoardDetail, getBoardCommentsPagedSorted, createBoardComment, BoardCommentLikes } from '@/api/channel'
 
-// props 및 라우터
 const route = useRoute()
 const postId = route.params.id
 
-// 반응형 데이터
 const loading = ref(false)
-const newCommentText = ref('') // 댓글 작성 텍스트
-const isCommentFocused = ref(false) // 댓글 입력 필드 포커스 상태
+const newCommentText = ref('')
+const isCommentFocused = ref(false)
 const likingComments = ref(new Set())
 
 const handleCommentLike = async (commentIdx) => {
@@ -40,7 +38,6 @@ const handleCommentLike = async (commentIdx) => {
     }
 }
 
-// 게시글 데이터 (reactive 사용)
 const post = reactive({
     idx: 0,
     title: '',
@@ -49,14 +46,12 @@ const post = reactive({
     commentCount: 0
 })
 
-// 무한 스크롤 관련 상태
 const comments = ref([])
-const sortBy = ref('oldest') // 댓글 정렬 기준
-const showSortDropdown = ref(false) // 드롭다운 표시 여부
+const sortBy = ref('oldest')
+const showSortDropdown = ref(false)
 const sortDropdownRef = ref(null) 
 const totalCommentCount = ref(0)
 
-// 무한 스크롤 상태
 const currentPage = ref(0)
 const hasNext = ref(true)
 const isLoadingMore = ref(false)
@@ -64,14 +59,11 @@ const pageSize = 10
 const observerTarget = ref(null)
 let observer = null
 
-// 게시글 상세 조회
-
 const fetchPostDetail = async () => {
     loading.value = true
     try {
         const response = await getChannelBoardDetail(postId)
         
-        // API 응답을 reactive 객체에 할당
         Object.assign(post, {
             idx: response.idx || 0,
             title: response.title || '제목 없음',
@@ -80,12 +72,10 @@ const fetchPostDetail = async () => {
             commentCount: response.commentCount || 0
         })
         
-        // 댓글 목록 조회 (첫 페이지)
         await loadComments(0, true)
         
     } catch (error) {
         console.error('게시글 로딩 실패:', error)
-        // 에러 시 기본값 설정
         Object.assign(post, {
             idx: 0,
             title: '게시글을 불러올 수 없습니다',
@@ -98,9 +88,6 @@ const fetchPostDetail = async () => {
     }
 }
 
-
-// 댓글 로드 (무한 스크롤) - 추가 로딩 시에만 딜레이
-
 const loadComments = async (page = 0, reset = false) => {
     if (isLoadingMore.value && !reset) return
     
@@ -109,7 +96,7 @@ const loadComments = async (page = 0, reset = false) => {
         console.log(`댓글 로드: page=${page}, reset=${reset}, sort=${sortBy.value}`)
         
         if (page > 0 && !reset) { 
-            await new Promise(resolve => setTimeout(resolve, 2000))  // 2초로 변경
+            await new Promise(resolve => setTimeout(resolve, 2000))
         }
         
         const response = await getBoardCommentsPagedSorted(postId, page, pageSize, sortBy.value)
@@ -151,14 +138,13 @@ const loadComments = async (page = 0, reset = false) => {
         isLoadingMore.value = false
     }
 }
-// 다음 페이지 로드
+
 const loadMoreComments = () => {
     if (hasNext.value && !isLoadingMore.value) {
         loadComments(currentPage.value + 1)
     }
 }
 
-// Intersection Observer 콜백
 const handleIntersection = (entries) => {
     const [entry] = entries
     if (entry.isIntersecting && hasNext.value && !isLoadingMore.value) {
@@ -167,38 +153,32 @@ const handleIntersection = (entries) => {
     }
 }
 
-// 댓글 정렬 변경
 const changeSortOrder = (newSort) => {
     console.log(`정렬 변경: ${sortBy.value} → ${newSort}`)
     sortBy.value = newSort
     showSortDropdown.value = false
     
-    // 정렬 변경 시 처음부터 다시 로드
     currentPage.value = 0
     hasNext.value = true
     loadComments(0, true)
 }
 
-// 정렬 드롭다운 토글
 const toggleSortDropdown = (event) => {
     event.stopPropagation()
     showSortDropdown.value = !showSortDropdown.value
 }
 
-// 외부 클릭 감지 함수
 const handleClickOutside = (event) => {
     if (showSortDropdown.value && sortDropdownRef.value && !sortDropdownRef.value.contains(event.target)) {
         showSortDropdown.value = false
     }
 }
 
-// 드롭다운 아이템 클릭 시 이벤트 처리
 const handleDropdownItemClick = (event, newSort) => {
     event.stopPropagation()
     changeSortOrder(newSort)
 }
 
-// 댓글 입력 필드 포커스/블러 처리
 const handleCommentFocus = () => {
     isCommentFocused.value = true
 }
@@ -209,13 +189,11 @@ const handleCommentBlur = () => {
     }
 }
 
-// 댓글 작성 취소
 const cancelComment = () => {
     newCommentText.value = ''
     isCommentFocused.value = false
 }
 
-// 댓글 작성 제출
 const submitComment = async () => {
     if (!newCommentText.value.trim()) {
         alert('댓글 내용을 입력해주세요.')
@@ -229,7 +207,6 @@ const submitComment = async () => {
             newCommentText.value = ''
             isCommentFocused.value = false
             
-            // 댓글 작성 후 첫 페이지부터 새로고침
             currentPage.value = 0
             hasNext.value = true
             await loadComments(0, true)
@@ -242,23 +219,19 @@ const submitComment = async () => {
     }
 }
 
-// 댓글 삭제 후 새로고침
 const handleCommentDeleted = () => {
     currentPage.value = 0
     hasNext.value = true
     loadComments(0, true)
 }
 
-// 컴포넌트 마운트
 onMounted(() => {
     fetchPostDetail()
     
-    // 외부 클릭 이벤트 리스너 추가
     setTimeout(() => {
         document.addEventListener('click', handleClickOutside)
     }, 100)
     
-    // Intersection Observer 설정
     setTimeout(() => {
         if (observerTarget.value) {
             observer = new IntersectionObserver(handleIntersection, {
@@ -270,7 +243,6 @@ onMounted(() => {
     }, 500)
 })
 
-// 컴포넌트 언마운트 시 이벤트 리스너 제거
 onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside)
     if (observer) {
@@ -281,14 +253,11 @@ onUnmounted(() => {
 
 <template>
   <div class="post-detail-container">
-    <!-- 로딩 상태 -->
     <div v-if="loading" class="loading">
       게시글을 불러오는 중...
     </div>
     
-    <!-- 게시글 내용 -->
     <div v-else class="community-post">
-      <!-- 게시글 헤더 -->
       <div class="post-header">
         <div class="post-author">
           <img src="https://via.placeholder.com/40" alt="채널" class="author-avatar">
@@ -300,18 +269,14 @@ onUnmounted(() => {
         <h1 class="post-title">{{ post.title }}</h1>
       </div>
       
-      <!-- 게시글 본문 -->
       <div class="post-content">
         <p>{{ post.contents }}</p>
       </div>
       
-      <!-- 댓글 섹션 -->
       <div class="comments-section">
-        <!-- 댓글 헤더 -->
         <div class="comments-header">
           <h3 class="comments-title">댓글 {{ totalCommentCount  }}개</h3>
           
-          <!-- 정렬 드롭다운 -->
           <div class="sort-dropdown" ref="sortDropdownRef">
             <button class="sort-button" @click="toggleSortDropdown">
               <i class="fas fa-sort"></i>
@@ -338,7 +303,6 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- 댓글 작성 폼 -->
         <div class="comment-form">
           <div class="comment-input-container">
             <img src="https://via.placeholder.com/40" alt="내 프로필" class="comment-user-avatar">
@@ -353,7 +317,6 @@ onUnmounted(() => {
                 rows="1"
               ></textarea>
               
-              <!-- 댓글 작성 버튼들 (포커스 시에만 표시) -->
               <div v-if="isCommentFocused || newCommentText.trim()" class="comment-actions">
                 <button class="comment-cancel-btn" @click="cancelComment">취소</button>
                 <button 
@@ -368,13 +331,11 @@ onUnmounted(() => {
           </div>
         </div>
         
-        <!-- 댓글 목록 -->
         <div class="comments-list">
           <div v-if="comments.length === 0 && !isLoadingMore" class="no-comments">
             첫 번째 댓글을 작성해보세요!
           </div>
           
-          <!-- 댓글 아이템들 -->
           <div 
             v-for="comment in comments" 
             :key="comment.idx"
@@ -387,43 +348,36 @@ onUnmounted(() => {
               <div class="comment-header">
                 <span class="comment-author-name">익명</span>
                 <span class="comment-time">{{ comment.createdAt }}</span>
-                <!-- 수정됨 표시 -->
                 <span v-if="comment.isModified" class="modified-badge">
-                  <!-- <i class="fas fa-edit"></i> -->
-                  <!-- 수정됨 -->
                 </span>
               </div>
               <div class="comment-content">
                 {{ comment.content || '댓글 내용이 없습니다' }}
               </div>
-              <!-- 수정 시간 표시 (수정된 댓글인 경우) -->
               <div v-if="comment.isModified" class="comment-modified-info">
-                <!-- 수정된 시간: {{ comment.updatedAt }} -->
               </div>
-              <!-- 댓글 액션 버튼들 -->
               <div class="comment-actions-bar">
                 <button 
-    class="comment-action-btn like-btn"
-    :class="{ 
-        'liked': comment.isLikes,
-        'processing': likingComments.has(comment.idx)
-    }"
-    :disabled="likingComments.has(comment.idx)"
-    @click="handleCommentLike(comment.idx)"
->
-    <i 
-        class="fas fa-thumbs-up" 
-        :style="{ color: comment.isLikes ? '#3b82f6' : '#888' }"
-    ></i>
-    <span v-if="comment.likesCount > 0">{{ comment.likesCount }}</span>
-</button>
+                  class="comment-action-btn like-btn"
+                  :class="{ 
+                      'liked': comment.isLikes,
+                      'processing': likingComments.has(comment.idx)
+                  }"
+                  :disabled="likingComments.has(comment.idx)"
+                  @click="handleCommentLike(comment.idx)"
+                >
+                  <i 
+                      class="fas fa-thumbs-up" 
+                      :style="{ color: comment.isLikes ? '#ff3040' : '#888' }"
+                  ></i>
+                  <span v-if="comment.likesCount > 0">{{ comment.likesCount }}</span>
+                </button>
                 
                 <button class="comment-action-btn">답글</button>
               </div>
             </div>
           </div>
           
-          <!-- 무한 스크롤 트리거 -->
           <div 
             v-if="hasNext" 
             ref="observerTarget" 
@@ -435,7 +389,6 @@ onUnmounted(() => {
             </div>
           </div>
           
-          <!-- 모든 댓글 로드 완료 -->
           <div v-if="!hasNext && comments.length > 0" class="comments-end">
             모든 댓글을 불러왔습니다.
           </div>
@@ -538,7 +491,6 @@ onUnmounted(() => {
   margin: 0;
 }
 
-/* 정렬 드롭다운 스타일 */
 .sort-dropdown {
   position: relative;
 }
@@ -590,11 +542,9 @@ onUnmounted(() => {
   color: white;
 }
 
-/* 댓글 작성 폼 스타일 (유튜브 스타일) */
 .comment-form {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
- 
 }
 
 .comment-input-container {
@@ -683,7 +633,6 @@ onUnmounted(() => {
   background-color: #2563eb;
 }
 
-/* 댓글 목록 스타일 */
 .comments-list {
   display: flex;
   flex-direction: column;
@@ -735,7 +684,6 @@ onUnmounted(() => {
   color: #888;
 }
 
-/* 수정됨 배지 스타일 */
 .modified-badge {
   display: flex;
   align-items: center;
@@ -759,7 +707,6 @@ onUnmounted(() => {
   font-size: 0.875rem;
 }
 
-/* 수정 시간 정보 스타일 */
 .comment-modified-info {
   font-size: 0.7rem;
   color: #888;
@@ -796,7 +743,6 @@ onUnmounted(() => {
   font-size: 0.75rem;
 }
 
-/* 무한 스크롤 관련 스타일 */
 .loading-trigger {
   height: 80px;
   display: flex;

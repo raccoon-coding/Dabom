@@ -1,5 +1,4 @@
 <script>
-import { onMounted, reactive } from 'vue'  
 import api from '@/api/channel'
 
 export default {
@@ -7,40 +6,34 @@ export default {
   props: {
     currentSection: String
   },
-  setup() {  
-    
-    const channelInfoForm = reactive({
-      id: "12345",
-      name: '',
-      content: '',
-      image: [],
-      banner: [],
-      email: '',
-      sns01: '',
-      sns02: ''
-    })
-
-    // 저장 이벤트 함수
-    const onSubmit = async() => {
-      const res = await api.updateChannelInfo(channelInfoForm)
-      console.log(res)
-      Object.assign(channelInfoForm, res)
-      alert('저장되었습니다!')
-    }
-
-    onMounted(async () => {
-      const result = await api.getChannelInfo()
-      console.log(result)
-      channelInfoForm.id = result.data.id
-      channelInfoForm.name = result.data.name
-      channelInfoForm.content = result.data.content
-      channelInfoForm.email = result.data.email
-    })
-
-    // 템플릿에서 사용할 것들 반환
+  data() {
     return {
-      channelInfoForm,
-      onSubmit
+      channelInfoForm: {
+        id: "12345",
+        name: '',
+        content: '',
+        image: [],
+        banner: [],
+        email: '',
+        sns01: '',
+        sns02: ''
+      }
+    }
+  },
+  async mounted() {
+    const result = await api.getChannelInfo()
+    console.log(result)
+    this.channelInfoForm.id = result.data.id
+    this.channelInfoForm.name = result.data.name
+    this.channelInfoForm.content = result.data.content
+    this.channelInfoForm.email = result.data.email
+  },
+  methods: {
+    async onSubmit() {
+      const res = await api.updateChannelInfo(this.channelInfoForm)
+      console.log(res)
+      Object.assign(this.channelInfoForm, res)
+      alert('저장되었습니다!')
     }
   }
 }

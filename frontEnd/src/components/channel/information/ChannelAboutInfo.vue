@@ -1,49 +1,40 @@
 <script>
-import ChannelAboutStats from './ChannelAboutStats.vue'
-import { onMounted, reactive } from 'vue'  
 import api from '@/api/channel'
 
 export default {
-  name: 'ChannelAbout',
-  components: {
-    ChannelAboutStats
-  },
-  setup() {  
-    // 채널 정보 데이터 선언
-    const channelInfo = reactive({
-      id: "",
-      name: '크리에이티브 채널',
-      content: '작성된 내용이 없습니다.',
-      image: '',
-      email: 'creative@dabom.com',
-      sns01: '',
-      sns02: '',
-      website: 'null'
-    })
-
-    // 채널 정보 불러오기
-    onMounted(async () => {
-      try {
-        const result = await api.getChannelInfo()
-        console.log('채널 정보:', result)
-        
-        // 서버 데이터로 업데이트 (기본값이 있으면 유지)
-        channelInfo.id = result.data.id || channelInfo.id
-        channelInfo.name = result.data.name || channelInfo.name
-        channelInfo.content = result.data.content || channelInfo.content 
-        channelInfo.email = result.data.email || channelInfo.email
-        channelInfo.image = result.data.image || channelInfo.image
-        channelInfo.sns01 = result.data.sns01 || channelInfo.sns01
-        channelInfo.sns02 = result.data.sns02 || channelInfo.sns02
-        channelInfo.website = result.data.website || channelInfo.website
-      } catch (error) {
-        console.error('채널 정보 불러오기 실패:', error)
-        // 에러 시 기본값 유지
-      }
-    })
-
+  
+  
+  data() {
     return {
-      channelInfo
+      channelInfo: {
+        id: "",
+        name: '크리에이티브 채널',
+        content: '작성된 내용이 없습니다.',
+        image: '',
+        email: 'creative@dabom.com',
+        sns01: '',
+        sns02: '',
+        website: 'null'
+      }
+    }
+  },
+  async mounted() {
+    try {
+      const result = await api.getChannelInfo()
+      console.log('채널 정보:', result)
+      
+      // 서버 데이터로 업데이트 (기본값이 있으면 유지)
+      this.channelInfo.id = result.data.id || this.channelInfo.id
+      this.channelInfo.name = result.data.name || this.channelInfo.name
+      this.channelInfo.content = result.data.content || this.channelInfo.content 
+      this.channelInfo.email = result.data.email || this.channelInfo.email
+      this.channelInfo.image = result.data.image || this.channelInfo.image
+      this.channelInfo.sns01 = result.data.sns01 || this.channelInfo.sns01
+      this.channelInfo.sns02 = result.data.sns02 || this.channelInfo.sns02
+      this.channelInfo.website = result.data.website || this.channelInfo.website
+    } catch (error) {
+      console.error('채널 정보 불러오기 실패:', error)
+      // 에러 시 기본값 유지
     }
   }
 }
@@ -99,11 +90,7 @@ export default {
     </div>
   </div>
   
-  <!-- 통계 섹션 (주석 해제 시 사용) -->
-  <!-- <div class="stat-div">
-    <h2 class="stat">통계</h2>
-    <ChannelAboutStats />
-  </div> -->
+ 
 </template>
 
 <style scoped>

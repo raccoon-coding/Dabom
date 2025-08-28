@@ -1,9 +1,9 @@
 <script>
   import Sidebar from '@/components/channel/MyChannelSidbar.vue';
   import VideoSection from '@/components/channel/video-management/VideoSection.vue';
-  import PlaylistSection from '@/components/channel/PlaylistSection.vue';
-  import CommunitySection from '@/components/channel/CommunitySection.vue';
-  import InfoSection from '@/components/channel/InfoSection.vue';
+  import PlaylistSection from '@/components/channel/palylist-management/PlaylistSection.vue';
+  import CommunitySection from '@/components/channel/community-management/CommunitySection.vue';
+  import InfoSection from '@/components/channel/information-management/InfoSection.vue';
   
   export default {
     name: 'MyChannel',

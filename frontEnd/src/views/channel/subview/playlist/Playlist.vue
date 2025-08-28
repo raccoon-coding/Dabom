@@ -1,5 +1,4 @@
 <script setup>
-import SidebarContainer from '@/components/sidebar/SidebarContainer.vue';
 import VideoCardComp from '@/components/videos/VideoCardComp.vue';
 import { onMounted, computed, reactive } from 'vue';
 import api from '@/api/playlist';
@@ -29,7 +28,7 @@ onMounted(async () => {
 
 <template>
     <div class="layout-wrap">
-        <SidebarContainer />
+        
         <div class="main-wrap">
             <div class="playlist-details">
                 <!-- Display playlist details here if needed -->
