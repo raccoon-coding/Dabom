@@ -24,14 +24,10 @@ const clickLikeBtn = async (idx) => {
     
     try {
         isProcessing.value = true;
-        console.log('클릭 이벤트 실행됨, idx:', idx);
-        console.log('api 객체:', api);
-        console.log('ChannelBoardLikes 함수 존재 여부:', typeof api.ChannelBoardLikes);
+        
         
         if (typeof api.ChannelBoardLikes === 'function') {
-            console.log('API 함수 호출 시작');
             const data = await api.ChannelBoardLikes(idx);
-            console.log('API 응답:', data);
             
             if (data) {
                 localPost.isLikes = !localPost.isLikes;
@@ -42,7 +38,6 @@ const clickLikeBtn = async (idx) => {
                 }
             }
         } else {
-            console.error('ChannelBoardLikes 함수가 존재하지 않습니다');
             console.log('사용 가능한 함수들:', Object.keys(api));
         }
     } catch (error) {
