@@ -30,9 +30,7 @@ const joinRoom = async () => {
   }
 
   const response = await api.joinTogetherWithCode(inviteCode.value)
-  console.log(response)
   if(response.code !== 200) {
-    console.error(response.message)
     errorMessage.value = response.message
     showErrorModal.value = true
   } else {

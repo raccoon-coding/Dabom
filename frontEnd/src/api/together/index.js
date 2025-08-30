@@ -16,6 +16,21 @@ export const getRandomTogetherList = async () => {
     return data
 };
 
+export const getRandomTogetherListTest = async (page, size) => {
+    const requestUrl = `/api/together?page=${page}&size=${size}`
+    let data = {}
+
+    await api.get(requestUrl)
+        .then((response) => {
+            console.log(response)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+};
+
 export const getTogetherListInMember = async () => {
   const requestUrl = `/api/together/member`
   let data = {}
@@ -290,7 +305,7 @@ export const isMaster = async (togetherIdx) => {
   return data
 };
 
-export default { getRandomTogetherList, getTogetherListInMember, searchTogether, getMembersByMaster, getTogetherInfo,
+export default { getRandomTogetherList, getTogetherListInMember, searchTogether, getMembersByMaster, getTogetherInfo, getRandomTogetherListTest,
   joinTogether, joinOpenTogether, joinTogetherWithCode, saveTogether, leaveTogether, deleteTogether, isMaster,
     changeTogetherTitle, changeTogetherMaxMember, changeTogetherIsOpen, changeTogetherVideo, kickTogetherMember,
   getTogetherListInMaster}
