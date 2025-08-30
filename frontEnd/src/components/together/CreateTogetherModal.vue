@@ -1,6 +1,7 @@
 <script setup>
-import {reactive} from 'vue'
+import {nextTick, reactive, ref} from 'vue'
 import {useRouter} from "vue-router";
+import Modal from '@/components/main/Modal.vue'
 import api from '@/api/together'
 
 const router = useRouter()
@@ -10,17 +11,21 @@ const props = defineProps({
     default: false
   }
 })
-// Events 정의[17][20]
 const emit = defineEmits(['close'])
-
 const roomBody = reactive({
   title: "",
   videoUrl: "",
   maxMemberNumber: "",
   isOpen: ""
 })
+const showErrorModal = ref(false)
+const errorMessage = ref('')
+const errorTitle = 'Together 생성 에러'
 
-// 모달 닫기 함수
+const closeErrorModal = () => {
+  showErrorModal.value = false
+}
+
 const closeModal = () => {
   emit('close')
 }
@@ -28,7 +33,7 @@ const closeModal = () => {
 // 배경 클릭시 모달 닫기
 const handleBackdropClick = (event) => {
   if (event.target === event.currentTarget) {
-    handleClose()
+    closeModal()
   }
 }
 
@@ -37,14 +42,22 @@ const saveTogetherRoom = async () => {
   if(res.code === 200) {
     return res.data.togetherIdx;
   }
+  await nextTick()
+  errorMessage.value = res.message
+  showErrorModal.value = true
+  return null;
 }
 
 // 방 만들기 버튼 클릭 시 데이터 전송
 const sendApi = async () => {
   let idx = await saveTogetherRoom()
-  alert("방을 생성했습니다.")
-  closeModal()
-  router.push({ name: 'togetherRoom', params: {id: idx}})
+  if(!showErrorModal.value) {
+    alert("방을 생성했습니다.")
+    closeModal()
+    router.push({ name: 'togetherRoom', params: {id: idx}})
+  }
+  console.log(errorMessage.value)
+  console.log(showErrorModal.value)
 }
 </script>
 
@@ -64,8 +77,8 @@ const sendApi = async () => {
           <i class="fas fa-times"></i>
         </button>
       </div>
-
-      <form class="create-room-form" @submit.prevent="closeModal">
+      <Modal v-if="showErrorModal" @confirm="closeErrorModal" :title="errorTitle" :message="errorMessage"  />
+      <form class="create-room-form" @submit.prevent="sendApi">
         <!-- 방 이름 입력 -->
         <div class="form-group">
           <label for="roomName">방 이름 *</label>
@@ -129,7 +142,7 @@ const sendApi = async () => {
         <!-- 모달 푸터(버튼) -->
         <div class="modal-footer">
           <button type="button" class="btn-cancel" @click="closeModal">취소</button>
-          <button type="submit" class="btn-create" @click="sendApi">
+          <button type="submit" class="btn-create">
             <i class="fas fa-plus"></i>
             방 만들기
           </button>

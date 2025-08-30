@@ -5,12 +5,14 @@ import MyTogetherCard from '@/components/together/MyTogetherCard.vue'
 import TogetherOptionCard from '@/components/together/TogetherOptionCard.vue'
 import api from '@/api/together'
 
-import { reactive, onMounted } from 'vue'
+import {reactive, onMounted, onUnmounted} from 'vue'
 
 const togethers = reactive({
   randomTogethers: [],
   masterTogethers: [],
-  joinTogethers: []
+  joinTogethers: [],
+  currentPage: 0,
+  notTogetherData: false
 })
 
 const getMyTogethers = async () => {
@@ -22,6 +24,39 @@ const getMyTogethers = async () => {
   }
 }
 
+const loadMoreTogethers = async () => {
+  if(!togethers.notTogetherData) {
+    const nextPage = togethers.currentPage + 1;
+    await getTogethers(nextPage, true);
+  }
+}
+
+// 스크롤 이벤트 핸들러
+const handleScroll = () => {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const windowHeight = window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+
+  // 페이지 하단에서 200px 전에 미리 로드
+  const threshold = 200;
+  const shouldLoadMore = scrollTop + windowHeight >= documentHeight - threshold;
+
+  if (shouldLoadMore) {
+    loadMoreTogethers();
+  }
+}
+
+// 스크롤 이벤트 스로틀링 (성능 최적화)
+let scrollTimer = null;
+const throttledScroll = () => {
+  if (scrollTimer) return;
+
+  scrollTimer = setTimeout(() => {
+    handleScroll();
+    scrollTimer = null;
+  }, 100); // 100ms마다 실행
+}
+
 const getJoinTogethers = async () => {
   const res = await api.getTogetherListInMember()
   if (res.code === 200) {
@@ -31,19 +66,37 @@ const getJoinTogethers = async () => {
   }
 }
 
-const getTogethers = async () => {
-  const res = await api.getRandomTogetherList()
-  if (res.code === 200) {
-    togethers.randomTogethers.push(...res.data.togethers)
-  } else {
-    console.log('error')
+const getTogethers = async (page = 0, append = false) => {
+  const res = await api.getRandomTogetherListTest(page, 3)
+  if(res.data.togethers.length < 3) {
+    togethers.notTogetherData = true;
   }
+  if (append) {
+    // 무한 스크롤로 추가 데이터 로드
+    togethers.randomTogethers = [...togethers.randomTogethers, ...res.data.togethers];
+  } else {
+    // 초기 데이터 로드 또는 새로운 검색
+    togethers.randomTogethers = res.data.togethers;
+  }
+  togethers.currentPage = page;
 }
 
 onMounted(() => {
   getTogethers()
   getMyTogethers()
   getJoinTogethers()
+  // 스크롤 이벤트 리스너 등록
+  window.addEventListener('scroll', throttledScroll, { passive: true });
+})
+
+onUnmounted(() => {
+  // 스크롤 이벤트 리스너 제거
+  window.removeEventListener('scroll', throttledScroll);
+
+  // 타이머 정리
+  if (scrollTimer) {
+    clearTimeout(scrollTimer);
+  }
 })
 </script>
 
