@@ -239,7 +239,7 @@ watch(() => props.isActive, (newVal) => {
   <section id="section-community" class="dashboard-section" :class="{ active: isActive }">
     <div class="community-header">
       <h2>커뮤니티 게시글 관리</h2>
-      
+
       <!-- 정렬 드롭다운 컴포넌트 -->
       <SortDropdown 
         :sortBy="sortBy" 

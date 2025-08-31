@@ -1,64 +1,8 @@
 <script setup>
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import VideoListComp from "@/components/channel/video-management/VideoListComp.vue";
 import VideoUploadModal from "@/components/channel/video-management/VideoUploadModal.vue";
-
-const videos = ref([
-  {
-    videoId: 1,
-    title: '프로젝트 소개 영상',
-    duration: '2:00',
-    description: '아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어',
-    rating: 4.2,
-    views: '1.2K',
-    isVisibility: true,
-    uploadedAt: 5,
-    channel: {
-      name: '개발팀 채널'
-    },
-    // 추가 관리용 데이터
-    fileName: '프로젝트 소개 영상.mp4',
-    thumbnail: '/thumbnails/video1.jpg',
-    size: 15728640,
-    uploadDate: new Date('2024-01-15')
-  },
-  {
-    videoId: 2,
-    title: '튜토리얼 영상',
-    description: '아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어아에이오우어',
-    duration: '5:00',
-    rating: 4.8,
-    views: '2.5K',
-    isVisibility: false,
-    uploadedAt: 10,
-    channel: {
-      name: '교육팀 채널'
-    },
-    // 추가 관리용 데이터
-    fileName: '튜토리얼 영상.mp4',
-    thumbnail: '/thumbnails/video2.jpg',
-    size: 52428800,
-    uploadDate: new Date('2024-01-10')
-  },
-  {
-    videoId: 3,
-    title: '그냥 개쩌는 영상',
-    description: '미쳤음',
-    duration: '12:34',
-    rating: 5,
-    views: '65.5M',
-    isVisibility: false,
-    uploadedAt: 10,
-    channel: {
-      name: '교육팀 채널'
-    },
-    // 추가 관리용 데이터
-    fileName: '튜토리얼 영상.mp4',
-    thumbnail: '/thumbnails/video2.jpg',
-    size: 52428800,
-    uploadDate: new Date('2024-01-10')
-  }
-])
+import api from "@/api/video/index.js"
 
 const props = defineProps({
   isActive: {
@@ -71,52 +15,8 @@ const uploadFiles = ref([])
 const isUploading = ref(false)
 const uploadProgress = ref(0)
 
-// 업로드 처리
-const uploadVideos = async () => {
-  if (!uploadFiles.value.length) return
+const videos = ref([])
 
-  isUploading.value = true
-
-  try {
-    for (let i = 0; i < uploadFiles.value.length; i++) {
-      const file = uploadFiles.value[i]
-
-      // 실제 업로드 API 호출
-      await uploadSingleVideo(file)
-
-      // 진행률 업데이트
-      uploadProgress.value = Math.round(((i + 1) / uploadFiles.value.length) * 100)
-    }
-
-    // 업로드 완료 후 리스트 새로고침
-    await refreshVideoList()
-    closeUploadModal()
-
-  } catch (error) {
-    console.error('업로드 실패:', error)
-    alert('업로드 중 오류가 발생했습니다.')
-  } finally {
-    isUploading.value = false
-  }
-}
-
-// 비디오 액션들
-const playVideo = (video) => {
-  console.log('비디오 재생:', video)
-  // 비디오 플레이어 모달 또는 새 탭에서 재생
-}
-
-const editVideo = (video) => {
-  console.log('비디오 편집:', video)
-  // 편집 모달 열기
-}
-
-const deleteVideo = (videoId) => {
-  if (confirm('정말로 이 비디오를 삭제하시겠습니까?')) {
-    videos.value = videos.value.filter(v => v.id !== videoId)
-    // 실제로는 API 호출: await axios.delete(`/api/videos/${videoId}`)
-  }
-}
 // 모달 제어
 const openUploadModal = () => {
   showUploadModal.value = true
@@ -129,31 +29,21 @@ const closeUploadModal = () => {
   isUploading.value = false
 }
 
-const uploadSingleVideo = async (file) => {
-  // 실제 API 호출 로직
-  const formData = new FormData()
-  formData.append('video', file)
-
-  // 예시: axios 사용
-  // return await axios.post('/api/videos/upload', formData, {
-  //   headers: { 'Content-Type': 'multipart/form-data' }
-  // })
-
-  // 임시 지연 (실제로는 제거)
-  return new Promise(resolve => setTimeout(resolve, 100000))
+const getVideoList = async () => {
+  const response = await api.getMyVideoList()
+  console.log("videos >>", response)
+  videos.value = response.data;
 }
 
-const refreshVideoList = async () => {
-  // 비디오 리스트 새로고침 API 호출
-  // const response = await axios.get('/api/videos')
-  // videos.value = response.data
-}
-
-
+onMounted(() => {
+  getVideoList();
+})
 </script>
 
 <template>
   <section id="section-videos" class="dashboard-section" :class="{ active: isActive }">
+    <VideoUploadModal :visible="showUploadModal" @close="closeUploadModal"/>
+
     <!-- 헤더 영역 -->
     <div class="section-header">
       <h2>비디오 관리</h2>
@@ -163,17 +53,24 @@ const refreshVideoList = async () => {
       </button>
     </div>
 
-    <VideoListComp :videos="videos"/>
-    <VideoUploadModal :visible="showUploadModal" @close="closeUploadModal"/>
+    <VideoListComp v-if="videos.length > 0" :videos="videos"/>
+    <div v-else class="empty-state">
+      <i class="fas fa-file-video"></i>
+      <h3>업로드된 비디오가 없습니다</h3>
+      <p>첫 번째 비디오를 업로드해보세요</p>
+      <button @click="openUploadModal" class="upload-btn-empty">
+        비디오 업로드
+      </button>
+    </div>
+
   </section>
 </template>
-
 
 
 <style scoped>
 .dashboard-section {
   padding: 2rem 1rem;
-  opacity: 0;
+  opacity: 1 !important;
   transform: translateY(20px);
   transition: var(--transition);
   background-color: var(--background-color);
@@ -442,6 +339,7 @@ const refreshVideoList = async () => {
   font-size: 0.875rem;
 }
 
+/*
 .selected-files {
   text-align: left;
 }
@@ -462,12 +360,14 @@ const refreshVideoList = async () => {
   align-items: center;
   gap: 0.75rem;
 }
+*/
 
 .file-info i {
   font-size: 24px;
   color: var(--primary-color);
 }
 
+/*
 .file-name {
   margin: 0;
   font-size: 0.875rem;
@@ -511,6 +411,7 @@ const refreshVideoList = async () => {
   background: var(--primary-color);
   transition: width 0.3s;
 }
+*/
 
 .upload-progress p {
   color: var(--text-secondary);
@@ -518,6 +419,7 @@ const refreshVideoList = async () => {
   text-align: center;
 }
 
+/*
 .modal-footer {
   padding: 1.5rem;
   border-top: 1px solid var(--border-color);
@@ -561,6 +463,48 @@ const refreshVideoList = async () => {
   border-color: var(--border-color);
   cursor: not-allowed;
   color: var(--text-secondary);
+}
+*/
+
+/* 빈 상태 */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-state i {
+  font-size: 64px;
+  margin-bottom: 1rem;
+  opacity: 0.3;
+  color: var(--text-secondary);
+}
+
+.empty-state h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.empty-state p {
+  margin: 0 0 1.5rem 0;
+}
+
+.upload-btn-empty {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.upload-btn-empty:hover {
+  background: #ff3838;
+  transform: translateY(-2px);
 }
 
 /* 아이콘 폰트 대체 (실제로는 Font Awesome 등 사용) */

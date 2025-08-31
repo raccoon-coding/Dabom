@@ -2,7 +2,7 @@
 import TogetherMasterModal from '@/components/together_room/TogetherMasterModal.vue'
 import TogetherRoomChat from '@/components/together_room/TogetherRoomChat.vue'
 import TogetherRoomNavigator from '@/components/together_room/TogetherRoomNavigator.vue'
-import Video_Player_Component from '@/components/Video_Player/Video_Player_Component.vue'
+import Video_Player_Component from '@/components/video-player/Video_Player_Component.vue'
 
 import Stomp from 'stompjs'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
