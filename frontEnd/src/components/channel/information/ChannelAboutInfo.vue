@@ -2,8 +2,6 @@
 import api from '@/api/channel'
 
 export default {
-  
-  
   data() {
     return {
       channelInfo: {

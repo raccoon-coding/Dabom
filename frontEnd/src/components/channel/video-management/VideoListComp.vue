@@ -1,7 +1,7 @@
 <script setup>
 const props = defineProps(['videos'])
+console.log("아 씨발 너무짜증난다 진짜2")
 
-// 유틸리티 함수들
 const formatDate = (dateString) => {
   if (!dateString) return ''
   try {
@@ -11,29 +11,16 @@ const formatDate = (dateString) => {
     return dateString
   }
 }
-
-const formatNumber = (num) => {
-  if (typeof num !== 'number') return ''
-  if (num === 0) return '0'
-
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + 'M'
-  } else if (num >= 1000) {
-    return (num / 1000).toFixed(1) + 'K'
-  }
-  return num.toLocaleString()
-}
-
 </script>
 
 <template>
-  <div v-if="videos.length > 0">
+  <div>
     <table class="video-table">
       <thead>
       <tr>
         <th>동영상</th>
         <th>제목</th>
-        <th>재생시간</th>
+        <!--        <th>재생시간</th>-->
         <th>조회수</th>
         <th>평점</th>
         <th>상태</th>
@@ -61,14 +48,14 @@ const formatNumber = (num) => {
           </div>
         </td>
 
-        <td class="duration-cell">{{ video.duration }}</td>
+        <!--        <td class="duration-cell">{{ video.duration }}</td>-->
 
         <td class="views-cell">{{ video.views }}</td>
 
         <td class="rating-cell">
           <div class="rating">
             <i class="icon-star"></i>
-            {{ video.rating }}
+            {{ video.averageScore }}
           </div>
         </td>
 
@@ -78,7 +65,7 @@ const formatNumber = (num) => {
           </span>
         </td>
 
-        <td class="date-cell">{{ formatDate(video.uploadDate) }}</td>
+        <td class="date-cell">{{ formatDate(video.uploadedAt) }}</td>
 
         <td class="actions-cell">
           <div class="action-buttons">
@@ -95,16 +82,6 @@ const formatNumber = (num) => {
       </tbody>
     </table>
   </div>
-  <!-- 빈 상태 -->
-  <div v-else class="empty-state">
-    <i class="fas fa-file-video"></i>
-    <h3>업로드된 비디오가 없습니다</h3>
-    <p>첫 번째 비디오를 업로드해보세요</p>
-    <button @click="openUploadModal" class="upload-btn-empty">
-      비디오 업로드
-    </button>
-  </div>
-
 </template>
 
 <style scoped>
@@ -310,47 +287,6 @@ const formatNumber = (num) => {
 .action-btn.delete:hover {
   background-color: #e74c3c;
   color: white;
-}
-
-/* 빈 상태 */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-secondary);
-}
-
-.empty-state i {
-  font-size: 64px;
-  margin-bottom: 1rem;
-  opacity: 0.3;
-  color: var(--text-secondary);
-}
-
-.empty-state h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.2rem;
-  color: var(--text-primary);
-}
-
-.empty-state p {
-  margin: 0 0 1.5rem 0;
-}
-
-.upload-btn-empty {
-  padding: 0.75rem 1.5rem;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: var(--transition);
-}
-
-.upload-btn-empty:hover {
-  background: #ff3838;
-  transform: translateY(-2px);
 }
 
 /* 반응형 */

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import ChatList from '../components/Message/ChatList.vue'
-import ChatWindow from '../components/Message/ChatWindow.vue'
+import ChatList from '@/components/message/ChatList.vue'
+import ChatWindow from '@/components/message/ChatWindow.vue'
 import Login from "@/stores/useMemberStore";
 import { useRouter } from 'vue-router'
 
