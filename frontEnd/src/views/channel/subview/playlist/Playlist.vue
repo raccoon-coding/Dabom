@@ -1,57 +1,43 @@
 <script setup>
-import VideoCardComp from '@/components/videos/VideoCardComp.vue';
-import { onMounted, computed, reactive } from 'vue';
+import { onMounted, reactive } from 'vue';
 import api from '@/api/playlist';
 
-const playlist_videos = reactive({
-    music: [],
-    sports: [],
-    education: []
-});
+const playlists = reactive([]);
 
 onMounted(async () => {
-  const res = await api.playlist_show();
-    if (Array.isArray(res)) {
-        for (let playlist_video of res) {
-            if(playlist_video.style === '음악') {
-                playlist_videos.music.push(playlist_video);
-            } else if (playlist_video.style === '스포츠') {
-                playlist_videos.sports.push(playlist_video);
-            } else if (playlist_video.style === '교육') {
-                playlist_videos.education.push(playlist_video);
-            }
-        }
-    }
+  try {
+    const response = await api.getMyPlaylists();
+    // The backend returns a list of playlists. Let's put them in our reactive array.
+    playlists.splice(0, playlists.length, ...response);
+  } catch (error) {
+    console.error('Failed to load playlists:', error);
+  }
 });
+
+const getPlaylistDetails = (playlistIdx) => {
+    // We can navigate to a detailed view of the playlist later
+    console.log("Navigate to playlist with id:", playlistIdx)
+}
 
 </script>
 
 <template>
     <div class="layout-wrap">
-        
         <div class="main-wrap">
-            <div class="playlist-details">
-                <!-- Display playlist details here if needed -->
-            </div>
-
-            <div v-if="playlist_videos.music.length > 0">
-                <h2>음악</h2>
-                <div class="video-grid">
-                    <VideoCardComp v-for="video in playlist_videos.music" :key="video.id" :video="video" />
-                </div>
-            </div>
-
-            <div v-if="playlist_videos.sports.length > 0">
-                <h2>스포츠</h2>
-                <div class="video-grid">
-                    <VideoCardComp v-for="video in playlist_videos.sports" :key="video.id" :video="video" />
-                </div>
-            </div>
-
-            <div v-if="playlist_videos.education.length > 0">
-                <h2>교육</h2>
-                <div class="video-grid">
-                    <VideoCardComp v-for="video in playlist_videos.education" :key="video.id" :video="video" />
+            <h1>내 플레이리스트</h1>
+            <div class="playlists-grid">
+                <div v-for="playlist in playlists" :key="playlist.idx" class="playlist-card" @click="getPlaylistDetails(playlist.idx)">
+                    <div class="playlist-thumbnail">
+                        <!-- We can add a generic playlist icon or a thumbnail of the first video later -->
+                        <img src="https://via.placeholder.com/320x180?text=Playlist" alt="플레이리스트 썸네일">
+                        <div class="playlist-count">
+                            <i class="fas fa-list"></i>
+                            {{ playlist.videoCount }}개 동영상
+                        </div>
+                    </div>
+                    <div class="playlist-info">
+                        <h3 class="playlist-title">{{ playlist.playlistTitle }}</h3>
+                    </div>
                 </div>
             </div>
         </div>
@@ -59,6 +45,8 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+@import '@/CSS/playList.css';
+
 .layout-wrap {
     display: flex;
 }
@@ -73,19 +61,10 @@ onMounted(async () => {
     max-width: 78%;
 }
 
-.video-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
-    gap: 1rem;
-    width: 100%;
-}
-
-.playlist-details {
-    margin-bottom: 20px;
-    /* Style your playlist details section as needed */
-}
-
-h2 {
+h1 {
     color: white;
+    margin-bottom: 2rem;
 }
+
+/* Using the existing styles from playList.css */
 </style>
