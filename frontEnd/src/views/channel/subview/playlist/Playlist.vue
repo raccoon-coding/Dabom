@@ -1,34 +1,55 @@
 <script setup>
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import api from '@/api/playlist';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const playlists = reactive([]);
+const selectedPlaylist = ref(null); // To store the currently selected playlist details
+const showPlaylistVideos = ref(false); // To control visibility of video list
 
 onMounted(async () => {
   try {
     const response = await api.getMyPlaylists();
-    // The backend returns a list of playlists. Let's put them in our reactive array.
     playlists.splice(0, playlists.length, ...response);
   } catch (error) {
     console.error('Failed to load playlists:', error);
   }
 });
 
-const getPlaylistDetails = (playlistIdx) => {
-    // We can navigate to a detailed view of the playlist later
-    console.log("Navigate to playlist with id:", playlistIdx)
-}
+const getPlaylistDetails = async (playlistIdx) => {
+  try {
+    const response = await api.getPlaylistDetails(playlistIdx);
+    selectedPlaylist.value = response; // Assuming response contains playlist details including videoList
+    showPlaylistVideos.value = true; // Show the video list section
+  } catch (error) {
+    console.error('Failed to load playlist details:', error);
+  }
+};
 
+const playVideo = (videoIdx) => {
+  router.push(`/video-player/${videoIdx}`);
+};
+
+const goBackToPlaylists = () => {
+  showPlaylistVideos.value = false;
+  selectedPlaylist.value = null;
+};
 </script>
 
 <template>
     <div class="layout-wrap">
         <div class="main-wrap">
-            <h1>내 플레이리스트</h1>
-            <div class="playlists-grid">
+            <h1 v-if="!showPlaylistVideos">내 플레이리스트</h1>
+            <h1 v-else>{{ selectedPlaylist.playlistTitle }}</h1>
+
+            <button v-if="showPlaylistVideos" @click="goBackToPlaylists" class="back-button">
+                &larr; 플레이리스트 목록으로 돌아가기
+            </button>
+
+            <div class="playlists-grid" v-if="!showPlaylistVideos">
                 <div v-for="playlist in playlists" :key="playlist.idx" class="playlist-card" @click="getPlaylistDetails(playlist.idx)">
                     <div class="playlist-thumbnail">
-                        <!-- We can add a generic playlist icon or a thumbnail of the first video later -->
                         <img src="https://via.placeholder.com/320x180?text=Playlist" alt="플레이리스트 썸네일">
                         <div class="playlist-count">
                             <i class="fas fa-list"></i>
@@ -39,6 +60,19 @@ const getPlaylistDetails = (playlistIdx) => {
                         <h3 class="playlist-title">{{ playlist.playlistTitle }}</h3>
                     </div>
                 </div>
+            </div>
+
+            <div class="video-list-grid" v-if="showPlaylistVideos && selectedPlaylist">
+                <div v-for="video in selectedPlaylist.videoList" :key="video.idx" class="video-card" @click="playVideo(video.idx)">
+                    <div class="video-thumbnail">
+                        <img :src="video.thumbnailUrl || 'https://via.placeholder.com/320x180?text=Video'" :alt="video.title">
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">{{ video.title }}</h3>
+                        <p class="video-channel">{{ video.channelName }}</p>
+                    </div>
+                </div>
+                <p v-if="selectedPlaylist.videoList && selectedPlaylist.videoList.length === 0">이 플레이리스트에는 동영상이 없습니다.</p>
             </div>
         </div>
     </div>
@@ -64,6 +98,64 @@ const getPlaylistDetails = (playlistIdx) => {
 h1 {
     color: white;
     margin-bottom: 2rem;
+}
+
+.back-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+.video-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px; /* Adjust as needed */
+}
+
+.video-card {
+    background-color: #2c2c2c;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.video-card:hover {
+    transform: translateY(-5px);
+}
+
+.video-thumbnail img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.video-info {
+    padding: 10px;
+}
+
+.video-title {
+    font-size: 1.1em;
+    color: white;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-channel {
+    font-size: 0.9em;
+    color: #aaa;
 }
 
 /* Using the existing styles from playList.css */
