@@ -61,12 +61,13 @@ export const getTogetherListInMaster = async () => {
     return data
 };
 
-export const searchTogether = async (body) => {
-    const requestUrl = `/api/together/search`
+export const searchTogether = async (search, page, size) => {
+    const requestUrl = `/api/together/search?page=${page}&size=${size}&search=${search}`
+    // const requestUrl = `/api/together/search`
     let data = {}
 
     // await api.get(requestUrl, {params: searc h})
-    await api.post(requestUrl, body)
+    await api.get(requestUrl)
         .then((response) => {
             console.log(response)
             data = response.data
