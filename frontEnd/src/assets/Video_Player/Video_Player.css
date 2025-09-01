@@ -256,8 +256,9 @@
 }
 
 .current-rating {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
+    color: var(--text-primary); /* --text-secondary 대신 --text-primary 사용 */
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
 /* Video Info Section */

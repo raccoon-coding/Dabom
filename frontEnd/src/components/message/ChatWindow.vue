@@ -20,8 +20,8 @@ function handleSendMessage(messageText) {
 <template>
 <div class="chat-window" v-if="currentChat">
     <ChatHeader :chat="currentChat" />
-    <MessageList 
-      :messages="currentChat.messages"
+    <MessageList
+      :room-idx="currentChat.idx"
       :chat-avatar="currentChat.avatar"
     />
     <MessageInput @send-message="handleSendMessage" />
