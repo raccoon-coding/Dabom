@@ -1,13 +1,10 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { getComments, postComment, deleteComment } from '@/api/videocomment/'
 
-const props = defineProps({
-  videoId: {
-    type: [String, Number],
-    required: true
-  }
-})
+const route = useRoute()
+const videoId = ref(route.params.id)
 
 const commentText = ref('')
 const comments = ref([])
@@ -18,9 +15,9 @@ const pageSize = 10 // 페이지당 댓글 수
 const hasMore = ref(true) // 추가 댓글 여부
 
 const loadComments = async (reset = false) => {
-  if (!props.videoId) return; // videoId가 없으면 실행하지 않음
+  if (!videoId.value) return; // videoId가 없으면 실행하지 않음
 
-  console.log(props.videoId);
+  console.log(videoId.value);
 
   if (reset) {
     page.value = 0
@@ -37,7 +34,7 @@ const loadComments = async (reset = false) => {
       sortParam = 'likes,desc'
     }
 
-    const response = await getComments(props.videoId, {
+    const response = await getComments(videoId.value, {
       page: page.value,
       size: pageSize,
       sort: sortParam
@@ -58,9 +55,9 @@ const loadComments = async (reset = false) => {
 }
 
 const submitComment = async () => {
-  console.log('submitComment 호출됨, videoId:', props.videoId) // 디버깅용
+  console.log('submitComment 호출됨, videoId:', videoId.value) // 디버깅용
   
-  if (!props.videoId) {
+  if (!videoId.value) {
     alert('비디오 ID가 없습니다.')
     return
   }
@@ -71,8 +68,8 @@ const submitComment = async () => {
   }
   
   try {
-    console.log('postComment 호출 전, videoId:', props.videoId) // 디버깅용
-    await postComment(props.videoId, { content: commentText.value })
+    console.log('postComment 호출 전, videoId:', videoId.value) // 디버깅용
+    await postComment(videoId.value, { content: commentText.value })
     commentText.value = ''
     loadComments(true)
   } catch (error) {
@@ -101,9 +98,10 @@ const changeSortOrder = () => {
   loadComments(true)
 }
 
-// videoId가 변경될 때마다 댓글을 다시 불러오도록 설정
-watch(() => props.videoId, (newVideoId) => {
+// URL의 videoId가 변경될 때마다 댓글을 다시 불러오도록 설정
+watch(() => route.params.id, (newVideoId) => {
   if (newVideoId) {
+    videoId.value = newVideoId;
     loadComments(true);
   }
 }, { immediate: true });
