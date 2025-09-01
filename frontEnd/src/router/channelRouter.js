@@ -28,6 +28,7 @@ const channelRoutes = [
                 name: 'playlists',
                 component: playlists
             },
+
             {
                 path: 'community',
                 name: 'community',

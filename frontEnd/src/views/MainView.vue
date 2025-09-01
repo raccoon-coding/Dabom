@@ -18,10 +18,8 @@ const state = reactive({
     currentKeyword: ''
 })
 
-// 현재 검색어를 계산된 속성으로 관리
 const searchKeyword = computed(() => route.query.keyword || '');
 
-// 검색어에 따른 섹션 제목과 아이콘 설정
 const sectionTitle = computed(() => {
     return searchKeyword.value ? `"${searchKeyword.value}" 검색결과` : '인기영상';
 });
@@ -57,7 +55,6 @@ const getVideoList = async (page = 0, append = false, keyword = '') => {
         }
 
     } catch (error) {
-        console.error('비디오 목록 조회 실패:', error);
         state.error = '비디오를 불러오는데 실패했습니다.';
     } finally {
         state.loading = false;
