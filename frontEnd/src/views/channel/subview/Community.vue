@@ -1,8 +1,11 @@
 <script setup>
 import ChannelPostCard from '@/components/channel/community/ChannelPostCard.vue';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
+
 import { getChannelBoardListPaged } from '@/api/channel'; 
 
+const route = useRoute();
 const posts = ref([]);
 const loading = ref(false);
 
@@ -14,20 +17,22 @@ const pageSize = 10;
 const observerTarget = ref(null);
 let observer = null;
 
+const channelIdx = computed(() => {
+    return route.params.channelIdx ? (route.params.channelIdx) : null;
+});
+
 const loadPosts = async (page = 0, reset = false) => {
     if (isLoadingMore.value && !reset) return;
     
     isLoadingMore.value = true;
     try {
-        console.log(`게시글 로드: page=${page}, reset=${reset}`);
         
         
         if (page > 0 && !reset) {
             await new Promise(resolve => setTimeout(resolve, 800));
         }
         
-        const response = await getChannelBoardListPaged(page, pageSize, 'latest'); // 최신순
-        console.log('받은 게시글 데이터:', response);
+        const response = await getChannelBoardListPaged(page, pageSize, 'latest', channelIdx.value); // 최신순
         
         if (reset) {
             posts.value = response.content || [];
@@ -62,7 +67,6 @@ const loadMorePosts = () => {
 const handleIntersection = (entries) => {
     const [entry] = entries;
     if (entry.isIntersecting && hasNext.value && !isLoadingMore.value) {
-        console.log('Intersection 감지: 다음 페이지 로드');
         loadMorePosts();
     }
 };

@@ -4,44 +4,54 @@ import channel from "@/views/channel/ChannelMainView.vue"
 import about from "@/views/channel/subview/About.vue"
 import mychannel from "@/views/channel/MychannelMainView.vue"
 import videos from "@/views/channel/subview/video/Video_Fix.vue"
-
+import ChannelPost from "@/components/channel/community/ChannelPost.vue"
 
 const channelRoutes = [
     {
-        path: '/channel',
+        path: '/channel/:channelIdx',
         name: 'channel',
         component: channel,
+        redirect: to => ({ name: 'videos', params: to.params }),
         children: [
             {
-                path: '/channel/videos',
+                path: '',
+                name: 'channelDefault',
+                redirect: to => ({ name: 'videos', params: to.params })
+            },
+            {
+                path: 'videos',
                 name: 'videos',
-                component: videos,
+                component: videos
             },
             {
-                path: '/channel/playlists',
-                name: 'playlist',
-                component: playlist,
+                path: 'playlists',
+                name: 'playlists',
+                component: playlist
             },
             {
-                path: '/channel/community',
-                component: community,
+                path: 'community',
+                name: 'community',
+                component: community
             },
             {
-                path: '/channel/about',
-                component: about,
+                path: 'about',
+                name: 'about',
+                component: about
             },
-            {
-                path: '/channel/mychannel',
-                name: 'mychannel',
-                component: mychannel,
-            },
-
-            {
-                path: '/channel/community/:id',
-                component: () => import('@/components/channel/community/ChannelPost.vue')
-            }
         ],
     },
+    {
+        path: '/post/:id',
+        name: 'post',
+        component: ChannelPost
+    },
+
+    // 내 채널 (별도 경로)
+    {
+        path: '/mychannel',
+        name: 'mychannel',
+        component: mychannel,
+    }
 ]
 
 export default channelRoutes

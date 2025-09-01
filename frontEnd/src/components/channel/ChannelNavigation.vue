@@ -2,6 +2,13 @@
 import { useRouter } from 'vue-router';
 import { reactive } from 'vue';
 
+const props = defineProps({
+  channelIdx: {
+    type: [String, Number],
+    required: true
+  }
+});
+
 const headerActive = reactive({
   video: true,
   playlist: false,
@@ -15,7 +22,7 @@ const clickVideo = () => {
   headerActive.playlist = false;
   headerActive.community = false;
   headerActive.about = false;
-  router.push('/channel/videos')
+  router.push(`/channel/${props.channelIdx}/videos`);
 }
 
 const clickPlaylist = () => {
@@ -23,7 +30,7 @@ const clickPlaylist = () => {
   headerActive.playlist = true;
   headerActive.community = false;
   headerActive.about = false;
-  router.push('/channel/playlists')
+  router.push(`/channel/${props.channelIdx}/playlists`);
 }
 
 const clickCommunity = () => {
@@ -31,7 +38,7 @@ const clickCommunity = () => {
   headerActive.playlist = false;
   headerActive.community = true;
   headerActive.about = false;
-  router.push('/channel/community')
+  router.push(`/channel/${props.channelIdx}/community`); 
 }
 
 const clickAbout = () => {
@@ -39,7 +46,7 @@ const clickAbout = () => {
   headerActive.playlist = false;
   headerActive.community = false;
   headerActive.about = true;
-  router.push('/channel/about')
+  router.push(`/channel/${props.channelIdx}/about`);
 }
 </script>
 

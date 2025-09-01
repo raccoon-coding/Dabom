@@ -31,19 +31,19 @@ export const login = async (loginForm) => {
 }
 
 export const logout = async () => {
-  const requestUrl = `/api/member/logout`
-  let data = {}
+    const requestUrl = `/api/member/logout`
+    let data = {}
 
-  await api.get(requestUrl)
-    .then((response) => {
-      console.log(response)
-      console.log(response.data)
-      data = response.data
-    })
-    .catch((error) => {
-      data = error.data
-    })
-  return data
+    await api.get(requestUrl)
+        .then((response) => {
+            console.log(response)
+            console.log(response.data)
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
 }
 
 export const checkEmailExists = async (email) => {
@@ -72,5 +72,31 @@ export const checkChannelNameExists = async (channelName) => {
     return data
 };
 
+export const getCurrentMemberInfo = async () => {
+    const requestUrl = `/api/member/info`
+    let data = {}
+    await api.get(requestUrl)
+        .then((response) => {
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+}
 
-export default { signup, login, logout, checkEmailExists, checkChannelNameExists }
+export const getChannelInfoByIdx = async (channelIdx) => {
+    const requestUrl = `/api/member/info/${channelIdx}`
+    let data = {}
+    await api.get(requestUrl)
+        .then((response) => {
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+}
+
+
+export default { signup, login, logout, checkEmailExists, checkChannelNameExists, getCurrentMemberInfo, getChannelInfoByIdx }

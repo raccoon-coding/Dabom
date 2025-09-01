@@ -2,7 +2,6 @@
 import { ref, onMounted, watch, onUnmounted } from 'vue';
 import { getChannelBoardListPaged, deleteChannelBoard, updateChannelBoard, createChannelBoard } from '@/api/channel';
 
-
 import PostCard from '@/components/channel/community-management/PostCard.vue';
 import CreatePostModal from '@/components/channel/community-management/CreatePostModal.vue';
 import SortDropdown from '@/components/channel/community-management/SortDropdown.vue';
@@ -37,15 +36,12 @@ const loadPosts = async (page = 0, reset = false) => {
   
   isLoadingMore.value = true;
   try {
-    console.log(`게시글 로드: page=${page}, reset=${reset}, sort=${sortBy.value}`);
-    
     // 무한 스크롤 추가 로딩 시에만 딜레이 (첫 로딩은 즉시)
     if (page > 0 && !reset) {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
     
     const response = await getChannelBoardListPaged(page, pageSize, sortBy.value);
-    console.log('게시글 응답:', response);
     
     // 전체 게시글 개수 업데이트
     if (reset || page === 0) {
@@ -98,7 +94,6 @@ const loadMorePosts = () => {
 
 // 정렬 변경
 const handleSortChange = (newSort) => {
-  console.log(`정렬 변경: ${sortBy.value} → ${newSort}`);
   sortBy.value = newSort;
   
   // 정렬 변경 시 처음부터 다시 로드
@@ -212,13 +207,11 @@ const handleCloseModal = () => {
 
 // 댓글 관리 페이지로 이동
 const handleCommentManage = (postIdx) => {
-  console.log('댓글 관리:', postIdx);
   alert(`게시글 ${postIdx}의 댓글 관리 기능은 추후 구현 예정입니다.`);
 };
 
 // 컴포넌트 마운트
 onMounted(() => {
-  console.log('컴포넌트 마운트됨, isActive:', props.isActive);
   if (props.isActive) {
     loadPosts(0, true);
   }
@@ -226,7 +219,6 @@ onMounted(() => {
 
 // props가 변경될 때 데이터 로드
 watch(() => props.isActive, (newVal) => {
-  console.log('isActive 변경됨:', newVal);
   if (newVal) {
     currentPage.value = 0;
     hasNext.value = true;
