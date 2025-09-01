@@ -1,56 +1,68 @@
 <script setup>
-import { reactive } from 'vue'
-import api from '@/api/channel' // 실제 api 경로 맞게
+import { reactive, onMounted } from 'vue';
+import api from '@/api/playlist';
 
 const props = defineProps({
   isActive: Boolean
-})
+});
 
-const playlist = reactive([
-  {
-    id: 1,
-    thumbnail: 'https://via.placeholder.com/80x50',
-    title: 'DaBom 완전 정복',
-    content: 'DaBom 시리즈',
-    videoCount: 12,
-  },
-  
-])
+const playlists = reactive([]);
 
-// 수정(저장) 버튼 - 각 행의 수정된 값 서버로 전송
+// Fetch playlists on component mount
+const fetchPlaylists = async () => {
+  try {
+    const response = await api.getMyPlaylists();
+    playlists.splice(0, playlists.length, ...response.data);
+  } catch (error) {
+    console.error('Failed to load playlists:', error);
+    alert('플레이리스트를 불러오는데 실패했습니다.');
+  }
+};
+
+onMounted(() => {
+  fetchPlaylists();
+});
+
+// Handle playlist title update
 const handleEdit = async (item) => {
   try {
-    await api.updatePlaylistItem(item)
-    alert('수정되었습니다!')
+    await api.updatePlaylist(item.idx, item.playlistTitle);
+    alert('수정되었습니다!');
   } catch (e) {
-    alert('수정 실패')
+    alert('수정 실패: 이 기능은 백엔드에 구현이 필요합니다.');
+    console.error(e);
   }
-}
+};
 
-// 삭제 버튼
+// Handle playlist deletion
 const handleDelete = async (item) => {
-  if (!confirm('정말 삭제하시겠습니까?')) return
+  if (!confirm('정말 삭제하시겠습니까?')) return;
   try {
-    await api.deletePlaylistItem(item.id)
-    // 삭제 성공 시 배열에서 제거
-    const idx = playlist.findIndex(v => v.id === item.id)
-    if (idx > -1) playlist.splice(idx, 1)
+    await api.deletePlaylist(item.idx);
+    // Refetch the list to show the change
+    await fetchPlaylists();
+    alert('삭제되었습니다!');
   } catch (e) {
-    alert('삭제 실패')
+    alert('삭제 실패: 이 기능은 백엔드에 구현이 필요합니다.');
+    console.error(e);
   }
-}
+};
 
-// (선택) 추가 버튼 - 실제 구현에 맞게 확장
+// Handle new playlist creation
 const handleCreate = async () => {
-  // 임시 새 항목 추가
-  playlist.push({
-    id: Date.now(),
-    thumbnail: 'https://via.placeholder.com/80x50',
-    title: '',
-    content: '',
-    videoCount: 0,
-  })
-}
+  const newTitle = prompt('새 플레이리스트의 이름을 입력하세요:');
+  if (!newTitle) return;
+
+  try {
+    await api.createPlaylist(newTitle);
+    // Refetch the list to show the new playlist
+    await fetchPlaylists();
+    alert('새 플레이리스트가 추가되었습니다!');
+  } catch (e) {
+    alert('추가 실패');
+    console.error(e);
+  }
+};
 </script>
 
 <template>
@@ -62,37 +74,29 @@ const handleCreate = async () => {
     <div class="playlist-table-area">
       <table class="playlist-table">
         <thead>
-          <tr>
-            <th>썸네일</th>
-            <th>제목</th>
-            <th>영상 수</th>
-            <th>관리</th>
-          </tr>
+        <tr>
+          <th>제목</th>
+          <th>영상 수</th>
+          <th>관리</th>
+        </tr>
         </thead>
         <tbody>
-          <tr v-for="item in playlist" :key="item.id">
-            <td>
-              <img :src="item.thumbnail" alt="썸네일">
-            </td>
-            <td>
-              <input type="text" v-model="item.title" placeholder="DaBom 완전 정복">
-              <div class="edit-meta">
-                설명: <input type="text" v-model="item.content" placeholder="DaBom 시리즈">
-              </div>
-            </td>
-            <td>
-              <span class="video-count">{{ item.videoCount }}</span>
-            </td>
-            <td>
-              <button class="btn-list-edit" @click="handleEdit(item)">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn-list-delete" @click="handleDelete(item)">
-                <i class="fas fa-trash"></i>
-              </button>
-              <!-- 관리 등 다른 버튼 추가 가능 -->
-            </td>
-          </tr>
+        <tr v-for="item in playlists" :key="item.idx">
+          <td>
+            <input type="text" v-model="item.playlistTitle">
+          </td>
+          <td>
+            <span class="video-count">{{ item.videoCount }}</span>
+          </td>
+          <td>
+            <button class="btn-list-edit" @click="handleEdit(item)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-list-delete" @click="handleDelete(item)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
@@ -100,6 +104,22 @@ const handleCreate = async () => {
 </template>
 
 <style scoped>
-@import url(@/assets/channel/mychannel);
+@import url(@/CSS/main.css);
+@import url(@/assets/channel/mychannel.css);
+
+/* Add some styles for the input field to make it look better */
+input[type="text"] {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  border-radius: 5px;
+  width: 100%;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
 
 </style>
