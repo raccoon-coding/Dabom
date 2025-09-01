@@ -2,11 +2,12 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
+import { useChatStore } from './useChatStore'; // Import chat store
 
 export const useSocketStore = defineStore('socket', () => {
   const stompClient = ref(null);
   const isConnected = ref(false);
-  const receivedMessages = ref([]);
+  // receivedMessages is removed, chatStore will be the single source of truth
 
   function connect() {
     if (isConnected.value) {
@@ -14,24 +15,34 @@ export const useSocketStore = defineStore('socket', () => {
       return;
     }
 
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (!jwtToken) {
-      console.error('JWT Token not found.');
-      return;
-    }
+    const chatStore = useChatStore(); // Initialize chat store
 
     const socket = new SockJS('http://localhost:8080/chat');
     stompClient.value = Stomp.over(socket);
 
     stompClient.value.connect(
-      { Authorization: `Bearer ${jwtToken}` },
+      {},
       (frame) => {
         console.log('WebSocket connected:', frame);
         isConnected.value = true;
 
         stompClient.value.subscribe('/user/queue/messages', (message) => {
+          console.log('Socket: Received raw message:', message); // Log raw message
           const messageData = JSON.parse(message.body);
-          receivedMessages.value.push(messageData);
+          console.log('Socket: Parsed messageData:', messageData); // Log parsed data
+          
+          // Transform the message to the format MessageBubble expects
+          const transformedMessage = {
+            id: messageData.createdAt || Date.now(),
+            content: messageData.message,
+            sender: messageData.senderName,
+            sent: String(messageData.senderIdx) === String(chatStore.currentMemberIdx),
+            time: new Date(messageData.createdAt).toLocaleTimeString(),
+            isRead: messageData.isRead,
+          };
+
+          // Add the transformed message to the central chat store
+          chatStore.addMessage(transformedMessage);
         });
       },
       (error) => {
@@ -48,14 +59,20 @@ export const useSocketStore = defineStore('socket', () => {
         console.log('WebSocket disconnected.');
         isConnected.value = false;
         stompClient.value = null;
-        receivedMessages.value = [];
+        // No need to clear messages here anymore
       });
     }
   }
 
-  function sendMessage(messageDto) {
+  function sendMessage(messageDto) { // Expects a single object argument
     if (stompClient.value && isConnected.value) {
-      stompClient.value.send('/app/chat/send', {}, JSON.stringify(messageDto));
+      console.log("보내는 DTO:", messageDto); // Debug log for the actual DTO being sent
+
+      stompClient.value.send(
+        '/app/chat/send',
+        {},
+        JSON.stringify(messageDto)
+      );
     } else {
       console.error('Cannot send message, not connected.');
     }
@@ -64,7 +81,7 @@ export const useSocketStore = defineStore('socket', () => {
   return {
     stompClient,
     isConnected,
-    receivedMessages,
+    // receivedMessages is removed
     connect,
     disconnect,
     sendMessage,
