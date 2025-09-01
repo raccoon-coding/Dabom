@@ -32,6 +32,19 @@ export const getChannelInfo = async () => {
     return data
 };
 
+export const getChannelInfoByChannelName = async (channelName) => {
+    const requestUrl = `/api/member/info/${channelName}`
+    return await api.get(requestUrl)
+        .then((response) => {
+            console.log(response.data.data);
+            return response.data.data
+        })
+        .catch((error) => {
+            console.error(error)
+            throw error
+        })
+}
+
 export const updateChannelInfo = async (channelInfoForm) => {
     const requestUrl = `/api/member/update`
     let data = {}
@@ -369,5 +382,6 @@ export default {
     getChannelChart, getChannelInfo, updateChannelInfo, updatePlaylistItem, deletePlaylistItem,
     uploadVideo, uploadThumbnail, getChannelBoardList, getChannelBoardDetail,
     getBoardComments, createBoardComment, deleteBoardComment,
-    deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted, getChannelBoardListPaged, ChannelBoardLikes, BoardCommentLikes
+    deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted, getChannelBoardListPaged, ChannelBoardLikes, BoardCommentLikes,
+    getChannelInfoByChannelName
 }
