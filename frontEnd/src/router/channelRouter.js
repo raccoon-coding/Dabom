@@ -28,11 +28,7 @@ const channelRoutes = [
                 name: 'playlists',
                 component: playlists
             },
-            // {
-            //     path: 'playlists',
-            //     name: 'channelPlaylists',
-            //     component: () => import('@/views/channel/subview/playlist/Playlist.vue'),
-            // },
+
             {
                 path: 'community',
                 name: 'community',
