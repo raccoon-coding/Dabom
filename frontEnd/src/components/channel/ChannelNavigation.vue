@@ -3,9 +3,19 @@ import {useRouter} from 'vue-router';
 import {reactive, onMounted} from 'vue';
 import api from '@/api/channel'
 
+
+const props = defineProps({
+  channelIdx: {
+    type: [String, Number],
+    required: true
+  }
+});
+
+
 const router = useRouter()
 
 // 네비게이션 상태 관리
+
 const headerActive = reactive({
   video: true,
   playlist: false,
@@ -32,27 +42,37 @@ const resetActiveStates = () => {
 
 // 네비게이션 클릭 핸들러들
 const clickVideo = () => {
-  resetActiveStates()
-  headerActive.video = true
-  router.push('/channel/videos')
+
+  headerActive.video = true;
+  headerActive.playlist = false;
+  headerActive.community = false;
+  headerActive.about = false;
+  router.push(`/channel/${props.channelIdx}/videos`);
 }
 
 const clickPlaylist = () => {
-  resetActiveStates()
-  headerActive.playlist = true
-  router.push('/channel/playlists')
+  headerActive.video = false;
+  headerActive.playlist = true;
+  headerActive.community = false;
+  headerActive.about = false;
+  router.push(`/channel/${props.channelIdx}/playlists`);
 }
 
 const clickCommunity = () => {
-  resetActiveStates()
-  headerActive.community = true
-  router.push('/channel/community')
+  headerActive.video = false;
+  headerActive.playlist = false;
+  headerActive.community = true;
+  headerActive.about = false;
+  router.push(`/channel/${props.channelIdx}/community`); 
 }
 
 const clickAbout = () => {
-  resetActiveStates()
-  headerActive.about = true
-  router.push('/channel/about')
+  headerActive.video = false;
+  headerActive.playlist = false;
+  headerActive.community = false;
+  headerActive.about = true;
+  router.push(`/channel/${props.channelIdx}/about`);
+
 }
 
 const clickManage = () => {

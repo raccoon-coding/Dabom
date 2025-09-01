@@ -31,7 +31,6 @@ export default {
   methods: {
     async onSubmit() {
       const res = await api.updateChannelInfo(this.channelInfoForm)
-      console.log(res)
       Object.assign(this.channelInfoForm, res)
       alert('저장되었습니다!')
     }
@@ -42,12 +41,12 @@ export default {
 <template>
   <aside class="dashboard-sidebar">
     <form class="channel-info-form" @submit.prevent="onSubmit">
-      <div class="profile-area">
+      <!-- <div class="profile-area">
         <img
           src="https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2F20151026_112%2Firia__1445857574429PW33V_JPEG%2Fb016zruan8_09_pt01__sclzzzzzzz_aa400_.jpg&type=a340"
           class="dashboard-avatar" alt="채널 아바타">
         <div class="channel-owner">{{ channelInfoForm.name || '내 채널' }}</div>
-      </div>
+      </div> -->
     </form>
     <button :class="['sidebar-btn', { active: currentSection === 'videos' }]" @click="$emit('navigate', 'videos')"><i class="fas fa-video"></i> 동영상 관리</button>
     <button :class="['sidebar-btn', { active: currentSection === 'playlists' }]" @click="$emit('navigate', 'playlists')"><i class="fas fa-list"></i> 플레이리스트 관리</button>

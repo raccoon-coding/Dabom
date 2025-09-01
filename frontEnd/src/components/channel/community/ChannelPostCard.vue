@@ -45,7 +45,7 @@ const clickLikeBtn = async (idx) => {
 };
 
 const clickPost = () => {
-    router.push(`/channel/community/${localPost.idx}`);
+    router.push(`/post/${localPost.idx}`);
 };
 </script>
 
