@@ -4,11 +4,11 @@ import channel from "@/views/channel/ChannelMainView.vue"
 import about from "@/views/channel/subview/About.vue"
 import videos from "@/views/channel/subview/video/Video_Fix.vue"
 import ChannelPost from "@/components/channel/community/ChannelPost.vue"
-import MychannelMainView from "@/views/channel/MychannelMainView.vue"
+import MyChannelMainView from "@/views/channel/MyChannelMainView.vue"
 
 const channelRoutes = [
     {
-        path: '/channel/:channelIdx',
+        path: '/channel/:channelName',
         name: 'channel',
         component: channel,
         redirect: to => ({ name: 'videos', params: to.params }),
@@ -28,11 +28,6 @@ const channelRoutes = [
                 name: 'playlists',
                 component: playlist
             },
-            // {
-            //     path: 'playlists',
-            //     name: 'channelPlaylists',
-            //     component: () => import('@/views/channel/subview/playlist/Playlist.vue'),
-            // },
             {
                 path: 'community',
                 name: 'community',
@@ -56,7 +51,7 @@ const channelRoutes = [
     {
         path: '/mychannel',
         name: 'mychannel',
-        component: MychannelMainView,
+        component: MyChannelMainView,
     }
 ]
 

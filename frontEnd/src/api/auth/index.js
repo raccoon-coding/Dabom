@@ -20,8 +20,6 @@ export const login = async (loginForm) => {
 
     await api.post(requestUrl, loginForm)
         .then((response) => {
-            console.log(response)
-            console.log(response.data)
             data = response.data
         })
         .catch((error) => {
