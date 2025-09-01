@@ -44,14 +44,12 @@ const logoutMember = async () => {
 
 const toggleDropdown = async () => {
   state.isDropdownOpen = !state.isDropdownOpen;
-<<<<<<< HEAD
+
   
   // 드롭다운 열 때 사용자 정보 조회
   if (state.isDropdownOpen && !currentUserIdx.value) {
     await getCurrentUserIdx();
   }
-=======
->>>>>>> main
 }
 
 // 외부 클릭 시 드롭다운 닫기
@@ -112,11 +110,8 @@ watch(
             <img src="@/assets/images/dabom2.png" alt="프로필" class="profile-img" />
           </div>
           <div class="profile-dropdown" v-if="state.isDropdownOpen">
-<<<<<<< HEAD
             <RouterLink :to="myChannelLink" class="dropdown-item">내 채널</RouterLink>
-=======
 <!--            <RouterLink :to="{ name: 'channelVideos' }" class="dropdown-item">내 채널</RouterLink>-->
->>>>>>> main
             <RouterLink :to="{ name: 'message' }" class="dropdown-item">DM</RouterLink>
             <a href="#" class="dropdown-item" @click="logoutMember">로그아웃</a>
           </div>

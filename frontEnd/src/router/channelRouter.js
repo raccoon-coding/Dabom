@@ -4,6 +4,7 @@ import channel from "@/views/channel/ChannelMainView.vue"
 import about from "@/views/channel/subview/About.vue"
 import videos from "@/views/channel/subview/video/Video_Fix.vue"
 import ChannelPost from "@/components/channel/community/ChannelPost.vue"
+import MychannelMainView from "@/views/channel/MychannelMainView.vue"
 
 const channelRoutes = [
     {
@@ -55,7 +56,7 @@ const channelRoutes = [
     {
         path: '/mychannel',
         name: 'mychannel',
-        component: mychannel,
+        component: MychannelMainView,
     }
 ]
 
