@@ -39,7 +39,7 @@ onMounted(() => {
   <div class="management-layout">
     <!-- 채널 헤더 유지 (관리 페이지에서는 돌아가기 버튼으로 변경됨) -->
     <ChannelHeader v-if="currentUserIdx" :channelIdx="currentUserIdx" />
-    
+
     <!-- 관리 대시보드 -->
     <div class="channel-dashboard">
       <Sidebar :currentSection="currentSection" @navigate="handleNavigation" />

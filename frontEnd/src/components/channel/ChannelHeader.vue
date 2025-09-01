@@ -1,105 +1,48 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import {onMounted, reactive, ref, watch} from 'vue';
 import { useRoute } from 'vue-router';
+import api from '@/api/channel/index.js'
 import useMemberStore from '@/stores/useMemberStore';
-import api from '@/api/auth';
-
-const props = defineProps({
-  channelIdx: {
-    type: [String, Number],
-    required: true
-  }
-});
+import channel from "@/api/channel/index.js";
 
 const route = useRoute();
 const memberStore = useMemberStore();
-const currentUserIdx = ref(null);
-const channelInfo = ref(null);
+const isMyChannel = ref(false);
+const channelInfo = reactive({
+  id: '',
+  name: '',
+  content: '',
+  email: ''
+})
 
-// 현재 로그인한 사용자가 이 채널의 소유자인지 확인
-const isOwner = computed(() => {
-  return currentUserIdx.value && 
-         currentUserIdx.value.toString() === props.channelIdx.toString();
-});
-
-// 현재 페이지가 채널 관리 페이지인지 확인
-const isManagementPage = computed(() => {
-  return route.name === 'mychannel';
-});
-
-// 현재 사용자 정보 조회
-const getCurrentUserIdx = async () => {
-  if (memberStore.checkLogin() && !currentUserIdx.value) {
-    try {
-      const result = await api.getCurrentMemberInfo();
-      if (result.code === 200) {
-        currentUserIdx.value = result.data.id;
-      }
-    } catch (error) {
-      console.error('사용자 정보 조회 실패:', error);
-    }
-  }
-}
-
-// 채널 정보 조회
-const getChannelInfo = async () => {
-  try {
-    if (isManagementPage.value) {
-      // 관리 페이지: 내 정보 조회
-      const result = await api.getCurrentMemberInfo();
-      if (result.code === 200) {
-        channelInfo.value = {
-          name: result.data.name,
-          profileImage: "@/assets/images/dabom2.png",
-          subscriberCount: "0", 
-          content: result.data.content
-        };
-      }
-    } else {
-      // 일반 채널: 해당 채널 정보 조회
-      const result = await api.getChannelInfoByIdx(props.channelIdx);
-      if (result.code === 200) {
-        channelInfo.value = {
-          name: result.data.name,
-          profileImage: "@/assets/images/dabom2.png",
-          subscriberCount: "0", // TODO: 구독자 수 계산
-          content: result.data.content
-        };
-      }
-    }
-  } catch (error) {
-    console.error('채널 정보 조회 실패:', error);
-    // 기본값 설정
-    channelInfo.value = {
-      name: "채널 정보를 불러올 수 없습니다",
-      profileImage: "@/assets/images/dabom2.png",
-      subscriberCount: "0",
-      content: ""
-    };
-  }
+const checkIsMyChannel = () => {
+  const myChannel = memberStore.getChannelNameWithEncrypt();
+  return myChannel && channelInfo.name && myChannel === channelInfo.name;
 }
 
 onMounted(async () => {
-  await getCurrentUserIdx();
-  await getChannelInfo();
-});
+  const channelName = route.params.channelName
+  const channelInfoResponse = await api.getChannelInfoByChannelName(channelName);
+  Object.assign(channelInfo, channelInfoResponse);
+  isMyChannel.value = checkIsMyChannel()
+})
 
 // watch를 추가하여 라우트 변경 시 채널 정보 다시 로드
-watch(
-  () => route.name,
-  async () => {
-    await getChannelInfo();
-  }
-);
+// watch(
+//   () => route.name,
+//   async () => {
+//     await getChannelInfo();
+//   }
+// );
 </script>
 
 <template>
   <div class="channel-header">
     <div class="channel-info">
       <div class="profile-section">
-        <img 
-          :src="channelInfo?.profileImage || '@/assets/images/dabom2.png'" 
-          alt="채널 프로필" 
+        <img
+          :src="channelInfo?.profileImage || `@/assets/images/dabom2.png`"
+          alt="채널 프로필"
           class="channel-profile-img"
         />
         <div class="channel-details">
@@ -110,30 +53,30 @@ watch(
           </div>
         </div>
       </div>
-      
+
       <div class="channel-actions">
         <!-- 관리 페이지에서는 돌아가기 버튼 -->
-        <RouterLink 
-          v-if="isOwner && isManagementPage" 
-          :to="{ name: 'channel', params: { channelIdx: currentUserIdx } }" 
+        <RouterLink
+          v-if="isOwner && isManagementPage"
+          :to="{ name: 'channel', params: { channelIdx: currentUserIdx } }"
           class="back-to-channel-btn"
         >
           <i class="fas fa-arrow-left"></i>
           채널로 돌아가기
         </RouterLink>
-        
+
         <!-- 일반 채널 페이지에서는 관리 버튼 -->
-        <RouterLink 
-          v-else-if="isOwner && !isManagementPage" 
-          :to="{ name: 'mychannel' }" 
+        <RouterLink
+          v-else-if="isMyChannel"
+          :to="{ name: 'mychannel' }"
           class="manage-channel-btn"
         >
           <i class="fas fa-cog"></i>
           채널 관리
         </RouterLink>
-        
+
         <!-- 다른 사람 채널일 때는 구독 버튼 -->
-        <button v-else-if="!isOwner" class="subscribe-btn">
+        <button v-else-if="!isMyChannel" class="subscribe-btn">
           <i class="fas fa-bell"></i>
           구독
         </button>
@@ -143,10 +86,11 @@ watch(
 </template>
 
 <style scoped>
+/* 헤더임 */
 .channel-header {
-  background-color: var(--background-color);
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 25%, #21262d 50%, #161b22 75%, #0d1117 100%);
+  padding: 4rem 0 4rem 0;
+  color: white;
 }
 
 .channel-info {
@@ -259,11 +203,11 @@ watch(
     gap: 1.5rem;
     align-items: flex-start;
   }
-  
+
   .channel-name {
     font-size: 1.5rem;
   }
-  
+
   .channel-profile-img {
     width: 60px;
     height: 60px;

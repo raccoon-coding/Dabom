@@ -26,14 +26,14 @@ const togglePassword = () => {
 }
 
 const login = async () => {
-    const data = await api.login(form.loginForm)
-    console.log("로그인 정보!!!",data)
-    if (data.code !== 200) {
-        alert("로그인 실패.")
-        return
-    }
-    memberStore.setWithEncrypt()
-    window.location.href = '/'
+  const data = await api.login(form.loginForm)
+  const channelName = data.data;
+  if (data.code !== 200) {
+    alert("로그인 실패")
+    return
+  }
+  memberStore.setWithEncrypt(channelName)
+  window.location.href = '/'
 }
 
 const doGoogleLogin = async () => {
