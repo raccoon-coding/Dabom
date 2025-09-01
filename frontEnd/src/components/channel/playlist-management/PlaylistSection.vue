@@ -12,7 +12,7 @@ const playlists = reactive([]);
 const fetchPlaylists = async () => {
   try {
     const response = await api.getMyPlaylists();
-    playlists.splice(0, playlists.length, ...response);
+    playlists.splice(0, playlists.length, ...response.data);
   } catch (error) {
     console.error('Failed to load playlists:', error);
     alert('플레이리스트를 불러오는데 실패했습니다.');

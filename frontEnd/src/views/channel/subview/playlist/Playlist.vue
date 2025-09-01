@@ -11,7 +11,8 @@ const showPlaylistVideos = ref(false); // To control visibility of video list
 onMounted(async () => {
   try {
     const response = await api.getMyPlaylists();
-    playlists.splice(0, playlists.length, ...response);
+    console.log('Response from getMyPlaylists:', response); // Add this line for debugging
+    playlists.splice(0, playlists.length, ...response.data);
   } catch (error) {
     console.error('Failed to load playlists:', error);
   }
@@ -50,7 +51,8 @@ const goBackToPlaylists = () => {
             <div class="playlists-grid" v-if="!showPlaylistVideos">
                 <div v-for="playlist in playlists" :key="playlist.idx" class="playlist-card" @click="getPlaylistDetails(playlist.idx)">
                     <div class="playlist-thumbnail">
-                        <img src="https://via.placeholder.com/320x180?text=Playlist" alt="플레이리스트 썸네일">
+                        <!-- <img src="https://via.placeholder.com/320x180?text=Playlist" alt="플레이리스트 썸네일"> -->
+                        <div style="width: 320px; height: 180px; background-color: #ccc; display: flex; align-items: center; justify-content: center; color: #333;">플레이리스트 썸네일</div>
                         <div class="playlist-count">
                             <i class="fas fa-list"></i>
                             {{ playlist.videoCount }}개 동영상
@@ -65,7 +67,8 @@ const goBackToPlaylists = () => {
             <div class="video-list-grid" v-if="showPlaylistVideos && selectedPlaylist">
                 <div v-for="video in selectedPlaylist.videoList" :key="video.idx" class="video-card" @click="playVideo(video.idx)">
                     <div class="video-thumbnail">
-                        <img :src="video.thumbnailUrl || 'https://via.placeholder.com/320x180?text=Video'" :alt="video.title">
+                        <!-- <img :src="video.thumbnailUrl || 'https://via.placeholder.com/320x180?text=Video'" :alt="video.title"> -->
+                        <div style="width: 320px; height: 180px; background-color: #ccc; display: flex; align-items: center; justify-content: center; color: #333;">비디오 썸네일</div>
                     </div>
                     <div class="video-info">
                         <h3 class="video-title">{{ video.title }}</h3>
