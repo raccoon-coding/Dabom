@@ -1,6 +1,6 @@
 <script setup>
 import { ref, nextTick } from 'vue';
-import { useSocketStore } from '@/stores/socket'; // 스토어 임포트
+import { useSocketStore } from '@/stores/socket';
 
 const messageText = ref('');
 const textarea = ref(null);
