@@ -4,11 +4,12 @@ import ChatList from '../components/Message/ChatList.vue'
 import ChatWindow from '../components/Message/ChatWindow.vue'
 import { getChatList } from '@/api/chat' // API 임포트
 import useMemberStore from "@/stores/useMemberStore"; // 로그인 스토어 임포트
-
-import { useChatStore } from '@/stores/useChatStore'; // Import the store
+import { useChatStore } from '@/stores/useChatStore'; // 채팅 스토어 임포트
+import { useSocketStore } from '@/stores/socket'; // 소켓 스토어 임포트
 
 const memberStore = useMemberStore();
 const chatStore = useChatStore(); // Initialize the store
+const socketStore = useSocketStore(); // 소켓 스토어 초기화
 
 const currentChatId = ref('') // 초기 선택 없음
 const chatData = ref({}) // API로부터 받을 데이터 (초기값 비어있음)
@@ -40,6 +41,10 @@ function transformChatListData(backendList, currentMemberIdx) {
 }
 
 onMounted(async () => {
+  // 1. 소켓 연결 시도
+  socketStore.connect();
+
+  // 2. 기존 채팅 목록 가져오기
   const response = await getChatList(); // 백엔드 API 호출
   const rawChatList = response.chatRooms; // Access the chatRooms list
   const currentMemberIdx = response.currentMemberIdx; // Get currentMemberIdx from response
