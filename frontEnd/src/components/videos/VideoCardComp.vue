@@ -9,7 +9,7 @@ const playVideo = () => {
 }
 
 const goToChannel = () => {
-    router.push(`/channel/${props.video.channel.idx}`);
+    router.push(`/channel/${props.video.channel.name}`);
 }
 </script>
 
