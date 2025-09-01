@@ -33,7 +33,7 @@ const login = async () => {
     showErrorModal.value = true
     return
   }
-  memberStore.setWithEncrypt()
+  memberStore.setWithEncrypt(data.data)
   window.location.href = '/'
 }
 

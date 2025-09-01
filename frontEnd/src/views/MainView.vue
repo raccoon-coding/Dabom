@@ -126,7 +126,7 @@ onMounted(async () => {
     // 초기 데이터 로드 (현재 URL의 검색어 사용)
     const initialKeyword = searchKeyword.value;
     await getVideoList(0, false, initialKeyword);
-    
+
     // 스크롤 이벤트 리스너 등록
     window.addEventListener('scroll', throttledScroll, { passive: true });
 })
