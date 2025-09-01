@@ -23,8 +23,7 @@ export const getTogetherSearch = async (search) => {
 };
 
 export const getChatList = async () => {
-  const requestUrl = 'http://localhost:8080/api/chat/list';
-  console.log("챗리스트")
+  const requestUrl = '/api/chat/list';
   try {
     const response = await api.get(requestUrl, {
       headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
@@ -38,7 +37,7 @@ export const getChatList = async () => {
 
 export const getChatRoom = async (roomIdx, page = 0, size = 20) => {
   console.log("챗룸")
-  const requestUrl = `http://localhost:8080/api/chat/read/${roomIdx}`;
+  const requestUrl = `/api/chat/read/${roomIdx}`;
   try {
     const response = await api.get(requestUrl, {
       headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
@@ -52,7 +51,7 @@ export const getChatRoom = async (roomIdx, page = 0, size = 20) => {
 };
 
 export const createChatRoom = async (member2Idx) => {
-  const requestUrl = 'http://localhost:8080/api/chat/room';
+  const requestUrl = '/api/chat/room';
   const member1Idx = parseInt(localStorage.getItem('memberIdx'));
   try {
     const response = await api.post(

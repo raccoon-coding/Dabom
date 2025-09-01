@@ -56,7 +56,9 @@ const loadTogetherInfo = (data) => {
   togetherInfo.joinMemberNumber = data.joinMemberNumber
   togetherInfo.userIdx = data.userIdx
 }
-const connectWebSocket = () => {
+const connectWebSocket = async () => {
+  const res = await api.getToken();
+  console.log(res.authorization)
   const ws = new WebSocket('ws://localhost:8080/chat')
   const client = Stomp.over(ws)
   socket.value = client

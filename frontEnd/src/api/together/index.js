@@ -306,7 +306,22 @@ export const isMaster = async (togetherIdx) => {
   return data
 };
 
+export const getToken = async (togetherIdx) => {
+  const requestUrl = `/api/member/token`
+  let data = {}
+
+  await api.get(requestUrl)
+    .then((response) => {
+      console.log(response)
+      data = response.headers
+    })
+    .catch((error) => {
+      data = error.data
+    })
+  return data
+};
+
 export default { getRandomTogetherList, getTogetherListInMember, searchTogether, getMembersByMaster, getTogetherInfo, getRandomTogetherListTest,
   joinTogether, joinOpenTogether, joinTogetherWithCode, saveTogether, leaveTogether, deleteTogether, isMaster,
     changeTogetherTitle, changeTogetherMaxMember, changeTogetherIsOpen, changeTogetherVideo, kickTogetherMember,
-  getTogetherListInMaster}
+  getTogetherListInMaster, getToken}
