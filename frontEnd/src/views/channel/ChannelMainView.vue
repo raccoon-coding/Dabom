@@ -1,8 +1,12 @@
 <script setup>
+<<<<<<< HEAD
 import ChannelHeader from '@/components/channel/ChannelHeader.vue';  // 새로 만든 컴포넌트
 import ChannelNavigation from '@/components/channel/ChannelNavigation.vue';
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
+=======
+import ChannelNavigation from '@/components/channel/ChannelNavigation.vue';
+>>>>>>> main
 
 const route = useRoute();
 const channelIdx = route.params.channelIdx;
@@ -13,6 +17,7 @@ const isMychannelRoute = computed(() => {
 </script>
 
 <template>
+<<<<<<< HEAD
     <ChannelHeader :channelIdx="channelIdx" />
     
     <!-- 네비게이션 (mychannel 경로가 아닐 때만 표시) -->
@@ -24,13 +29,20 @@ const isMychannelRoute = computed(() => {
     <div class="channel-content">
         <router-view></router-view>
     </div>
+=======
+  <ChannelNavigation/>
+  <div class="channel-content">
+    <RouterView/>
+  </div>
+
+>>>>>>> main
 </template>
 
 <style scoped>
 .channel-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 .channel-content {

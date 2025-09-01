@@ -2,7 +2,6 @@ import community from "@/views/channel/subview/Community.vue"
 import playlist from "@/views/channel/subview/playlist/Playlist.vue"
 import channel from "@/views/channel/ChannelMainView.vue"
 import about from "@/views/channel/subview/About.vue"
-import mychannel from "@/views/channel/MychannelMainView.vue"
 import videos from "@/views/channel/subview/video/Video_Fix.vue"
 import ChannelPost from "@/components/channel/community/ChannelPost.vue"
 
@@ -21,13 +20,18 @@ const channelRoutes = [
             {
                 path: 'videos',
                 name: 'videos',
-                component: videos
+                component: videos,
             },
             {
                 path: 'playlists',
                 name: 'playlists',
                 component: playlist
             },
+            // {
+            //     path: 'playlists',
+            //     name: 'channelPlaylists',
+            //     component: () => import('@/views/channel/subview/playlist/Playlist.vue'),
+            // },
             {
                 path: 'community',
                 name: 'community',
@@ -38,6 +42,7 @@ const channelRoutes = [
                 name: 'about',
                 component: about
             },
+
         ],
     },
     {

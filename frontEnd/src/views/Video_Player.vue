@@ -1,14 +1,14 @@
 <script setup>
-import Video_Main_Info from '../components/Video_Player/Video_Main_Info.vue'
-import Video_Tag_Explain from '../components/Video_Player/Video_Tag_Explain.vue'
-import Video_Recommend from '../components/Video_Player/Video_Recommend.vue'
-import Video_Comment from '../components/Video_Player/Video_Comment.vue'
+import Video_Main_Info from '@/components/video-player/Video_Main_Info.vue'
+import Video_Tag_Explain from '@/components/video-player/Video_Tag_Explain.vue'
+import Video_Recommend from '@/components/video-player/Video_Recommend.vue'
+import Video_Comment from '@/components/video-player/Video_Comment.vue'
 import { useRoute } from 'vue-router'
 import { onMounted, reactive, ref, onUnmounted } from 'vue'
 import Hls from 'hls.js'
 import api from '@/api/video_player'
 import video from "@/api/video/index.js"
-import Video_Player_Component from "@/components/Video_Player/Video_Player_Component.vue";
+import Video_Player_Component from "@/components/video-player/Video_Player_Component.vue";
 
 const route = useRoute()
 const videoId = route.params.id
@@ -90,8 +90,8 @@ onUnmounted(() => {
           </video>
         </div>
         <h2>{{ videoInfo.title }}</h2>
-        <Video_Main_Info :videoInfo="videoInfo"></Video_Main_Info>
         <Video_Tag_Explain :videoInfo="videoInfo"></Video_Tag_Explain>
+        <Video_Main_Info :videoInfo="videoInfo"></Video_Main_Info>
         <Video_Comment></Video_Comment>
       </div>
       <!-- Right Sidebar -->

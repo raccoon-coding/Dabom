@@ -20,4 +20,21 @@ export const imageUpload = async (file, directory) => {
   }
 };
 
+export const multiImageUpload = async (files, directory) => {
+  const formData = new FormData();
+  files.forEach(file => formData.append("files", file));
+
+  formData.append("directory", directory);
+
+  try {
+    const response = await api.post("/api/image/upload/multiple", formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("이미지 다중 업로드 실패:", error);
+    return error.response?.data || null;
+  }
+};
+
 export default { imageUpload };

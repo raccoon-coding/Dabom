@@ -1,5 +1,11 @@
 <script setup>
+import { ref } from 'vue';
+import StarRating from '@/components/common/StarRating.vue'; // StarRating 컴포넌트 임포트
+
 const props = defineProps(['videoInfo']);
+
+// videoRating은 StarRating 컴포넌트의 v-model과 연결됩니다.
+const videoRating = ref(0); // 초기값은 0 또는 videoInfo에서 가져올 수 있음
 
 </script>
 
@@ -43,21 +49,12 @@ const props = defineProps(['videoInfo']);
 
     <!-- 별점 평가 시스템 -->
     <div class="rating-row">
-        <span class="current-rating">조회수 {{ props.videoInfo.views }}회 • 평균 {{ props.videoInfo.rating }}점</span>
+        <span class="current-rating">조회수 {{ props.videoInfo.views }}회 • 평균 {{ videoRating.toFixed(1) }}점</span>
         <div class="rating-right">
             <span class="rating-label">이 영상을 평가해주세요:</span>
             <div class="star-rating-interactive">
-                <i class="fas fa-star" data-rating="1"></i>
-                <i class="fas fa-star" data-rating="2"></i>
-                <i class="fas fa-star" data-rating="3"></i>
-                <i class="fas fa-star" data-rating="4"></i>
-                <i class="fas fa-star" data-rating="5"></i>
-
+                <StarRating v-model="videoRating" :video-info="props.videoInfo" />
             </div>
         </div>
     </div>
 </template>
-
-<style scoped>
-@import url(../../assets/Video_Player/Video_Player.css);
-</style>

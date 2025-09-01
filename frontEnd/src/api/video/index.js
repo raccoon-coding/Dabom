@@ -71,7 +71,21 @@ export const uploadToPresignedUrl = async (presignedUrl, file) => {
     return axiosResponse
 }
 
+export const getMyVideoList = async () => {
+    const requestUrl = `/api/channels/videos/manage`
 
-export default {getVideoList, uploadVideo, uploadVideoMetadata, getPresignedUrl, uploadToPresignedUrl};
+    try {
+        const response = await api.get(requestUrl)
+        return response.data
+    } catch (error) {
+        console.error('내 비디오 리스트 요청 실패', error)
+        throw error
+    }
+
+}
+
+
+
+export default {getVideoList, uploadVideo, uploadVideoMetadata, getPresignedUrl, uploadToPresignedUrl, getMyVideoList};
 
 
