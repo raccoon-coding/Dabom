@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, watch, ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRoute } from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import useMemberStore from '@/stores/useMemberStore';
 import api from '@/api/auth'
 
@@ -8,31 +8,18 @@ const route = useRoute()
 const memberStore = useMemberStore();
 const currentUserIdx = ref(null);
 const profileWrapperRef = ref(null);
+const router = useRouter();
+
 
 const state = reactive({
   isDropdownOpen: false
 })
 
-// 현재 사용자의 채널 링크 계산
-const myChannelLink = computed(() => {
-  if (currentUserIdx.value) {
-    return { name: 'channel', params: { channelIdx: currentUserIdx.value } };
-  }
-  return { name: 'mychannel' }; 
-});
-
 // 사용자 정보 조회
-const getCurrentUserIdx = async () => {
-  if (memberStore.checkLogin() && !currentUserIdx.value) {
-    try {
-      const result = await api.getCurrentMemberInfo();
-      if (result.code === 200) {
-        currentUserIdx.value = result.data.id; // MemberInfoResponseDto의 id가 idx
-      }
-    } catch (error) {
-      console.error('사용자 정보 조회 실패:', error);
-    }
-  }
+const toMyChannel = async () => {
+  const channelName = memberStore.getChannelNameWithEncrypt()
+  await toggleDropdown()
+  await router.push(`/channel/${channelName}`)
 }
 
 const logoutMember = async () => {
@@ -44,42 +31,8 @@ const logoutMember = async () => {
 
 const toggleDropdown = async () => {
   state.isDropdownOpen = !state.isDropdownOpen;
-
-  
-  // 드롭다운 열 때 사용자 정보 조회
-  if (state.isDropdownOpen && !currentUserIdx.value) {
-    await getCurrentUserIdx();
-  }
 }
 
-// 외부 클릭 시 드롭다운 닫기
-const handleClickOutside = (event) => {
-  if (profileWrapperRef.value && !profileWrapperRef.value.contains(event.target)) {
-    state.isDropdownOpen = false;
-  }
-}
-
-// 컴포넌트 마운트 시 로그인 상태라면 사용자 정보 조회
-onMounted(() => {
-  if (memberStore.checkLogin()) {
-    getCurrentUserIdx();
-  }
-  
-  // 전역 클릭 이벤트 리스너 등록
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  // 컴포넌트 언마운트 시 이벤트 리스너 제거
-  document.removeEventListener('click', handleClickOutside);
-});
-
-watch(
-  () => route.fullPath,
-  () => {
-    state.isDropdownOpen = false
-  }
-)
 </script>
 
 <template>
@@ -110,8 +63,7 @@ watch(
             <img src="@/assets/images/dabom2.png" alt="프로필" class="profile-img" />
           </div>
           <div class="profile-dropdown" v-if="state.isDropdownOpen">
-            <RouterLink :to="myChannelLink" class="dropdown-item">내 채널</RouterLink>
-<!--            <RouterLink :to="{ name: 'channelVideos' }" class="dropdown-item">내 채널</RouterLink>-->
+            <a @click="toMyChannel" class="dropdown-item" href="#" @click.prevent>내 채널</a>
             <RouterLink :to="{ name: 'message' }" class="dropdown-item">DM</RouterLink>
             <a href="#" class="dropdown-item" @click="logoutMember">로그아웃</a>
           </div>
