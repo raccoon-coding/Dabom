@@ -90,8 +90,8 @@ onUnmounted(() => {
           </video>
         </div>
         <h2>{{ videoInfo.title }}</h2>
-        <Video_Main_Info :videoInfo="videoInfo"></Video_Main_Info>
         <Video_Tag_Explain :videoInfo="videoInfo"></Video_Tag_Explain>
+        <Video_Main_Info :videoInfo="videoInfo"></Video_Main_Info>
         <Video_Comment></Video_Comment>
       </div>
       <!-- Right Sidebar -->
