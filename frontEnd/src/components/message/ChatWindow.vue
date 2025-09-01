@@ -7,6 +7,10 @@ const props = defineProps({
   currentChat: {
     type: Object,
     default: null
+  },
+  roomIdx: { // Add roomIdx prop
+    type: [String, Number],
+    required: true // Make it required as it's crucial
   }
 })
 
@@ -21,7 +25,7 @@ function handleSendMessage(messageText) {
 <div class="chat-window" v-if="currentChat">
     <ChatHeader :chat="currentChat" />
     <MessageList
-      :room-idx="currentChat.idx"
+      :room-idx="props.roomIdx"
       :chat-avatar="currentChat.avatar"
     />
     <MessageInput @send-message="handleSendMessage" />

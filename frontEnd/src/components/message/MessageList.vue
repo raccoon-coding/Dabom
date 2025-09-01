@@ -4,9 +4,13 @@ import MessageBubble from './MessageBubble.vue';
 import TypingIndicator from './TypingIndicator.vue';
 import api from '@/api/chat';
 import { useSocketStore } from '@/stores/socket'; // 스토어 임포트
+import { useChatStore } from '@/stores/useChatStore'; // 스토어 임포트
+
+const socketStore = useSocketStore(); // 스토어 사용
+const chatStore = useChatStore(); // 스토어 사용
 
 const props = defineProps({
-  roomIdx: { // Add roomIdx as a prop
+  roomIdx: {
     type: [String, Number],
     required: true,
   },
@@ -21,56 +25,47 @@ const props = defineProps({
 });
 
 const messagesContainer = ref(null);
-const chatList = ref([]); // Initialize as empty, will be populated by loadMessages
+// const chatList = ref([]); // REMOVED: Messages are now in chatStore
 const page = ref(0);
 const size = ref(20);
 const hasNext = ref(true);
 const isLoading = ref(false);
-
-const socketStore = useSocketStore(); // 스토어 사용
 
 // Watch for roomIdx changes to load new chat messages
 watch(() => props.roomIdx, (newRoomIdx, oldRoomIdx) => {
   if (newRoomIdx && newRoomIdx !== oldRoomIdx) {
     resetAndLoadMessages();
   }
-}, { immediate: true }); // immediate: true to load messages on initial mount if roomIdx is present
+}, { immediate: true });
 
-// Watch for new messages from socket store
-watch(() => socketStore.receivedMessages,
-  (newMessages) => {
-    if (newMessages.length > 0) {
-      const latestMessage = newMessages[newMessages.length - 1];
-      // Only add messages for the current room
-      if (latestMessage.roomIdx == props.roomIdx) {
-        chatList.value.push({
-          id: latestMessage.createdAt,
-          content: latestMessage.message,
-          sender: latestMessage.senderName,
-          sent: latestMessage.senderIdx === parseInt(localStorage.getItem('memberIdx')),
-          time: new Date(latestMessage.createdAt).toLocaleTimeString(),
-          isRead: latestMessage.isRead,
-        });
-        scrollToBottom(); // Scroll to bottom for new messages
-      }
-    }
-  }, { deep: true });
+// Watch for new messages in the chat store to scroll down
+watch(() => chatStore.messages, (newMessages, oldMessages) => {
+  if (newMessages.length > oldMessages.length) {
+    scrollToBottom();
+  }
+}, { deep: true });
+
+
 
 async function loadMoreMessages() {
-  if (isLoading.value || !hasNext.value || !props.roomIdx) return;
+  if (isLoading.value || !hasNext.value || !props.roomIdx) {
+    return;
+  }
   isLoading.value = true;
   try {
     const data = await api.getChatRoom(props.roomIdx, page.value, size.value);
     if (data.content && data.content[0]) {
-      const newMessages = data.content[0].chatList.map((msg) => ({
-        id: msg.createdAt,
-        content: msg.message,
-        sender: msg.senderName,
-        sent: msg.senderIdx === parseInt(localStorage.getItem('memberIdx')),
-        time: new Date(msg.createdAt).toLocaleTimeString(),
-        isRead: msg.isRead,
-      }));
-      chatList.value = [...newMessages, ...chatList.value]; // Add older messages to the top
+      const newMessages = data.content[0].chatList.map((msg) => {
+                     return {
+                         id: msg.createdAt,
+                         content: msg.message,
+                         sender: msg.senderName,
+                         sent: String(msg.senderIdx) === String(chatStore.currentMemberIdx),
+                         time: new Date(msg.createdAt).toLocaleTimeString(),
+                         isRead: msg.isRead,
+                       };
+                   });
+      chatStore.setMessages([...newMessages, ...chatStore.messages]);
       hasNext.value = data.hasNext;
       page.value += 1;
     }
@@ -82,7 +77,7 @@ async function loadMoreMessages() {
 }
 
 async function resetAndLoadMessages() {
-  chatList.value = [];
+  chatStore.clearMessages();
   page.value = 0;
   hasNext.value = true;
   await loadMoreMessages();
@@ -90,11 +85,15 @@ async function resetAndLoadMessages() {
 }
 
 function scrollToBottom() {
+  // Use nextTick to wait for the DOM to update
   nextTick(() => {
-    const container = messagesContainer.value;
-    if (container) {
-      container.scrollTop = container.scrollHeight;
-    }
+    // And then use setTimeout to give it a little more time, just in case.
+    setTimeout(() => {
+      const container = messagesContainer.value;
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }, 50); // 50ms delay
   });
 }
 
@@ -108,25 +107,28 @@ function setupIntersectionObserver() {
     { threshold: 0.1 }
   );
   nextTick(() => {
-    if (messagesContainer.value && messagesContainer.value.firstChild) {
-      observer.observe(messagesContainer.value.firstChild);
+    const container = messagesContainer.value;
+    if (container && container.firstChild) {
+      observer.observe(container.firstChild);
+    } else {
+      console.warn('IntersectionObserver: messagesContainer or its firstChild is null.');
     }
   });
 }
 
 onMounted(() => {
-  socketStore.connect(); // Connect socket on mount
+  socketStore.connect();
   setupIntersectionObserver();
+  loadMoreMessages(); // Initial load
 });
 
-// No need for onUpdated(scrollToBottom) as it's handled by watch for new messages and resetAndLoadMessages
 
 </script>
 
 <template>
   <div class="chat-messages" ref="messagesContainer">
     <MessageBubble
-      v-for="message in chatList"
+      v-for="message in chatStore.messages"
       :key="message.id"
       :message="message"
       :chat-avatar="props.chatAvatar"
