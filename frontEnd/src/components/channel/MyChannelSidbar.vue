@@ -1,43 +1,10 @@
 <script setup>
-import { reactive, onMounted } from 'vue'
-import api from '@/api/channel'
-
 const props = defineProps({
   currentSection: {
     type: String,
     default: ''
   }
 })
-
-
-
-// const channelInfoForm = reactive({
-//   id: "12345",
-//   name: '',
-//   content: '',
-//   image: [],
-//   banner: [],
-//   email: '',
-//   sns01: '',
-//   sns02: ''
-// })
-
-const loadChannelInfo = async () => {
-    const result = await api.getChannelInfo()
-    channelInfoForm.id = result.data.id
-    channelInfoForm.name = result.data.name
-    channelInfoForm.content = result.data.content
-    channelInfoForm.email = result.data.email
-}
-
-// const onSubmit = async () => {
-//     const res = await api.updateChannelInfo(channelInfoForm)
-//     Object.assign(channelInfoForm, res)
-//     alert('저장되었습니다!')
-// }
-// onMounted(() => {
-//   loadChannelInfo()
-// })
 
 const emit = defineEmits(['navigate'])
 const handleNavigate = (section) => {

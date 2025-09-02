@@ -1,29 +1,11 @@
 import api from "@/plugins/axiosinterceptor";
 
-
-export const getChannelChart = async () => {
-
-    const requestUrl = `/api/channel_stats.json`
-    let data = {}
-
-    await api.get(requestUrl)
-        .then((response) => {
-            // console.log(response)
-            data = response.data
-        })
-        .catch((error) => {
-            data = error.data
-        })
-    return data
-};
-
 export const getChannelInfo = async () => {
     const requestUrl = `/api/member/info`
     let data = {}
 
     await api.get(requestUrl)
         .then((response) => {
-            // console.log(response)
             data = response.data
         })
         .catch((error) => {
@@ -36,7 +18,6 @@ export const getChannelInfoByChannelName = async (channelName) => {
     const requestUrl = `/api/member/info/${channelName}`
     return await api.get(requestUrl)
         .then((response) => {
-            console.log(response.data.data);
             return response.data.data
         })
         .catch((error) => {
@@ -51,7 +32,6 @@ export const updateChannelInfo = async (channelInfoForm) => {
 
     await api.patch(requestUrl, channelInfoForm)
         .then((response) => {
-            // console.log(response)
             data = response.data
         })
         .catch((error) => {
@@ -67,7 +47,6 @@ export const updatePlaylistItem = async (playlistedit) => {
 
     await api.get(requestUrl, playlistedit)
         .then((response) => {
-            // console.log(response)
             data = response.data
         })
         .catch((error) => {
@@ -83,7 +62,6 @@ export const deletePlaylistItem = async (playlistdelete) => {
 
     await api.get(requestUrl, playlistdelete)
         .then((response) => {
-            // console.log(response)
             data = response.data
         })
         .catch((error) => {
@@ -92,21 +70,6 @@ export const deletePlaylistItem = async (playlistdelete) => {
     return data
 };
 
-export const uploadVideo = async (videoform) => {
-
-    const requestUrl = `/api/channel_uploadVideo.json`
-    let data = {}
-
-    await api.get(requestUrl, videoform)
-        .then((response) => {
-            // console.log(response)
-            data = response.data
-        })
-        .catch((error) => {
-            data = error.data
-        })
-    return data
-};
 
 export const uploadThumbnail = async (Thumbnailform) => {
 
@@ -115,7 +78,6 @@ export const uploadThumbnail = async (Thumbnailform) => {
 
     await api.get(requestUrl, Thumbnailform)
         .then((response) => {
-            // console.log(response)
             data = response.data
         })
         .catch((error) => {
@@ -123,22 +85,18 @@ export const uploadThumbnail = async (Thumbnailform) => {
         })
     return data
 };
+
 export const getChannelBoardList = async () => {
     const requestUrl = `/api/channel/board/list`;
     let data = [];
 
     try {
-        console.log('API 호출 시작:', requestUrl);
         const response = await api.get(requestUrl);
 
         if (response.data.code === 200) {
             data = response.data.data.content || response.data.data;
-            console.log('추출된 데이터:', data);
-        } else {
-            console.log('응답 코드가 200이 아님:', response.data.code);
         }
     } catch (error) {
-
         data = [];
     }
 
@@ -175,7 +133,6 @@ export const getChannelBoardDetail = async (boardIdx) => {
 
     await api.get(requestUrl)
         .then((response) => {
-
             data = response.data.data;
         })
         .catch((error) => {
@@ -185,53 +142,36 @@ export const getChannelBoardDetail = async (boardIdx) => {
     return data;
 };
 
-// 댓글 목록 조회 API 수정
 export const getBoardComments = async (boardIdx) => {
     const requestUrl = `/api/channel/board/comment/list/${boardIdx}`;
-    let data = [];
 
-    await api.get(requestUrl)
-        .then((response) => {
+    try {
+        const response = await api.get(requestUrl);
 
+        if (response.data.code === 200) {
+            const responseData = response.data.data;
 
-            if (response.data.code === 200) {
-                const responseData = response.data.data;
-
-                // 응답이 배열인지 단일 객체인지 확인
-                if (Array.isArray(responseData)) {
-                    data = responseData;
-                } else if (responseData && typeof responseData === 'object') {
-                    // 단일 객체인 경우 배열로 변환
-                    data = [responseData];
-                } else if (responseData && responseData.content) {
-                    // content 배열이 있는 경우
-                    data = responseData.content;
-                } else {
-                    data = [];
-                }
-            }
-        })
-        .catch((error) => {
-
-            data = [];
-        })
-    return data;
+            // 배열이면 그대로 반환, 아니면 빈 배열
+            return Array.isArray(responseData) ? responseData : [];
+        }
+        return [];
+    } catch (error) {
+        console.error('댓글 조회 에러:', error);
+        return [];
+    }
 };
 
-// 댓글 검색 정렬
 export const getBoardCommentsSorted = async (boardIdx, sortBy = 'oldest') => {
     const requestUrl = `/api/channel/board/comment/list/${boardIdx}/sorted`;
     let data = [];
 
     await api.get(requestUrl, { params: { sort: sortBy } })
         .then((response) => {
-
             if (response.data.code === 200) {
                 data = response.data.data || [];
             }
         })
         .catch((error) => {
-
             data = [];
         })
     return data;
@@ -249,54 +189,45 @@ export const getBoardCommentsPagedSorted = async (boardIdx, page = 0, size = 10,
         }
     })
         .then((response) => {
-
             if (response.data.code === 200) {
-                data = response.data.data; // SliceBaseResponse
+                data = response.data.data;
             }
         })
         .catch((error) => {
-
             data = { content: [], hasNext: false };
         })
 
     return data;
 };
 
-// 댓글 작성 API
 export const createBoardComment = async (boardIdx, commentData) => {
     const requestUrl = `/api/channel/board/comment/create/${boardIdx}`;
     let data = {};
 
     await api.post(requestUrl, commentData)
         .then((response) => {
-
             data = response.data;
         })
         .catch((error) => {
-
             data = error.response?.data || {};
         })
     return data;
 };
 
-// 댓글 삭제 API
 export const deleteBoardComment = async (commentIdx) => {
     const requestUrl = `/comment/delete/${commentIdx}`;
     let data = {};
 
     await api.delete(requestUrl)
         .then((response) => {
-
             data = response.data;
         })
         .catch((error) => {
-
             data = error.response?.data || {};
         })
     return data;
 };
 
-// 게시글 삭제 API 추가
 export const deleteChannelBoard = async (boardIdx) => {
     const requestUrl = `/api/channel/board/delete/${boardIdx}`;
     let data = {};
@@ -311,10 +242,8 @@ export const deleteChannelBoard = async (boardIdx) => {
     return data;
 };
 
-// 게시글 수정 API 추가
 export const updateChannelBoard = async (boardIdx, boardData) => {
     const requestUrl = `/api/channel/board/update`;
-
 
     const updateData = {
         boardIdx: boardIdx,
@@ -324,7 +253,7 @@ export const updateChannelBoard = async (boardIdx, boardData) => {
 
     let data = {};
 
-    await api.post(requestUrl, updateData) // PUT이 아닌 POST 사용
+    await api.post(requestUrl, updateData)
         .then((response) => {
             data = response.data;
         })
@@ -334,7 +263,6 @@ export const updateChannelBoard = async (boardIdx, boardData) => {
     return data;
 };
 
-// 게시글 작성 API 추가
 export const createChannelBoard = async (boardData) => {
     const requestUrl = `/api/channel/board/register`;
     let data = {};
@@ -363,6 +291,7 @@ const ChannelBoardLikes = async (idx) => {
 
     return data;
 }
+
 export const BoardCommentLikes = async (idx) => {
     let data = {};
     let url = `/api/likes/boardComment/${idx}`;
@@ -379,8 +308,8 @@ export const BoardCommentLikes = async (idx) => {
 }
 
 export default {
-    getChannelChart, getChannelInfo, updateChannelInfo, updatePlaylistItem, deletePlaylistItem,
-    uploadVideo, uploadThumbnail, getChannelBoardList, getChannelBoardDetail,
+    getChannelInfo, updateChannelInfo, updatePlaylistItem, deletePlaylistItem,
+    uploadThumbnail, getChannelBoardList, getChannelBoardDetail,
     getBoardComments, createBoardComment, deleteBoardComment,
     deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted, getChannelBoardListPaged, ChannelBoardLikes, BoardCommentLikes,
     getChannelInfoByChannelName
