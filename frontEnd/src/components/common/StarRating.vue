@@ -294,7 +294,7 @@ const cancelRating = () => {
 
 .star-rating-container i {
   transition: color 0.2s ease;
-  color: var(--empty-color); /* 기본 빈 별 색상 */
+  //color: var(--empty-color); /* 기본 빈 별 색상 */
 }
 
 /* 채워진 별 색상은 컴포넌트 props.color로 제어 */
