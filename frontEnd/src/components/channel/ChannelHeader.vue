@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, reactive, ref, watch} from 'vue';
+import {computed, onMounted, reactive, ref, watch} from 'vue';
 import { useRoute } from 'vue-router';
 import api from '@/api/channel/index.js'
 import useMemberStore from '@/stores/useMemberStore';
@@ -12,28 +12,41 @@ const channelInfo = reactive({
   id: '',
   name: '',
   content: '',
-  email: ''
+  email: '',
+  videoCount: 0
 })
+
+
+const isOwner = computed(() => {
+  return isMyChannel.value;
+});
+const isManagementPage = computed(() =>
+  route.path == '/mychannel'
+);
 
 const checkIsMyChannel = () => {
   const myChannel = memberStore.getChannelNameWithEncrypt();
   return myChannel && channelInfo.name && myChannel === channelInfo.name;
 }
 
+const loadChannelInfo = async () => {
+    let channelName;
+    if (route.path === '/mychannel') {
+      channelName = memberStore.getChannelNameWithEncrypt();
+    } else {
+      channelName = route.params.channelName;
+    }
+    if (channelName) {
+      const channelInfoResponse = await api.getChannelInfoByChannelName(channelName);
+      Object.assign(channelInfo, channelInfoResponse);
+      isMyChannel.value = checkIsMyChannel();
+    }
+  
+}
 onMounted(async () => {
-  const channelName = route.params.channelName
-  const channelInfoResponse = await api.getChannelInfoByChannelName(channelName);
-  Object.assign(channelInfo, channelInfoResponse);
-  isMyChannel.value = checkIsMyChannel()
+  await loadChannelInfo();
 })
 
-// watch를 추가하여 라우트 변경 시 채널 정보 다시 로드
-// watch(
-//   () => route.name,
-//   async () => {
-//     await getChannelInfo();
-//   }
-// );
 </script>
 
 <template>
@@ -46,10 +59,10 @@ onMounted(async () => {
           class="channel-profile-img"
         />
         <div class="channel-details">
-          <h1 class="channel-name">{{ channelInfo?.name || '채널 이름' }}</h1>
+          <h1 class="channel-name">{{ channelInfo?.name || '찾을 수 없음' }}</h1>
           <div class="channel-meta">
             <span class="subscriber-count">구독자 {{ channelInfo?.subscriberCount || '0' }}명</span>
-            <span class="video-count">동영상 0개</span>
+            <span class="video-count">동영상 {{ channelInfo.videoCount||"null"}}게</span>
           </div>
         </div>
       </div>
@@ -58,7 +71,7 @@ onMounted(async () => {
         <!-- 관리 페이지에서는 돌아가기 버튼 -->
         <RouterLink
           v-if="isOwner && isManagementPage"
-          :to="{ name: 'channel', params: { channelIdx: currentUserIdx } }"
+          :to="{ name: 'channel', params: { channelName: channelInfo.name } }"
           class="back-to-channel-btn"
         >
           <i class="fas fa-arrow-left"></i>
