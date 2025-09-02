@@ -8,6 +8,7 @@ import Stomp from 'stompjs'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/api/together/'
+import SockJS from 'sockjs-client'
 
 const socket = ref(null)
 const route = useRoute()
@@ -59,28 +60,26 @@ const loadTogetherInfo = (data) => {
 const connectWebSocket = async () => {
   const res = await api.getToken();
   console.log(res.authorization)
-  const ws = new WebSocket('ws://localhost:8080/chat')
+  const ws = new SockJS('http://localhost:8080/chat')
   const client = Stomp.over(ws)
   socket.value = client
-  client.connect(
-    {},
+
+  socket.value.connect(
+    { Authorization: res.authorization },
     (frame) => {
-      socket.value.subscribe(`/topic/together/${togetherInfo.togetherIdx}`, (msg) => {
-        try {
-          const data = JSON.parse(msg.body)
-          message.messages.push(data)
-          if(data.users !== joinMember.value) {
-            joinMember.value = data.users
-          }
-        } catch(e) {
-          console.error("메시지 파싱 실패", e)
-        }
-      })
+      console.log('WebSocket connected:', frame);
       subscribed.value = true
+      socket.value.subscribe(`/topic/together/${togetherInfo.togetherIdx}`, (mes) => {
+        const data = JSON.parse(mes.body)
+        message.messages.push(data)
+        if(data.users !== joinMember.value) {
+          joinMember.value = data.users
+        }
+      });
     },
-    (err) => {
-      console.error('연결 실패', err)
-    },
+    (error) => {
+      console.error('WebSocket connection error:', error);
+    }
   )
 }
 
