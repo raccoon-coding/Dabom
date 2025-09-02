@@ -12,6 +12,11 @@ const form = reactive({
 const showErrorModal = ref(false)
 const errorMessage = ref('')
 const errorTitle = 'Together 생성 에러'
+const socialLogin = reactive({
+  "google": "http://localhost:8080/oauth2/authorization/google",
+  "kakao": "http://localhost:8080/oauth2/authorization/kakao",
+  "naver": ""
+})
 
 const closeErrorModal = () => {
   showErrorModal.value = false
@@ -36,11 +41,7 @@ const login = async () => {
     window.location.href = '/'
 }
 
-const doGoogleLogin = async () => {
-  showSocialLoginPopup()
-}
-
-const showSocialLoginPopup = () => {
+const showSocialLoginPopup = (url) => {
   const popupHeight = 500;
   const popupWidth = 500;
   const left = (window.screen.width - popupWidth) / 2;
@@ -48,11 +49,11 @@ const showSocialLoginPopup = () => {
 
   const popupOptions = `height=${popupHeight},width=${popupWidth},left=${left},top=${top},scrollbars=yes,resizable=yes`;
 
-  openPopup(popupOptions);
+  openPopup(popupOptions, url);
 };
 
-const openPopup = async (options) => {
-  window.open("http://localhost:8080/oauth2/authorization/google", "_blank", options);
+const openPopup = async (options, url) => {
+  window.open(url, "_blank", options);
   window.addEventListener("message", (event) => {
     console.log(event.data)
     if (event.data === 'true') {
@@ -111,13 +112,13 @@ const openPopup = async (options) => {
         </div>
 
         <div class="social-login-container">
-          <button class="social-icon-btn kakao" title="kakao">
+          <button class="social-icon-btn kakao" title="kakao" @click="showSocialLoginPopup(socialLogin.kakao)">
             <i class="fas fa-comment"></i>
           </button>
           <button class="social-icon-btn naver" title="naver">
             <span>N</span>
           </button>
-          <button class="social-icon-btn google" title="google" @click="doGoogleLogin">
+          <button class="social-icon-btn google" title="google" @click="showSocialLoginPopup(socialLogin.google)">
             <i class="fab fa-google"></i>
           </button>
           <button class="social-icon-btn apple" title="apple">
