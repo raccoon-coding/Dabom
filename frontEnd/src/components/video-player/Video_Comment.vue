@@ -139,8 +139,8 @@ onMounted(() => {
             v-model="commentText"
         ></textarea>
         <div class="comment-actions">
-          <button class="btn btn-cancel" @click="commentText = ''">취소</button>
-          <button class="btn btn-primary" @click="submitComment">댓글 달기</button>
+          <button class="action-btn btn-cancel" @click="commentText = ''">취소</button>
+          <button class="action-btn btn-message" @click="submitComment">댓글 달기</button>
         </div>
       </div>
     </div>
@@ -177,7 +177,7 @@ onMounted(() => {
     </div>
 
     <div class="load-more" v-if="hasMore">
-      <button class="btn btn-load-more" @click="loadMoreComments">더 보기</button>
+      <button class="action-btn btn-load-more" @click="loadMoreComments">더 보기</button>
     </div>
   </div>
 </template>
@@ -195,9 +195,9 @@ onMounted(() => {
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
 }
+//border-radius: 4px;
 .btn-load-more:hover {
   background-color: #0056b3;
 }

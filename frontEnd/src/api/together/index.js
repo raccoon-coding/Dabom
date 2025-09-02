@@ -306,7 +306,7 @@ export const isMaster = async (togetherIdx) => {
   return data
 };
 
-export const getToken = async (togetherIdx) => {
+export const getToken = async () => {
   const requestUrl = `/api/member/token`
   let data = {}
 

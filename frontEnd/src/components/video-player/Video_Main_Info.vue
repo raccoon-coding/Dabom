@@ -58,3 +58,10 @@ const videoRating = ref(0); // 초기값은 0 또는 videoInfo에서 가져올 �
         </div>
     </div>
 </template>
+
+<style scoped>
+@import url('@/assets/Video_Player/Video_Player.css');
+.channel-buttons {
+  padding:0.5rem 0.5rem;
+}
+</style>
