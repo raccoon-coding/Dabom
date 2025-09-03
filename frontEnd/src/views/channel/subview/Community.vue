@@ -17,8 +17,9 @@ const pageSize = 10;
 const observerTarget = ref(null);
 let observer = null;
 
-const channelIdx = computed(() => {
-    return route.params.channelIdx ? (route.params.channelIdx) : null;
+const channelName  = computed(() => {
+    return route.params.channelName ? (route.params.channelName) : null;
+    
 });
 
 const loadPosts = async (page = 0, reset = false) => {
@@ -32,7 +33,8 @@ const loadPosts = async (page = 0, reset = false) => {
             await new Promise(resolve => setTimeout(resolve, 800));
         }
         
-        const response = await getChannelBoardListPaged(page, pageSize, 'latest', channelIdx.value); // 최신순
+        const response = await getChannelBoardListPaged(page, pageSize, 'latest', channelName.value); // 최신순
+        console.log("테스트",channelName.value);
         
         if (reset) {
             posts.value = response.content || [];

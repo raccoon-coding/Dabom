@@ -1,4 +1,6 @@
 <script setup>
+import useMemberStore from '@/stores/useMemberStore';
+import { useRoute } from 'vue-router';
 import { ref, onMounted, watch, onUnmounted } from 'vue';
 import { getChannelBoardListPaged, deleteChannelBoard, updateChannelBoard, createChannelBoard } from '@/api/channel';
 
@@ -21,6 +23,18 @@ const hasNext = ref(true);
 const isLoadingMore = ref(false);
 const pageSize = 10;
 
+
+const memberStore = useMemberStore();
+const route = useRoute();
+const getChannelName = () => {
+  if (route.path === '/mychannel') {
+    return memberStore.getChannelNameWithEncrypt();
+  } else {
+    return route.params.channelName;
+  }
+};
+const channelName = getChannelName();
+console.log("!!테스트 ",channelName)
 // 정렬 관련 상태
 const sortBy = ref('oldest'); // 기본 오래된순
 
@@ -41,7 +55,7 @@ const loadPosts = async (page = 0, reset = false) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
     
-    const response = await getChannelBoardListPaged(page, pageSize, sortBy.value);
+    const response = await getChannelBoardListPaged(page, pageSize, sortBy.value, channelName);
     
     // 전체 게시글 개수 업데이트
     if (reset || page === 0) {

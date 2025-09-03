@@ -103,7 +103,7 @@ export const getChannelBoardList = async () => {
     return data;
 };
 
-export const getChannelBoardListPaged = async (page = 0, size = 10, sort = 'oldest', channelIdx) => {
+export const getChannelBoardListPaged = async (page = 0, size = 10, sort = 'oldest', channelName) => {
     const requestUrl = `/api/channel/board/list`;
     let data = {};
 
@@ -113,7 +113,7 @@ export const getChannelBoardListPaged = async (page = 0, size = 10, sort = 'olde
                 page: page,
                 size: size,
                 sort: sort,
-                channelIdx: channelIdx
+                channelName: channelName
             }
         });
         if (response.data.code === 200) {
