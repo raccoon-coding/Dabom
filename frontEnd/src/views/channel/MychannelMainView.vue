@@ -6,6 +6,7 @@ import Sidebar from '@/components/channel/MyChannelSidbar.vue';
 import VideoManagementSection from '@/components/channel/video-management/VideoManagementSection.vue';
 import CommunitySection from '@/components/channel/community-management/CommunitySection.vue';
 import InfoSection from '@/components/channel/information-management/InfoSection.vue';
+import PlaylistSection from '@/components/channel/playlist-management/PlaylistSection.vue';
 import useMemberStore from '@/stores/useMemberStore';
 import api from '@/api/auth';
 
