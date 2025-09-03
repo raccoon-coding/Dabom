@@ -18,6 +18,7 @@ const useMemberStore = defineStore('member', () => {
     }
     if (Date.now() > data.expireAt) {
       encryptStorage.removeItem(LOGIN_KEY)
+      encryptStorage.removeItem(CHANNEL_NAME)
       return false
     }
     return data.loggedIn
@@ -36,6 +37,7 @@ const useMemberStore = defineStore('member', () => {
 
   const removeWithEncrypt = () => {
     encryptStorage.removeItem(LOGIN_KEY)
+    encryptStorage.removeItem(CHANNEL_NAME)
   }
 
   return { isLogin, checkLogin, setWithEncrypt, removeWithEncrypt, getChannelNameWithEncrypt }
