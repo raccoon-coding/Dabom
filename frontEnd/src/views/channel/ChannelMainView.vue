@@ -2,6 +2,7 @@
 import ChannelHeader from '@/components/channel/ChannelHeader.vue';  // 새로 만든 컴포넌트
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
+import ChannelNavigationBar from "@/components/channel/ChannelNavigationBar.vue";
 
 
 const route = useRoute();
@@ -14,6 +15,7 @@ const isMyChannelRoute = computed(() => {
 
 <template>
     <ChannelHeader :channelIdx="channelIdx" />
+    <ChannelNavigationBar/>
     <div class="channel-content">
         <RouterView />
     </div>
