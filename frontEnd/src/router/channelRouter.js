@@ -1,5 +1,5 @@
 import community from "@/views/channel/subview/Community.vue"
-import playlists from "@/components/channel/playlist-management/PlaylistSection.vue"
+import playlists from "@/views/channel/subview/ChannelPlaylists.vue"
 import channel from "@/views/channel/ChannelMainView.vue"
 import about from "@/views/channel/subview/About.vue"
 import videos from "@/views/channel/subview/video/Video_Fix.vue"
