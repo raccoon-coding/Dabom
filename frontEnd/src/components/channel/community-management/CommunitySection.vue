@@ -34,7 +34,6 @@ const getChannelName = () => {
   }
 };
 const channelName = getChannelName();
-console.log("!!테스트 ",channelName)
 // 정렬 관련 상태
 const sortBy = ref('oldest'); // 기본 오래된순
 
