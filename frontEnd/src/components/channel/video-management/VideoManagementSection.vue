@@ -30,9 +30,12 @@ const closeUploadModal = () => {
 }
 
 const getVideoList = async () => {
-  const response = await api.getMyVideoList()
-  console.log("videos >>", response)
-  videos.value = response.data;
+  try {
+    const response = await api.getMyVideoList()
+    videos.value = (response && Array.isArray(response.data)) ? response.data : [];
+  } catch (error) {
+    videos.value = []; //null 값오면 밑에 템플릿에서 조건부 버튼 안눌려서 터짐 예외 꼭처리하기!!!!
+  }
 }
 
 onMounted(() => {

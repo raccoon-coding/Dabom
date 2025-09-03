@@ -1,6 +1,5 @@
 <script setup>
 const props = defineProps(['videos'])
-console.log("아 씨발 너무짜증난다 진짜2")
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
