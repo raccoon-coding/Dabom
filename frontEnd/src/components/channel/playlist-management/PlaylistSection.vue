@@ -86,7 +86,7 @@ const handleCreate = async () => {
             <input type="text" v-model="item.playlistTitle">
           </td>
           <td>
-            <span class="video-count">{{ item.videoCount }}</span>
+            <span class="video-count">{{ item.items.length }}</span>
           </td>
           <td>
             <button class="btn-list-edit" @click="handleEdit(item)">

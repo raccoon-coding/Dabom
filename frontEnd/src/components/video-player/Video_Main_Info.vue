@@ -1,11 +1,14 @@
 <script setup>
 import { ref } from 'vue';
 import StarRating from '@/components/common/StarRating.vue'; // StarRating 컴포넌트 임포트
+import PlaylistAddModal from './PlaylistAddModal.vue';
 
 const props = defineProps(['videoInfo']);
 
 // videoRating은 StarRating 컴포넌트의 v-model과 연결됩니다.
 const videoRating = ref(0); // 초기값은 0 또는 videoInfo에서 가져올 수 있음
+
+const showPlaylistModal = ref(false); // 모달 표시 상태를 관리할 변수
 
 </script>
 
@@ -37,7 +40,7 @@ const videoRating = ref(0); // 초기값은 0 또는 videoInfo에서 가져올 �
                 <button class="action-btn together-btn" id="togetherBtn">
                     <i class="fas fa-users"></i>Together 모드</button>
                 <button class="action-btn share-btn"><i class="fas fa-share"></i>공유</button>
-                <button class="action-btn playlist-btn"><i class="fas fa-plus"></i>플레이리스트에 추가</button>
+                <button class="action-btn playlist-btn" @click="showPlaylistModal = true"><i class="fas fa-plus"></i>플레이리스트에 추가</button>
             </div>
         </div>
 
@@ -57,6 +60,13 @@ const videoRating = ref(0); // 초기값은 0 또는 videoInfo에서 가져올 �
             </div>
         </div>
     </div>
+
+    <!-- 플레이리스트 추가 모달 -->
+<PlaylistAddModal 
+  v-if="showPlaylistModal" 
+  :video-info="props.videoInfo" 
+  @close="showPlaylistModal = false" 
+/>
 </template>
 
 <style scoped>

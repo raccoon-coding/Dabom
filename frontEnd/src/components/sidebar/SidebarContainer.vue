@@ -20,7 +20,7 @@ const libraryMenu = [
     { icon: 'fas fa-history', label: '시청 기록' },
     { icon: 'fas fa-clock', label: '나중에 볼 영상' },
     { icon: 'fas fa-thumbs-up', label: '좋아요 표시한 동영상' },
-    { icon: 'fas fa-list', label: '재생목록' },
+    { icon: 'fas fa-list', label: '재생목록', path: '/my-playlists' },
 ]
 
 const subscriptionMenu = [
