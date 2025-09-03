@@ -2,7 +2,7 @@
 import {reactive, ref} from 'vue';
 import LoginForm from '@/entity/auth/LoginForm';
 import Modal from '@/components/main/Modal.vue'
-import api from '@/api/auth'
+import api, {getCurrentMemberInfo} from '@/api/auth'
 import useMemberStore from '@/stores/useMemberStore';
 
 const memberStore = useMemberStore();
@@ -15,7 +15,7 @@ const errorTitle = 'Together 생성 에러'
 const socialLogin = reactive({
   "google": "http://localhost:8080/oauth2/authorization/google",
   "kakao": "http://localhost:8080/oauth2/authorization/kakao",
-  "naver": ""
+  "naver": "http://localhost:8080/oauth2/authorization/naver"
 })
 
 const closeErrorModal = () => {
@@ -53,13 +53,16 @@ const showSocialLoginPopup = (url) => {
 };
 
 const openPopup = async (options, url) => {
-  window.open(url, "_blank", options);
-  window.addEventListener("message", (event) => {
-    console.log(event.data)
+  const popup = window.open(url, "_blank", options);
+  window.addEventListener("message", async (event) => {
     if (event.data === 'true') {
+      let res = await api.getCurrentMemberInfo();
       window.location.href = '/';
-      memberStore.setWithEncrypt()
+      return memberStore.setWithEncrypt(res.data.name)
     }
+    popup.close();
+    showErrorModal.value = true;
+    errorMessage.value = "소셜 로그인을 다시 시도해주세요."
   })
 };
 </script>
@@ -115,7 +118,7 @@ const openPopup = async (options, url) => {
           <button class="social-icon-btn kakao" title="kakao" @click="showSocialLoginPopup(socialLogin.kakao)">
             <i class="fas fa-comment"></i>
           </button>
-          <button class="social-icon-btn naver" title="naver">
+          <button class="social-icon-btn naver" title="naver" @click="showSocialLoginPopup(socialLogin.naver)">
             <span>N</span>
           </button>
           <button class="social-icon-btn google" title="google" @click="showSocialLoginPopup(socialLogin.google)">

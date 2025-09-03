@@ -66,9 +66,12 @@ export const uploadToPresignedUrl = async (presignedUrl, file) => {
     const axiosResponse = await api.put(presignedUrl, file, {
         headers: {
             'Content-Type': file.type
-        }
+        },
+        timeout: 120000, // 2분으로 오버라이드
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity
     });
-    return axiosResponse
+    return axiosResponse;
 }
 
 export const getMyVideoList = async () => {
