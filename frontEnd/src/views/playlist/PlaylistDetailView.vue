@@ -70,19 +70,14 @@ const formattedUpdatedAt = computed(() => {
   return playlist.value.updatedAt.split(' ')[0];
 });
 
-// VideoSectionComp가 videoId 속성을 기대하므로, video 객체에 videoId를 추가해줍니다.
 const videoListForComponent = computed(() => {
-    if (!playlist.value || !playlist.value.videos) return []; // Changed from items to videos
+    if (!playlist.value || !playlist.value.videos) return [];
     return playlist.value.videos.map(item => {
-        // item.video가 유효한지 확인
-        if (!item.video) {
-            return null; // 또는 기본값 반환
-        }
         return {
-            ...item.video,
-            videoId: item.video.idx // videoId를 video 객체의 idx로 설정
+            ...item,
+            videoId: item.idx // videoId를 video 객체의 idx로 설정
         };
-    }).filter(Boolean); // null 값 필터링
+    });
 });
 
 </script>

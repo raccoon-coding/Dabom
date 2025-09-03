@@ -9,7 +9,10 @@ const playVideo = () => {
 }
 
 const goToChannel = () => {
-    router.push(`/channel/${props.video.channel.name}`);
+    // channel 정보가 있을 때만 이동하도록 수정
+    if (props.video.channel && props.video.channel.name) {
+        router.push(`/channel/${props.video.channel.name}`);
+    }
 }
 </script>
 
@@ -35,7 +38,8 @@ const goToChannel = () => {
             </div>
             <div class="video-details">
                 <h4 class="video-title">{{ props.video.title }}</h4>
-                <p class="channel-name">{{ props.video.channel.name || 내채널}}</p>
+                <!-- Optional Chaining (?.)을 사용해서 안전하게 접근하도록 수정 -->
+                <p class="channel-name">{{ props.video.channel?.name || '채널 정보 없음' }}</p>
                 <div class="video-meta">
                     <div class="star-rating">
 
