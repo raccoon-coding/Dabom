@@ -37,5 +37,38 @@ export const multiImageUpload = async (files, directory) => {
   }
 };
 
+export const getPresignedUrl = async (fileInfo) => {
+  const requestUrl = `/api/images/presigned`
 
-export default { imageUpload };
+  return await api.post(requestUrl, fileInfo)
+      .then((response) => {
+        return response.data
+      })
+      .catch((error) => {
+        console.error(error);
+        throw error;
+      })
+}
+
+export const uploadToPresignedUrl = async (presignedUrl, file) => {
+  return await api.put(presignedUrl, file, {
+    headers: {
+      'Content-Type': file.type
+    },
+  });
+}
+
+export const createImageEntity = async (requestData) => {
+  const requestUrl = `/api/images`
+  return await api.post(requestUrl, requestData)
+      .then((response) => {
+        console.log(response)
+        return response.data;
+      })
+      .catch((error) => {
+        console.error(error)
+        throw error;
+      })
+}
+
+export default { imageUpload, getPresignedUrl, uploadToPresignedUrl, createImageEntity };
