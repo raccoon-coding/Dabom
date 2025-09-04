@@ -77,14 +77,14 @@ export const uploadToPresignedUrl = async (presignedUrl, file) => {
 export const getMyVideoList = async () => {
     const requestUrl = `/api/channels/videos/manage`
 
-    try {
-        const response = await api.get(requestUrl)
-        return response.data
-    } catch (error) {
-        console.error('내 비디오 리스트 요청 실패', error)
-        throw error
-    }
-
+    return await api.get(requestUrl)
+        .then((response) => {
+            return response.data
+        })
+        .catch((error) => {
+            console.error("내 비디오 리스트 요청 실패", erro)
+            throw error;
+        })
 }
 
 
