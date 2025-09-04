@@ -1,6 +1,12 @@
 <script setup>
 import { ref, watch, computed, onMounted } from 'vue';
-import api from '@/api/score'; // score API 임포트
+import api from '@/api/score';
+import useMemberStore from '@/stores/useMemberStore';
+import Modal from '@/components/main/Modal.vue'
+
+const memberStore = useMemberStore();
+
+const showLoginModal = ref(false); // Reactive variable to control modal visibility
 
 const props = defineProps({
   modelValue: { // v-model 지원을 위한 prop
@@ -149,7 +155,7 @@ const onMouseMove = (event) => {
   const x = event.clientX - rect.left;
   const starWidth = rect.width / props.maxStars;
   const newRating = Math.ceil(x / starWidth);
-  if (selectedRating.value === 0) { // 선택된 상태가 없을 때만 호버 업데이트
+  if (selectedRating.value === 0) {
     hoverRating.value = Math.min(Math.max(0, newRating), props.maxStars);
   }
 };
@@ -177,44 +183,20 @@ const resetHover = () => {
 const submitRating = async () => {
   const ratingToSubmit = selectedRating.value;
   if (!props.editable || ratingToSubmit === 0) return;
-
-  if (!memberStore.isLogin) {
-    alert('로그인 후 평점을 매길 수 있습니다.');
-    return;
-  }
-
-  const memberIdx = parseInt(localStorage.getItem('memberIdx'));
-  if (isNaN(memberIdx)) {
-    alert('사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요.');
-    return;
-  }
-
-  const target = scoreTarget.value;
-  if (!target || !target.idx) {
-    alert('평점 대상 정보가 없어 평점을 매길 수 없습니다.');
+  if (!memberStore.checkLogin()) {
+    showLoginModal.value = true; // Show the modal
     return;
   }
 
   const scoreData = {
     score: ratingToSubmit,
-    member: { idx: memberIdx },
-    scoreType: target.type,
+    videoIdx: target.idx, // Directly pass videoIdx
   };
 
-  if (target.type === 'VIDEO') {
-    scoreData.video = { idx: target.idx };
-  } else if (target.type === 'CHANNEL') {
-    scoreData.channel = { idx: target.idx };
-  }
-
   try {
-    if (userScoreIdx.value) {
-      await api.updateScore({ ...scoreData, idx: userScoreIdx.value });
-      alert('평점이 업데이트되었습니다!');
-    } else {
-      await api.registerScore(scoreData);
-      alert('평점이 등록되었습니다!');
-    }
+    // Call the new unified API endpoint
+    await api.saveOrUpdateVideoScore(scoreData);
+    alert('평점이 처리되었습니다!'); // More general message
 
     // 평점 등록/수정 후 상태 업데이트
     const updatedAvgScore = await api.getAverageScore(target.type, target.idx);
@@ -230,8 +212,6 @@ const submitRating = async () => {
       userScoreIdx.value = null;
     }
 
-    // 제출 후 선택 상태 유지
-    // selectedRating.value는 그대로 유지하여 사용자가 선택한 상태를 보여줌
 
   } catch (error) {
     console.error('평점 처리 실패:', error);
@@ -245,7 +225,6 @@ const submitRating = async () => {
   }
 };
 
-// 평점 선택 취소 함수 (선택적)
 const cancelRating = () => {
   selectedRating.value = 0;
   hoverRating.value = 0;
@@ -280,8 +259,17 @@ const cancelRating = () => {
       <button @click="cancelRating()" class="cancel-btn">
         취소
       </button>
+
     </div>
   </div>
+
+  <!-- Login Required Modal -->
+  <Modal
+    v-if="showLoginModal"
+    title="로그인이 필요합니다."
+    message="평점을 매기려면 로그인해주세요."
+    @confirm="showLoginModal = false"
+  />
 </template>
 
 <style scoped>
