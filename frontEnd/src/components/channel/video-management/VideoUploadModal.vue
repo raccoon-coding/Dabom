@@ -91,6 +91,7 @@ const resetAndClose = () => {
   metadata.description = ''
   metadata.isPublic = true
   emit('close')
+  window.location.reload()
 }
 
 const closeModal = () => {
@@ -221,7 +222,7 @@ const handleOverlayClick = () => {
           <button @click="closeModal" class="btn-cancel">취소</button>
           <button
               @click="saveMetadata"
-              :disabled="!metadata.title.trim()"
+              :disabled="!metadata.title.trim() || !metadata.description.trim() || !metadata.videoTag"
               class="btn-save"
           >
             완료

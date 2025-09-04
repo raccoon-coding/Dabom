@@ -3,6 +3,7 @@ import {onMounted, ref} from 'vue'
 import VideoListComp from "@/components/channel/video-management/VideoListComp.vue";
 import VideoUploadModal from "@/components/channel/video-management/VideoUploadModal.vue";
 import api from "@/api/video/index.js"
+import TestModal from "@/components/common/TestModal.vue";
 
 const props = defineProps({
   isActive: {
@@ -40,24 +41,25 @@ onMounted(() => {
 
 <template>
   <section id="section-videos" class="dashboard-section" :class="{ active: isActive }">
+    <TestModal />
     <VideoUploadModal :visible="showUploadModal" @close="closeUploadModal"/>
 
     <!-- 헤더 영역 -->
     <div class="section-header">
-      <h2>비디오 관리</h2>
+      <h2>동영상 관리</h2>
       <button v-if="videos.length > 0" @click="openUploadModal" class="upload-btn">
         <i class="icon-plus"></i>
-        비디오 업로드
+        동영상 업로드
       </button>
     </div>
 
     <VideoListComp v-if="videos.length > 0" :videos="videos"/>
     <div v-else class="empty-state">
       <i class="fas fa-file-video"></i>
-      <h3>업로드된 비디오가 없습니다</h3>
-      <p>첫 번째 비디오를 업로드해보세요</p>
+      <h3>업로드된 동영상 없습니다</h3>
+      <p>첫 번째 동영상를 업로드해보세요</p>
       <button @click="openUploadModal" class="upload-btn-empty">
-        비디오 업로드
+        동영상 업로드
       </button>
     </div>
 
