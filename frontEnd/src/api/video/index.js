@@ -41,8 +41,8 @@ export const uploadVideo = async (file) => {
     return data;
 };
 
-export const uploadVideoMetadata = async (videoId, metadata) => {
-    const url = `/api/videos/metadata/${videoId}`;
+export const uploadVideoMetadata = async (videoIdx, metadata) => {
+    const url = `/api/videos/metadata/${videoIdx}`;
     let data = {};
 
     try {
@@ -96,8 +96,27 @@ export const getMyVideoList = async () => {
         })
 }
 
+export const deleteVideo = async (videoIdx) => {
+    console.log('API 함수 내부 videoIdx:', videoIdx); // 이것도 추가로 확인해보세요
+    const requestUrl = `/api/videos/metadata/${videoIdx}`
+    console.log('요청 URL:', requestUrl); // URL도 확인
+
+    await api.delete(requestUrl)
+        .then((response) => {
+            console.log(response)
+        })
+        .catch((error) => {
+            console.error(error)
+            throw error
+        })
+}
 
 
-export default { getVideoList, uploadVideo, uploadVideoMetadata, getPresignedUrl, uploadToPresignedUrl, getMyVideoList };
+export default {
+    uploadVideo, uploadVideoMetadata, uploadToPresignedUrl,
+    getVideoList, getPresignedUrl, getMyVideoList,
+    deleteVideo
+}
+
 
 

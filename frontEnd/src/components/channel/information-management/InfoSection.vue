@@ -41,7 +41,6 @@ const onImageChange = async (event) => {
 
 onMounted(async () => {
   const result = await api.getChannelInfo()
-  console.log(result)
   channelInfoForm.id = result.data.id
   channelInfoForm.name = result.data.name
   channelInfoForm.content = result.data.content

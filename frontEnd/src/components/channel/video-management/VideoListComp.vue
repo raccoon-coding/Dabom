@@ -1,5 +1,13 @@
+
 <script setup>
+import api from '@/api/video/index.js'
+import {ref} from "vue";
+import VideoDeleteModal from "@/components/channel/video-management/VideoDeleteModal.vue";
+
 const props = defineProps(['videos'])
+const deleteModal = ref(false)
+const targetVideoIdx = ref(null)
+const targetVideo = ref(null)
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
@@ -10,16 +18,42 @@ const formatDate = (dateString) => {
     return dateString
   }
 }
+
+const handleConfirm = async () => {
+  await api.deleteVideo(targetVideoIdx.value)
+  closeDeleteModal()
+  window.location.reload()
+}
+
+const openDeleteModal = (videoIdx) => {
+  targetVideoIdx.value = videoIdx
+  deleteModal.value = true
+}
+
+const closeDeleteModal = () => {
+  deleteModal.value = false
+  targetVideoIdx.value = null
+  targetVideo.value = null
+}
 </script>
 
 <template>
   <div>
+    <teleport to="body">
+      <VideoDeleteModal
+          v-if="deleteModal"
+          :title="targetVideo?.publicVideo ? '동영상 비공개' : '동영상 공개'"
+          :message="targetVideo?.publicVideo ?'동영상을 비공개 상태로 변경하시겠습니까?' : '동영상을 공개상태로 변경하시겠습니까?'"
+          @confirm="handleConfirm"
+          @cancel="closeDeleteModal"
+      />
+    </teleport>
+
     <table class="video-table">
       <thead>
       <tr>
         <th>동영상</th>
         <th>제목</th>
-        <!--        <th>재생시간</th>-->
         <th>조회수</th>
         <th>평점</th>
         <th>상태</th>
@@ -30,7 +64,6 @@ const formatDate = (dateString) => {
 
       <tbody>
       <tr v-for="video in videos" :key="video.videoId" class="video-row">
-
         <td class="video-cell">
           <div class="video-wrapper">
             <img src='' :alt="video.title"/>
@@ -47,8 +80,6 @@ const formatDate = (dateString) => {
           </div>
         </td>
 
-        <!--        <td class="duration-cell">{{ video.duration }}</td>-->
-
         <td class="views-cell">{{ video.views }}</td>
 
         <td class="rating-cell">
@@ -60,7 +91,7 @@ const formatDate = (dateString) => {
 
         <td class="status-cell">
           <span>
-            {{ video.isVisibility ? '공개' : '비공개' }}
+            {{ video.publicVideo ? '공개' : '비공개' }}
           </span>
         </td>
 
@@ -68,11 +99,8 @@ const formatDate = (dateString) => {
 
         <td class="actions-cell">
           <div class="action-buttons">
-            <button @click="editVideo(video)" class="action-btn edit" title="편집">
-              <i class="icon-edit"></i>
-            </button>
-            <button @click="deleteVideo(video.videoId)" class="action-btn delete" title="삭제">
-              <i class="icon-delete"></i>
+            <button @click="openDeleteModal(video.videoIdx)" class="action-btn delete">
+              {{ video.publicVideo ? '영상 비공개' : '영상 공개' }}
             </button>
           </div>
         </td>
@@ -90,7 +118,7 @@ const formatDate = (dateString) => {
   border-radius: 12px;
   overflow: hidden;
   border-collapse: collapse;
-  margin: var(--spacing-lg) 0;
+  //margin: var(--spacing-lg) 0;
 }
 
 .video-table thead {
@@ -122,53 +150,14 @@ const formatDate = (dateString) => {
   font-size: var(--font-sm);
 }
 
-/* 썸네일 셀 */
 .video-cell {
-  width: 120px;
+  width: 15vh;
+  text-align: center;
 }
 
-.video-wrapper {
-  position: relative;
-  width: 100px;
-  height: 60px;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.video-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.play-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: var(--transition);
-}
-
-.video-wrapper:hover .play-overlay {
-  opacity: 1;
-}
-
-.play-overlay i {
-  color: white;
-  font-size: var(--font-lg);
-}
-
-/* 제목 셀 */
 .title-cell {
-  max-width: 45vh;
-  min-width: 80px;
+  max-width: 40vh;
+  /* min-width: 80px; */
 }
 
 .title-wrapper h4 {
@@ -179,11 +168,6 @@ const formatDate = (dateString) => {
   line-height: 1.3;
 }
 
-/* 설명 셀 */
-.description-cell {
-  max-width: 300px;
-}
-
 .description {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -192,23 +176,14 @@ const formatDate = (dateString) => {
   line-height: 1.4;
 }
 
-/* 재생시간, 조회수 셀 */
-.duration-cell,
 .views-cell {
-  text-align: center;
   font-weight: 500;
   color: var(--text-primary);
 }
 
-/* 평점 셀 */
-.rating-cell {
-  text-align: center;
-}
 
 .rating {
   display: flex;
-  align-items: center;
-  justify-content: center;
   gap: var(--spacing-xs);
   color: var(--star-color);
   font-weight: 600;
@@ -218,59 +193,29 @@ const formatDate = (dateString) => {
   color: var(--star-color);
 }
 
-/* 상태 셀 */
-.status-cell {
-  text-align: center;
-}
-
-.status-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
-}
-
-.toggle-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: var(--spacing-xs);
-  border-radius: 4px;
-  transition: var(--transition);
-}
-
-.toggle-btn:hover {
-  background-color: var(--hover-color);
-  color: var(--text-primary);
-}
-
-/* 날짜 셀 */
 .date-cell {
-  text-align: center;
   font-size: var(--font-xs);
   white-space: nowrap;
 }
 
-/* 액션 셀 */
 .actions-cell {
-  text-align: center;
+  min-width: 120px;
 }
 
 .action-buttons {
   display: flex;
-  gap: var(--spacing-xs);
-  justify-content: center;
 }
 
 .action-btn {
   background: none;
   border: none;
-  padding: var(--spacing-sm);
+  padding: 0.4rem 0.8rem;
   border-radius: 6px;
   cursor: pointer;
   transition: var(--transition);
   color: var(--text-secondary);
+  white-space: nowrap;
+  font-size: 0.8rem;
 }
 
 .action-btn:hover {
@@ -278,85 +223,8 @@ const formatDate = (dateString) => {
   color: var(--text-primary);
 }
 
-.action-btn.edit:hover {
-  background-color: var(--primary-color);
-  color: white;
-}
-
 .action-btn.delete:hover {
   background-color: #e74c3c;
   color: white;
 }
-
-/* 반응형 */
-@media (max-width: 768px) {
-  .video-table {
-    font-size: var(--font-xs);
-  }
-
-  .video-table th,
-  .video-table td {
-    padding: var(--spacing-sm);
-  }
-
-  .video-wrapper {
-    width: 80px;
-    height: 45px;
-  }
-
-  .title-wrapper h4 {
-    font-size: var(--font-sm);
-  }
-
-  .description-cell {
-    max-width: 200px;
-  }
-}
-
-@media (max-width: 480px) {
-  .video-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .video-table thead,
-  .video-table tbody,
-  .video-table th,
-  .video-table td,
-  .video-table tr {
-    display: block;
-  }
-
-  .video-table thead tr {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-  }
-
-  .video-table tr {
-    background-color: var(--card-bg);
-    margin-bottom: var(--spacing-md);
-    border-radius: 8px;
-    padding: var(--spacing-md);
-    white-space: normal;
-  }
-
-  .video-table td {
-    border: none;
-    position: relative;
-    padding: var(--spacing-sm) 0;
-    padding-left: 40%;
-  }
-
-  .video-table td:before {
-    content: attr(data-label);
-    position: absolute;
-    left: 0;
-    width: 35%;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-}
 </style>
-
