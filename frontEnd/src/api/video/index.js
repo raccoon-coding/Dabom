@@ -111,11 +111,23 @@ export const toggleVideoVisibility = async (videoIdx) => {
         })
 }
 
+export const cleanupS3TempVideo = (videoIdx) => {
+    const requestUrl = `/api/videos/${videoIdx}/cleanup`
+    api.delete(requestUrl)
+        .then((response) => {
+        })
+        .catch((error) => {
+            console.error(error)
+            throw error;
+        })
+}
+
 
 export default {
     uploadVideo, uploadVideoMetadata, uploadToPresignedUrl,
     getVideoList, getPresignedUrl, getMyVideoList,
-    toggleVideoVisibility
+    toggleVideoVisibility,
+    cleanupS3TempVideo
 }
 
 
