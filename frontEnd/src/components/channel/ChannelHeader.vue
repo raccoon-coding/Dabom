@@ -1,9 +1,9 @@
 <script setup>
 import {computed, onMounted, reactive, ref, watch} from 'vue';
 import { useRoute } from 'vue-router';
-import api from '@/api/channel/index.js'
+import api from "@/api/channel"
 import useMemberStore from '@/stores/useMemberStore';
-import channel from "@/api/channel/index.js";
+import subscribe from "@/api/subscribe/index.js";
 
 const route = useRoute();
 const memberStore = useMemberStore();
@@ -13,7 +13,32 @@ const channelInfo = reactive({
   name: '',
   content: '',
   email: '',
-  videoCount: 0
+  videoCount: 0,
+  profileImg: "",
+})
+
+const bannerImg = ref('');
+
+
+const getBannerImage = async () => {
+  const imageUrl = await api.getChannelBannerImage();
+  console.log(imageUrl);
+  if (imageUrl) {
+    bannerImg.value = imageUrl;
+  }
+};
+
+const headerBackgroundStyle = computed(() => {
+  if (bannerImg) {
+    return `background-image: url(${bannerImg.value}); background-size: cover; background-position: center;`;
+  } else {
+    return `background: linear-gradient(135deg, #0d1117 0%, #161b22 25%, #21262d 50%, #161b22 75%, #0d1117 100%);`;
+  }
+});
+
+const isSubscribe = ref(false)
+const subscribeIdx = reactive({
+  memberIdx: 0
 })
 
 
@@ -23,6 +48,37 @@ const isOwner = computed(() => {
 const isManagementPage = computed(() =>
   route.path == '/mychannel'
 );
+
+const getSubscribe = async () => {
+  subscribeIdx.memberIdx = channelInfo.id
+  let res = await subscribe.getSubscribe(subscribeIdx);
+  if(res.data === true) {
+    isSubscribe.value = true;
+  }
+}
+
+const subscribing = async () => {
+  if(isSubscribe.value) {
+    return deleteSubscribe()
+  }
+  return trySubscribe()
+}
+
+const trySubscribe = async () => {
+  subscribeIdx.memberIdx = channelInfo.id
+  let res = await subscribe.trySubscribe(subscribeIdx);
+  if(res.code === 200) {
+    isSubscribe.value = true;
+  }
+}
+
+const deleteSubscribe = async () => {
+  subscribeIdx.memberIdx = channelInfo.id
+  let res = await subscribe.deleteSubscribe(subscribeIdx);
+  if(res.code === 200) {
+    isSubscribe.value = false;
+  }
+}
 
 const checkIsMyChannel = () => {
   const myChannel = memberStore.getChannelNameWithEncrypt();
@@ -45,24 +101,26 @@ const loadChannelInfo = async () => {
 }
 onMounted(async () => {
   await loadChannelInfo();
+  await getSubscribe();
+  await getBannerImage();
 })
 
 </script>
 
 <template>
-  <div class="channel-header">
+  <div class="channel-header" :style="headerBackgroundStyle">
     <div class="channel-info">
       <div class="profile-section">
         <img
-          :src="channelInfo?.profileImage || `@/assets/images/dabom2.png`"
+          :src="channelInfo.profileImg"
           alt="채널 프로필"
           class="channel-profile-img"
         />
         <div class="channel-details">
-          <h1 class="channel-name">{{ channelInfo?.name || '찾을 수 없음' }}</h1>
+          <h1 class="channel-name">{{ channelInfo?.name ?? '찾을 수 없음' }}</h1>
           <div class="channel-meta">
-            <span class="subscriber-count">구독자 {{ channelInfo?.subscriberCount || '0' }}명</span>
-            <span class="video-count">동영상 {{ channelInfo.videoCount||"null"}}게</span>
+            <span class="subscriber-count">구독자 {{ channelInfo?.subscriberCount ?? '0' }}명</span>
+            <span class="video-count">동영상 {{ channelInfo?.videoCount ?? "0"}}개</span>
           </div>
         </div>
       </div>
@@ -89,9 +147,15 @@ onMounted(async () => {
         </RouterLink>
 
         <!-- 다른 사람 채널일 때는 구독 버튼 -->
-        <button v-else-if="!isMyChannel" class="subscribe-btn">
-          <i class="fas fa-bell"></i>
-          구독
+        <button v-else-if="!isMyChannel" class="subscribe-btn" @click="subscribing">
+          <div v-if="!isSubscribe">
+            <i class="fas fa-bell"></i>
+            구독
+          </div>
+          <div v-if="isSubscribe">
+            <i class="fas fa-bell"></i>
+            구독 중
+          </div>
         </button>
       </div>
     </div>
@@ -101,7 +165,7 @@ onMounted(async () => {
 <style scoped>
 /* 헤더임 */
 .channel-header {
-  background: linear-gradient(135deg, #0d1117 0%, #161b22 25%, #21262d 50%, #161b22 75%, #0d1117 100%);
+  /* background: linear-gradient(135deg, #0d1117 0%, #161b22 25%, #21262d 50%, #161b22 75%, #0d1117 100%); */
   padding: 4rem 0 4rem 0;
   color: white;
 }

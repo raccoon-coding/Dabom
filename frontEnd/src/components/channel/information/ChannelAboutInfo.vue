@@ -20,7 +20,7 @@ export default {
     try {
       const result = await api.getChannelInfo()
       console.log('채널 정보:', result)
-      
+      console.log("채넝정보!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
       // 서버 데이터로 업데이트 (기본값이 있으면 유지)
       this.channelInfo.id = result.data.id || this.channelInfo.id
       this.channelInfo.name = result.data.name || this.channelInfo.name

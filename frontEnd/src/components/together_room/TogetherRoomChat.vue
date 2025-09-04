@@ -2,21 +2,36 @@
 import Message from '@/components/together_room/TogetherRoomChatMessage.vue'
 import ModalCloseButton from '@/components/together_room/ModalCloseButton.vue'
 import settingBtn from "@/components/together_room/SettingBtn.vue"
-import { nextTick, onMounted, ref, watch } from 'vue'
+import {nextTick, onMounted, reactive, ref, watch} from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const togetherIdx = ref("")
 const writeMessage = ref("")
-const props = defineProps(['isMaster', 'socket', 'messages', 'joinMember', 'userIdx'])
+const props = defineProps(['isMaster', 'socket', 'userIdx'])
 const emits = defineEmits(['close_modal', 'open_master_modal'])
 const chatMessagesRef = ref(null);
+const socket = reactive({
+  messages: [],
+  socket: null,
+  joinMember: 0
+})
+
+const chatSubscription = () => {
+  socket.socket.subscribe(`/topic/together/${togetherIdx.value}`, (mes) => {
+    const data = JSON.parse(mes.body)
+    socket.messages.push(data)
+    if(data.users !== socket.joinMember) {
+      socket.joinMember = data.users
+    }
+  });
+}
 
 const sendMessage = () => {
   if(writeMessage.value === ""){
     return;
   }
-  props.socket.send(`/app/together/${togetherIdx.value}`, {}, writeMessage.value);
+  socket.socket.send(`/app/together/${togetherIdx.value}`, {}, writeMessage.value);
   writeMessage.value = ""
 }
 
@@ -29,7 +44,7 @@ const openMasterModal = () => {
 }
 
 watch(
-  () => props.messages.length,
+  () => socket.messages.length,
   async () => {
     await nextTick(); // DOM 렌더링 대기
     const el = chatMessagesRef.value;
@@ -41,6 +56,8 @@ watch(
 
 onMounted(() => {
   togetherIdx.value = route.params.id;
+  socket.socket = props.socket
+  chatSubscription()
 })
 </script>
 
@@ -50,7 +67,7 @@ onMounted(() => {
             <div class="chat-title">채팅</div>
             <div class="online-count">
                 <i class="fas fa-circle"></i>
-                {{props.joinMember}}명 온라인
+                {{socket.joinMember}}명 온라인
             </div>
             <div>
                 <span v-if="props.isMaster" @click="openMasterModal"><settingBtn /></span>
@@ -60,7 +77,7 @@ onMounted(() => {
 
         <div class="chat-messages" id="chatMessages"  ref="chatMessagesRef">
           <Message
-            v-for="msg in props.messages"
+            v-for="msg in socket.messages"
             :message="msg"
             :userIdx="props.userIdx"
           />
