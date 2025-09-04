@@ -59,7 +59,7 @@ onMounted(() => {
     <div v-else class="community-post">
       <div class="post-header">
         <div class="post-author">
-          <img src="https://via.placeholder.com/40" alt="채널" class="author-avatar">
+          <!-- <img src="https://via.placeholder.com/40" alt="채널" class="author-avatar"> -->
           <div class="author-info">
             <span class="author-name">크리에이티브 채널</span>
             <span class="post-time">{{ post.createdAt }}</span>

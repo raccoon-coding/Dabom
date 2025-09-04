@@ -40,7 +40,7 @@ const handleCommentLike = async (commentIdx) => {
 <template>
     <div class="comment-item">
         <div class="comment-avatar-container">
-            <img src="https://via.placeholder.com/32" alt="작성자" class="comment-avatar">
+<img :src="comment.profileImg || 'https://via.placeholder.com/32'" alt="작성자" class="comment-avatar">
         </div>
         <div class="comment-main">
             <div class="comment-header">

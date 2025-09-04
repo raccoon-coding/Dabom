@@ -6,6 +6,18 @@ import { getComments, postComment, deleteComment } from '@/api/videocomment/'
 const route = useRoute()
 const videoId = ref(route.params.id)
 
+// props로 현재 사용자 프로필 정보 받기
+const props = defineProps({
+  currentUserProfile: {
+    type: Object,
+    required: true,
+    default: () => ({
+      profileImg: 'https://via.placeholder.com/40',
+      name: '사용자'
+    })
+  }
+})
+
 const commentText = ref('')
 const comments = ref([])
 const currentUser = ref(null) // 현재 사용자 정보
@@ -16,9 +28,6 @@ const hasMore = ref(true) // 추가 댓글 여부
 
 const loadComments = async (reset = false) => {
   if (!videoId.value) return; // videoId가 없으면 실행하지 않음
-
-  console.log(videoId.value);
-
   if (reset) {
     page.value = 0
     comments.value = []
@@ -40,10 +49,18 @@ const loadComments = async (reset = false) => {
       sort: sortParam
     })
     
-    if (response && response.data) {
+    // API 함수에서 이미 res.data를 반환하므로 response가 실제 데이터
+    console.log('전체 응답:', response);
+    console.log('response.data:', response.data); // 실제 Slice 객체
+    
+    if (response && response.data && response.data.content) {
+        // API 함수에서 res.data를 반환하므로 response.data가 실제 Slice
         comments.value = reset ? response.data.content : [...comments.value, ...response.data.content]
         hasMore.value = !response.data.last
+        console.log('댓글 데이터 로드 성공:', response.data.content);
+        console.log('첫 번째 댓글 프로필:', response.data.content[0]?.profileImg);
     } else {
+        console.log('예상과 다른 응답 구조입니다.');
         comments.value = []
         hasMore.value = false
     }
@@ -106,10 +123,9 @@ watch(() => route.params.id, (newVideoId) => {
   }
 }, { immediate: true });
 
-
 onMounted(() => {
-  // 이제 watcher가 초기 로딩을 처리합니다.
-  currentUser.value = { id: 1 } // 실제 인증 시스템에서 사용자 ID 설정
+  // 실제 인증 시스템에서 사용자 ID 설정
+  currentUser.value = { id: 1 }
 })
 </script>
 
@@ -128,7 +144,8 @@ onMounted(() => {
 
     <div class="comment-write">
       <div class="comment-avatar">
-        <img src="https://via.placeholder.com/40" alt="내 프로필" />
+        <!-- props에서 현재 사용자 프로필 이미지 사용 -->
+        <img :src="props.currentUserProfile.profileImg" :alt="props.currentUserProfile.name + ' 프로필'" />
       </div>
       <div class="comment-input-area">
         <textarea
@@ -147,25 +164,27 @@ onMounted(() => {
       <div
           class="comment-item"
           v-for="comment in comments"
-          :key="comment.id"
+          :key="comment.idx"
       >
         <div class="comment-avatar">
+          <!-- 백엔드에서 추가한 profileImg 필드 사용 -->
           <img
-              :src="comment.avatar || 'https://via.placeholder.com/40'"
+              :src="comment.profileImg || 'https://via.placeholder.com/40'"
               alt="사용자"
           />
         </div>
         <div class="comment-content">
           <div class="comment-header">
             <span class="commenter-name">{{ comment.username }}</span>
-            <span class="comment-time">{{ comment.time }}</span>
+            <!-- 백엔드 응답의 createdAt 사용 -->
+            <span class="comment-time">{{ comment.createdAt }}</span>
           </div>
           <p class="comment-text">{{ comment.content }}</p>
           <div class="comment-actions">
             <button
                 v-if="currentUser && currentUser.id === comment.memberIdx"
                 class="comment-btn delete-btn"
-                @click="handleDeleteComment(comment.id)"
+                @click="handleDeleteComment(comment.idx)"
             >
               삭제
             </button>
@@ -195,7 +214,7 @@ onMounted(() => {
   border: none;
   cursor: pointer;
 }
-//border-radius: 4px;
+
 .btn-load-more:hover {
   background-color: #0056b3;
 }
