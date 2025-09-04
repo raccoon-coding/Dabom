@@ -39,11 +39,16 @@ watch(() => props.roomIdx, (newRoomIdx, oldRoomIdx) => {
 }, { immediate: true });
 
 // Watch for new messages in the chat store to scroll down
-watch(() => chatStore.messages, (newMessages, oldMessages) => {
-  if (newMessages.length > oldMessages.length) {
+watch(() => chatStore.messages.length, (newLength, oldLength) => {
+  console.log('Watch triggered for chatStore.messages.length');
+  console.log('newLength:', newLength, 'oldLength:', oldLength);
+  if (newLength > oldLength) {
+    console.log('New message added, attempting to scroll.');
     scrollToBottom();
+  } else {
+    console.log('Length not increased, no scroll.');
   }
-}, { deep: true });
+}); // Removed { deep: true }
 
 
 
@@ -85,15 +90,19 @@ async function resetAndLoadMessages() {
 }
 
 function scrollToBottom() {
-  // Use nextTick to wait for the DOM to update
   nextTick(() => {
-    // And then use setTimeout to give it a little more time, just in case.
-    setTimeout(() => {
-      const container = messagesContainer.value;
-      if (container) {
+    const container = messagesContainer.value;
+    if (container) {
+      // Ensure the container is actually scrollable and has content
+      if (container.scrollHeight > container.clientHeight) {
         container.scrollTop = container.scrollHeight;
+        console.log('Scrolled to bottom. scrollHeight:', container.scrollHeight, 'scrollTop:', container.scrollTop);
+      } else {
+        console.log('Container not scrollable or no overflow. scrollHeight:', container.scrollHeight, 'clientHeight:', container.clientHeight);
       }
-    }, 50); // 50ms delay
+    } else {
+      console.log('messagesContainer is null.');
+    }
   });
 }
 

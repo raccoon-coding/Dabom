@@ -14,19 +14,19 @@ export const useSocketStore = defineStore('socket', () => {
       const tokenData = await together.getToken();
       const jwt = tokenData['authorization']; // 헤더에서 JWT 추출
       if (!jwt) {
-        console.error('jwt가 비어있음.');
+        
         return null;
       }
       return jwt;
     } catch (error) {
-      console.error('JWT 가져오기 실패:', error);
+      
       return null;
     }
   }
 
   async function connect() {
     if (isConnected.value) {
-      console.log('Already connected.');
+      
       return;
     }
 
@@ -36,20 +36,25 @@ export const useSocketStore = defineStore('socket', () => {
     const socket = new SockJS('http://localhost:8080/chat');
     stompClient.value = Stomp.over(socket);
 
-    const headers = {
-      Authorization: jwt
-    };
+    // Set the JWT as a cookie for the backend's JwtHandShakeInterceptor
+    if (jwt) {
+      document.cookie = `ACCESS_TOKEN=${jwt}; path=/;`; // Set path to root for WebSocket
+    }
+
+    stompClient.value = Stomp.over(socket);
 
     stompClient.value.connect(
-      headers,
+      {}, // No headers needed here, JWT is in cookie
       (frame) => {
-        console.log('WebSocket connected:', frame);
+        
         isConnected.value = true;
+        
 
         stompClient.value.subscribe('/user/queue/messages', (message) => {
-          console.log('Socket: Received raw message:', message);
+          
           const messageData = JSON.parse(message.body);
-          console.log('Socket: Parsed messageData:', messageData);
+          
+          
           
           const transformedMessage = {
             id: messageData.createdAt || Date.now(),
@@ -60,11 +65,13 @@ export const useSocketStore = defineStore('socket', () => {
             isRead: messageData.isRead,
           };
 
+          
           chatStore.addMessage(transformedMessage);
+          
         });
       },
       (error) => {
-        console.error('WebSocket connection error:', error);
+        
         isConnected.value = false;
         stompClient.value = null;
       }
@@ -74,7 +81,7 @@ export const useSocketStore = defineStore('socket', () => {
   function disconnect() {
     if (stompClient.value) {
       stompClient.value.disconnect(() => {
-        console.log('WebSocket disconnected.');
+        
         isConnected.value = false;
         stompClient.value = null;
       });
@@ -83,7 +90,7 @@ export const useSocketStore = defineStore('socket', () => {
 
   function sendMessage(messageDto) {
     if (stompClient.value && isConnected.value) {
-      console.log("보내는 DTO:", messageDto);
+      
 
       stompClient.value.send(
         '/app/chat/send',
@@ -91,7 +98,7 @@ export const useSocketStore = defineStore('socket', () => {
         JSON.stringify(messageDto)
       );
     } else {
-      console.error('Cannot send message, not connected.');
+      
     }
   }
 
