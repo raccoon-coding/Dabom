@@ -97,17 +97,17 @@ const sendApi = async () => {
 
 onMounted(() => {
   getTogether()
-  initialData = { ...roomBody }
+  initialData = {...roomBody}
 })
 </script>
 
 <template>
-  <div 
-    v-if="visible" 
-    class="modal-backdrop" 
-    @click="handleBackdropClick"
+  <div
+      v-if="visible"
+      class="modal-backdrop"
+      @click="handleBackdropClick"
   ></div>
-  
+
   <div class="create-room-modal">
     <div class="modal-overlay" @click="closeModal"></div>
     <div class="modal-content">
@@ -123,12 +123,12 @@ onMounted(() => {
         <div class="form-group">
           <label for="roomName">방 이름 *</label>
           <input
-            id="roomName"
-            type="text"
-            required
-            maxlength="50"
-            placeholder="방 이름을 입력하세요"
-            v-model="roomBody.title"
+              id="roomName"
+              type="text"
+              required
+              maxlength="50"
+              placeholder="방 이름을 입력하세요"
+              v-model="roomBody.title"
           />
           <div class="char-count"><span>0</span>/50</div>
         </div>
@@ -137,22 +137,21 @@ onMounted(() => {
         <div class="form-group">
           <label for="videoUrl">동영상 URL</label>
           <input
-            id="videoUrl"
-            type="url"
-            placeholder="함께 볼 동영상 URL을 입력하세요 (선택사항)"
-            v-model="roomBody.videoUrl"
+              id="videoUrl"
+              type="url"
+              placeholder="함께 볼 동영상 URL을 입력하세요 (선택사항)"
+              v-model="roomBody.videoUrl"
           />
-          <div class="help-text">나중에 방에서 동영상을 선택할 수도 있습니다</div>
         </div>
 
         <!-- 최대 참가자 수 -->
         <div class="form-group">
           <label for="maxUser">최대 참가자 수 *</label>
           <input
-            id="maxUser"
-            type="text"
-            placeholder="Together 최대 인원 수를 입력하세요"
-            v-model="roomBody.maxMemberNumber"
+              id="maxUser"
+              type="text"
+              placeholder="Together 최대 인원 수를 입력하세요"
+              v-model="roomBody.maxMemberNumber"
           />
         </div>
 
@@ -161,7 +160,7 @@ onMounted(() => {
           <label>방 공개 설정</label>
           <div class="radio-group">
             <label class="radio-item">
-              <input type="radio" name="roomPrivacy" value="true" v-model="roomBody.isOpen" />
+              <input type="radio" name="roomPrivacy" value="true" v-model="roomBody.isOpen"/>
               <span class="radio-mark"></span>
               <div class="radio-content">
                 <strong>공개 방</strong>
@@ -169,7 +168,7 @@ onMounted(() => {
               </div>
             </label>
             <label class="radio-item">
-              <input type="radio" name="roomPrivacy" value="false" v-model="roomBody.isOpen" />
+              <input type="radio" name="roomPrivacy" value="false" v-model="roomBody.isOpen"/>
               <span class="radio-mark"></span>
               <div class="radio-content">
                 <strong>비공개 방</strong>

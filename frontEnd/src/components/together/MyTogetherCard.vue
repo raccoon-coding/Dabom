@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import { onMounted, reactive, ref } from 'vue'
 import UpdateTogetherModal from '@/components/together/UpdateTogetherModal.vue'
-import DeleteTogetherModal from '@/components/together/DeleteTogetherModal.vue'
+import DeleteModal from '@/components/together/DeleteModal.vue'
 import api from '@/api/together/'
 
 const router = useRouter()
@@ -120,13 +120,13 @@ onMounted(() => {
       </button>
     </div>
   </div>
-  <DeleteTogetherModal
+  <DeleteModal
     v-if="deleteModal"
     :title="deleteContext.title"
     :message="deleteContext.message"
     @close="closeDeleteModal"
     @confirm="deleteTogether"
-  ></DeleteTogetherModal>
+  ></DeleteModal>
   <UpdateTogetherModal
     v-if="showUpdateModal"
     :visible="showUpdateModal"

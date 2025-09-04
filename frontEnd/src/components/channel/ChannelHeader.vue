@@ -3,7 +3,7 @@ import {computed, onMounted, reactive, ref, watch} from 'vue';
 import { useRoute } from 'vue-router';
 import api from '@/api/channel/index.js'
 import useMemberStore from '@/stores/useMemberStore';
-import channel from "@/api/channel/index.js";
+import subscribe from "@/api/subscribe/index.js";
 
 const route = useRoute();
 const memberStore = useMemberStore();
@@ -15,6 +15,10 @@ const channelInfo = reactive({
   email: '',
   videoCount: 0
 })
+const isSubscribe = ref(false)
+const subscribeIdx = reactive({
+  memberIdx: 0
+})
 
 
 const isOwner = computed(() => {
@@ -23,6 +27,37 @@ const isOwner = computed(() => {
 const isManagementPage = computed(() =>
   route.path == '/mychannel'
 );
+
+const getSubscribe = async () => {
+  subscribeIdx.memberIdx = channelInfo.id
+  let res = await subscribe.getSubscribe(subscribeIdx);
+  if(res.data === true) {
+    isSubscribe.value = true;
+  }
+}
+
+const subscribing = async () => {
+  if(isSubscribe.value) {
+    return deleteSubscribe()
+  }
+  return trySubscribe()
+}
+
+const trySubscribe = async () => {
+  subscribeIdx.memberIdx = channelInfo.id
+  let res = await subscribe.trySubscribe(subscribeIdx);
+  if(res.code === 200) {
+    isSubscribe.value = true;
+  }
+}
+
+const deleteSubscribe = async () => {
+  subscribeIdx.memberIdx = channelInfo.id
+  let res = await subscribe.deleteSubscribe(subscribeIdx);
+  if(res.code === 200) {
+    isSubscribe.value = false;
+  }
+}
 
 const checkIsMyChannel = () => {
   const myChannel = memberStore.getChannelNameWithEncrypt();
@@ -45,6 +80,7 @@ const loadChannelInfo = async () => {
 }
 onMounted(async () => {
   await loadChannelInfo();
+  await getSubscribe();
 })
 
 </script>
@@ -59,10 +95,10 @@ onMounted(async () => {
           class="channel-profile-img"
         />
         <div class="channel-details">
-          <h1 class="channel-name">{{ channelInfo?.name || '찾을 수 없음' }}</h1>
+          <h1 class="channel-name">{{ channelInfo?.name ?? '찾을 수 없음' }}</h1>
           <div class="channel-meta">
-            <span class="subscriber-count">구독자 {{ channelInfo?.subscriberCount || '0' }}명</span>
-            <span class="video-count">동영상 {{ channelInfo.videoCount||"null"}}게</span>
+            <span class="subscriber-count">구독자 {{ channelInfo?.subscriberCount ?? '0' }}명</span>
+            <span class="video-count">동영상 {{ channelInfo?.videoCount ?? "0"}}개</span>
           </div>
         </div>
       </div>
@@ -89,9 +125,15 @@ onMounted(async () => {
         </RouterLink>
 
         <!-- 다른 사람 채널일 때는 구독 버튼 -->
-        <button v-else-if="!isMyChannel" class="subscribe-btn">
-          <i class="fas fa-bell"></i>
-          구독
+        <button v-else-if="!isMyChannel" class="subscribe-btn" @click="subscribing">
+          <div v-if="!isSubscribe">
+            <i class="fas fa-bell"></i>
+            구독
+          </div>
+          <div v-if="isSubscribe">
+            <i class="fas fa-bell"></i>
+            구독 중
+          </div>
         </button>
       </div>
     </div>
