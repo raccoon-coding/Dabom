@@ -1,6 +1,6 @@
 
 <script setup>
-import api from '@/api/video/index.js'
+import api, {toggleVideoVisibility} from '@/api/video/index.js'
 import {ref} from "vue";
 import VideoDeleteModal from "@/components/channel/video-management/VideoDeleteModal.vue";
 
@@ -20,7 +20,7 @@ const formatDate = (dateString) => {
 }
 
 const handleConfirm = async () => {
-  await api.deleteVideo(targetVideoIdx.value)
+  await api.toggleVideoVisibility(targetVideoIdx.value)
   closeDeleteModal()
   window.location.reload()
 }
