@@ -37,4 +37,5 @@ export const multiImageUpload = async (files, directory) => {
   }
 };
 
+
 export default { imageUpload };
