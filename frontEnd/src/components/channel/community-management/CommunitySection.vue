@@ -219,8 +219,8 @@ const handleCloseModal = () => {
 };
 
 // 댓글 관리 페이지로 이동
-const handleCommentManage = (postIdx) => {
-  alert(`게시글 ${postIdx}의 댓글 관리 기능은 추후 구현 예정입니다.`);
+const handleCommentManage = (postTitle) => {
+  alert(`게시글 "${postTitle}" 의 댓글 관리 기능은 추후 구현 예정입니다.`);
 };
 
 // 컴포넌트 마운트

@@ -45,7 +45,7 @@ const handleCancel = () => {
 }
 
 const handleCommentManage = () => {
-  emit('comment-manage', props.post.idx)
+  emit('comment-manage', props.post.title)
 }
 </script>
 <template>
