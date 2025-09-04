@@ -8,8 +8,14 @@ const props = defineProps({
 })
 
 const channelInfoForm = reactive({
-  id: "12345",
+  id: '',
   content: ''
+})
+
+const fileInfo = reactive({
+  originalFilename: '',
+  fileSize: '',
+  contentType: ''
 })
 
 const onSubmit = async() => {
@@ -81,6 +87,33 @@ const onBannerChange = async (event) => {
   }
 }
 
+const getPresignedUrl = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return
+
+  try {
+    // 파일 정보 설정
+    [fileInfo.originalFilename, fileInfo.fileSize, fileInfo.contentType] = [file.name, file.size, file.type];
+    const presignedResponse = await imageApi.getPresignedUrl(fileInfo);
+    const {expiresIn, s3Key, uploadUrl} = presignedResponse.data;
+
+    const uploadResponse = await imageApi.uploadToPresignedUrl(uploadUrl, file);
+
+    if (uploadResponse.ok || uploadResponse.status === 200) {
+      const entityResponse = await imageApi.createImageEntity({
+        s3Key: s3Key,
+        originalFilename: fileInfo.originalFilename,
+        fileSize: fileInfo.fileSize,
+        contentType: fileInfo.contentType,
+        imageType: "PROFILE"
+      });
+      alert(entityResponse.message);
+    }
+  } catch (error) {
+    alert('프로필 이미지 변경 실패');
+  }
+}
+
 onMounted(async () => {
   try {
     const result = await api.getChannelInfo()
@@ -105,7 +138,7 @@ onMounted(async () => {
       </label>
       <label>
         채널 프로필 이미지
-        <input type="file" accept="image/*" @change="onImageChange">
+        <input type="file" accept="image/*" @change="getPresignedUrl">
       </label>
       <label>
         배너(커버) 이미지
@@ -117,5 +150,5 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-@import url(@/assets/channel/mychannel);
+@import url(@/assets/channel/mychannel.css);
 </style>
