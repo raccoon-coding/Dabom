@@ -55,10 +55,10 @@ const deleteScore = async (type, idx) => {
 };
 
 const saveOrUpdateVideoScore = async (scoreData) => {
-  const requestUrl = `/api/score/video`; // New endpoint
+  const requestUrl = `/api/score/register`;
   try {
     const response = await api.post(requestUrl, scoreData);
-    return response.data; // BaseResponse<Void>
+    return response.data;
   } catch (error) {
     console.error('Failed to save or update video score:', error);
     if (error.response && error.response.data && error.response.data.message) {
