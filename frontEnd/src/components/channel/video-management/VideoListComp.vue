@@ -2,12 +2,12 @@
 <script setup>
 import api, {toggleVideoVisibility} from '@/api/video/index.js'
 import {ref} from "vue";
-import VideoDeleteModal from "@/components/channel/video-management/VideoDeleteModal.vue";
+import VideoPublicStatusModal from "@/components/channel/video-management/VideoPublicStatusModal.vue";
 import {useRouter} from "vue-router";
 
 const props = defineProps(['videos'])
 const router = useRouter();
-const deleteModal = ref(false)
+const publicStatusModal = ref(false)
 const targetVideoIdx = ref(null)
 const targetVideo = ref(null)
 
@@ -23,17 +23,19 @@ const formatDate = (dateString) => {
 
 const handleConfirm = async () => {
   await api.toggleVideoVisibility(targetVideoIdx.value)
-  closeDeleteModal()
-  window.location.reload()
+  targetVideo.value.publicVideo = !targetVideo.value.publicVideo
+  alert("공개 여부 상태가 변경되었습니다.")
+  closePublicStatusUpdateModal()
 }
 
-const openDeleteModal = (videoIdx) => {
+const openPublicStatusUpdateModal = (videoIdx, video) => {
+  targetVideo.value = video
   targetVideoIdx.value = videoIdx
-  deleteModal.value = true
+  publicStatusModal.value = true
 }
 
-const closeDeleteModal = () => {
-  deleteModal.value = false
+const closePublicStatusUpdateModal = () => {
+  publicStatusModal.value = false
   targetVideoIdx.value = null
   targetVideo.value = null
 }
@@ -46,12 +48,12 @@ const playVideo = (videoIdx) => {
 <template>
   <div>
     <teleport to="body">
-      <VideoDeleteModal
-          v-if="deleteModal"
+      <VideoPublicStatusModal
+          v-if="publicStatusModal"
           :title="targetVideo?.publicVideo ? '동영상 비공개' : '동영상 공개'"
           :message="targetVideo?.publicVideo ?'동영상을 비공개 상태로 변경하시겠습니까?' : '동영상을 공개상태로 변경하시겠습니까?'"
           @confirm="handleConfirm"
-          @cancel="closeDeleteModal"
+          @cancel="closePublicStatusUpdateModal"
       />
     </teleport>
 
@@ -63,13 +65,13 @@ const playVideo = (videoIdx) => {
         <th>조회수</th>
         <th>평점</th>
         <th>상태</th>
-        <th>업로드일</th>
+        <th>업로드날짜</th>
         <th>관리</th>
       </tr>
       </thead>
 
       <tbody>
-      <tr v-for="video in videos" :key="video.videoId" class="video-row">
+      <tr v-for="video in videos" :key="video.videoIdx" class="video-row">
         <td class="video-cell" @click="playVideo(video.videoIdx)">
           <div class="video-wrapper">
             <img src='' :alt="video.title"/>
@@ -96,19 +98,17 @@ const playVideo = (videoIdx) => {
         </td>
 
         <td class="status-cell">
-          <span>
-            {{ video.publicVideo ? '공개' : '비공개' }}
-          </span>
+          <div class="action-buttons">
+            <button @click="openPublicStatusUpdateModal(video.videoIdx, video)" class="action-btn delete">
+              {{ video.publicVideo ? '공개' : '비공개' }}
+            </button>
+          </div>
         </td>
 
         <td class="date-cell">{{ formatDate(video.uploadedAt) }}</td>
 
         <td class="actions-cell">
-          <div class="action-buttons">
-            <button @click="openDeleteModal(video.videoIdx)" class="action-btn delete">
-              {{ video.publicVideo ? '영상 비공개' : '영상 공개' }}
-            </button>
-          </div>
+
         </td>
 
       </tr>
