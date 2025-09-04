@@ -97,9 +97,7 @@ export const getMyVideoList = async () => {
 }
 
 export const toggleVideoVisibility = async (videoIdx) => {
-    console.log('API 함수 내부 videoIdx:', videoIdx); // 이것도 추가로 확인해보세요
     const requestUrl = `/api/videos/${videoIdx}/visibility`
-    console.log('요청 URL:', requestUrl); // URL도 확인
 
     await api.patch(requestUrl)
         .then((response) => {
@@ -111,11 +109,23 @@ export const toggleVideoVisibility = async (videoIdx) => {
         })
 }
 
+export const cleanupS3TempVideo = (videoIdx) => {
+    const requestUrl = `/api/videos/${videoIdx}/cleanup`
+    api.delete(requestUrl)
+        .then((response) => {
+        })
+        .catch((error) => {
+            console.error(error)
+            throw error;
+        })
+}
+
 
 export default {
     uploadVideo, uploadVideoMetadata, uploadToPresignedUrl,
     getVideoList, getPresignedUrl, getMyVideoList,
-    toggleVideoVisibility
+    toggleVideoVisibility,
+    cleanupS3TempVideo
 }
 
 

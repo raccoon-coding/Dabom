@@ -1,6 +1,6 @@
 <script setup>
 import {reactive, ref} from 'vue'
-import api from '@/api/video'
+import api, {cleanupS3TempVideo} from '@/api/video'
 
 const props = defineProps(['visible'])
 const emit = defineEmits(['close', 'complete'])
@@ -31,26 +31,7 @@ const metadata = reactive({
   videoTag: null,
 })
 
-
-const uploadFile = async (file) => {
-  [fileInfo.originalFilename, fileInfo.fileSize, fileInfo.contentType] = [file.name, file.size, file.type]
-
-  const presignedUrlResponse = await api.getPresignedUrl(fileInfo);
-  const s3VideoInfo = presignedUrlResponse.data;
-
-  let axiosResponse = await api.uploadToPresignedUrl(s3VideoInfo.uploadUrl, file);
-
-  const videoIdx = s3VideoInfo.videoIdx;
-  const previewUrl = URL.createObjectURL(file)
-
-  return {videoIdx, previewUrl}
-}
-
-// 파일 선택
-const triggerFileInput = () => {
-  fileInput.value?.click()
-}
-
+// 모달 오픈
 const handleFileSelect = async (event) => {
   const file = event.target.files[0]
   if (!file) return
@@ -59,16 +40,35 @@ const handleFileSelect = async (event) => {
   step.value = 2
 
   try {
-    // 파일 업로드 API 호출
-    const uploadResult = await uploadFile(file)
+    // preview
+    videoPreviewUrl.value = getPreview(file);
 
-    const { videoIdx, previewUrl } = uploadResult
-    metadata.idx = videoIdx
-    videoPreviewUrl.value = previewUrl
+    // 파일 업로드 API 호출
+    metadata.idx = await uploadFile(file);
   } catch (error) {
     // 에러 처리
     console.error('파일 업로드 실패:', error)
   }
+}
+
+// 파일 선택
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+// 프리뷰 생성
+const getPreview = (file) => {
+  return URL.createObjectURL(file)
+}
+
+const uploadFile = async (file) => {
+  [fileInfo.originalFilename, fileInfo.fileSize, fileInfo.contentType] = [file.name, file.size, file.type]
+
+  const presignedUrlResponse = await api.getPresignedUrl(fileInfo);
+  const s3VideoInfo = presignedUrlResponse.data;
+
+  let axiosResponse = await api.uploadToPresignedUrl(s3VideoInfo.uploadUrl, file); // presigned upload
+  return s3VideoInfo.videoIdx;
 }
 
 // 메타데이터 저장
@@ -77,6 +77,7 @@ const saveMetadata = async () => {
     const data = await api.uploadVideoMetadata(metadata.idx, metadata)
     emit('complete', metadata)
     resetAndClose()
+    window.location.reload()
   } catch (error) {
     console.error('저장 실패:', error)
   }
@@ -91,10 +92,16 @@ const resetAndClose = () => {
   metadata.description = ''
   metadata.isPublic = true
   emit('close')
-  window.location.reload()
+}
+
+const cleanup = () => {
+  if (metadata.idx && step.value === 2) {
+    api.cleanupS3TempVideo(metadata.idx)
+  }
 }
 
 const closeModal = () => {
+  cleanup()
   resetAndClose()
 }
 
