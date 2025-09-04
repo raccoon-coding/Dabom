@@ -28,11 +28,9 @@ const onImageChange = async (event) => {
   if (!file) return
   
   try {
-    // 1단계: 백엔드에서 presigned URL 받기
     const uploadResponse = await imageApi.imageUpload(file, "profile")
     const presignedUrl = uploadResponse.data.imageUrl // presigned URL
     
-    // 2단계: presigned URL을 사용해 S3에 직접 업로드
     const s3Response = await fetch(presignedUrl, {
       method: "PUT",
       body: file,
