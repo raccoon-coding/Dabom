@@ -37,8 +37,8 @@ export const multiImageUpload = async (files, directory) => {
   }
 };
 
-export const getPresignedUrl = async (fileInfo) => {
-  const requestUrl = `/api/images/presigned`
+export const getPresignedUrl = async (fileInfo, requestPath) => {
+  const requestUrl = `/api/images/presigned/${requestPath}`
 
   return await api.post(requestUrl, fileInfo)
       .then((response) => {
@@ -58,7 +58,7 @@ export const uploadToPresignedUrl = async (presignedUrl, file) => {
   });
 }
 
-export const createImageEntity = async (requestData) => {
+export const createMemberImageEntity = async (requestData) => {
   const requestUrl = `/api/images`
   return await api.post(requestUrl, requestData)
       .then((response) => {
@@ -71,4 +71,17 @@ export const createImageEntity = async (requestData) => {
       })
 }
 
-export default { imageUpload, getPresignedUrl, uploadToPresignedUrl, createImageEntity };
+export const createThumbnailImageEntity = async (requestData, videoIdx) => {
+    const requestUrl = `/api/images/thumbnail/${videoIdx}`
+    return await api.post(requestUrl, requestData)
+        .then((response) => {
+            console.log(response)
+            return response.data;
+        })
+        .catch((error) => {
+            console.error(error)
+            throw error;
+        })
+}
+
+export default { imageUpload, getPresignedUrl, uploadToPresignedUrl, createMemberImageEntity, createThumbnailImageEntity };
