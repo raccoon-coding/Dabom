@@ -3,8 +3,10 @@
 import api, {toggleVideoVisibility} from '@/api/video/index.js'
 import {ref} from "vue";
 import VideoDeleteModal from "@/components/channel/video-management/VideoDeleteModal.vue";
+import {useRouter} from "vue-router";
 
 const props = defineProps(['videos'])
+const router = useRouter();
 const deleteModal = ref(false)
 const targetVideoIdx = ref(null)
 const targetVideo = ref(null)
@@ -35,6 +37,10 @@ const closeDeleteModal = () => {
   targetVideoIdx.value = null
   targetVideo.value = null
 }
+
+const playVideo = (videoIdx) => {
+  router.push({name: "videoPlayer", params: {id: videoIdx}})
+}
 </script>
 
 <template>
@@ -64,7 +70,7 @@ const closeDeleteModal = () => {
 
       <tbody>
       <tr v-for="video in videos" :key="video.videoId" class="video-row">
-        <td class="video-cell">
+        <td class="video-cell" @click="playVideo(video.videoIdx)">
           <div class="video-wrapper">
             <img src='' :alt="video.title"/>
             <div class="play-overlay" @click="playVideo(video)">
