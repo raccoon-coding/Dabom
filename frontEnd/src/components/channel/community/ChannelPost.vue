@@ -14,6 +14,7 @@ const post = reactive({
     contents: '',
     createdAt: '',
     commentCount: 0
+    
 })
 
 const fetchPostDetail = async () => {
@@ -26,7 +27,8 @@ const fetchPostDetail = async () => {
             title: response.title || '제목 없음',
             contents: response.contents || '내용 없음',
             createdAt: response.createdAt || '시간 정보 없음',
-            commentCount: response.commentCount || 0
+            commentCount: response.commentCount || 0,
+            
         })
         
     } catch (error) {

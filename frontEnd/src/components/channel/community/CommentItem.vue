@@ -44,7 +44,8 @@ const handleCommentLike = async (commentIdx) => {
         </div>
         <div class="comment-main">
             <div class="comment-header">
-                <span class="comment-author-name">익명</span>
+                <span class="comment-author-name"></span>
+                 <span class="comment-author-name">{{ comment.name  || '익명' }}</span>
                 <span class="comment-time">{{ comment.createdAt }}</span>
                 <span v-if="comment.isModified" class="modified-badge">
                     <i class="fas fa-edit"></i>

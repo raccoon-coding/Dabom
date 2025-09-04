@@ -7,7 +7,7 @@ export const imageUpload = async (file, directory) => {
 
   try {
     const response = await api.post(
-      "/api/image/upload",
+      "/api/member/profileimage",
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" }
