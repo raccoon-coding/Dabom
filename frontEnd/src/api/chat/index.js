@@ -66,4 +66,15 @@ export const createChatRoom = async (member2Idx) => {
   }
 };
 
-export default { getRandomTogetherList, getTogetherSearch, getChatList, getChatRoom, createChatRoom };
+export const getProfile = async (memberIdx) => {
+  const requestUrl = `/api/member/info/profileImg/${memberIdx}`;
+  try {
+    const response = await api.get(requestUrl);
+    return response.data.data;
+  } catch (error) {
+    console.error('이미지 가져오기 실패', error);
+    return error.response?.data || {};
+  }
+}
+
+export default { getRandomTogetherList, getTogetherSearch, getChatList, getChatRoom, createChatRoom,getProfile };
