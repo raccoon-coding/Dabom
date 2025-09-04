@@ -96,12 +96,12 @@ export const getMyVideoList = async () => {
         })
 }
 
-export const deleteVideo = async (videoIdx) => {
+export const toggleVideoVisibility = async (videoIdx) => {
     console.log('API 함수 내부 videoIdx:', videoIdx); // 이것도 추가로 확인해보세요
-    const requestUrl = `/api/videos/metadata/${videoIdx}`
+    const requestUrl = `/api/videos/${videoIdx}/visibility`
     console.log('요청 URL:', requestUrl); // URL도 확인
 
-    await api.delete(requestUrl)
+    await api.patch(requestUrl)
         .then((response) => {
             console.log(response)
         })
@@ -115,7 +115,7 @@ export const deleteVideo = async (videoIdx) => {
 export default {
     uploadVideo, uploadVideoMetadata, uploadToPresignedUrl,
     getVideoList, getPresignedUrl, getMyVideoList,
-    deleteVideo
+    toggleVideoVisibility
 }
 
 
