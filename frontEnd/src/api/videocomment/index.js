@@ -32,3 +32,5 @@ export const deleteComment = async (commentId) => {
         throw error;
     }
 };
+
+export default { getComments, deleteComment, postComment }

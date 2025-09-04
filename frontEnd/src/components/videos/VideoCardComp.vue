@@ -34,7 +34,10 @@ const goToChannel = () => {
         <!-- 비디오 정보 -->
         <div class="video-info">
             <div class="channel-avatar" @click="goToChannel">
-                <img src="@/assets/images/dabom2.png" alt="채널이미지" />
+                <img 
+                    :src="props.video.channel?.profileImg || '@/assets/images/dabom2.png'" 
+                    alt="채널이미지" 
+                />
             </div>
             <div class="video-details">
                 <h4 class="video-title">{{ props.video.title }}</h4>

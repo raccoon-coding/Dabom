@@ -2,7 +2,9 @@
 import { ref, watch, computed } from 'vue';
 import api from '@/api/score';
 import useMemberStore from '@/stores/useMemberStore';
-import Modal from '@/components/main/Modal.vue';
+import Modal from '@/components/main/Modal.vue'
+import video from '@/api/video';
+
 
 const memberStore = useMemberStore();
 
@@ -167,9 +169,11 @@ const submitRating = async () => {
   }
   scoreData.value = {
     score: ratingToSubmit,
+
     videoIdx: isVideo ? scoreTarget.value.idx : null,
     channelIdx: isChannel ? scoreTarget.value.idx : null,
     scoreType: scoreTarget.value.type
+
   };
 
 
@@ -193,6 +197,13 @@ const cancelRating = () => {
   selectedRating.value = 0;
   hoverRating.value = 0;
 };
+
+
+const getData = () => {
+  console.log(props.videoIdx);
+  console.log(videoInfo);
+
+}
 
 </script>
 
@@ -224,7 +235,7 @@ const cancelRating = () => {
         취소
       </button>
       <button @click="getData()" class="cancel-btn">
-      정보 보기
+        정보 보기
       </button>
 
 
@@ -257,7 +268,7 @@ const cancelRating = () => {
 
 .star-rating-container i {
   transition: color 0.2s ease;
-  //color: var(--empty-color); /* 기본 빈 별 색상 */
+  color: var(--empty-color); /* 기본 빈 별 색상 */
 }
 
 /* 채워진 별 색상은 컴포넌트 props.color로 제어 */

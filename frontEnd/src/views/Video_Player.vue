@@ -7,10 +7,13 @@ import {useRoute} from 'vue-router'
 import {onMounted, reactive, ref, onUnmounted} from 'vue'
 import Hls from 'hls.js'
 import api from '@/api/video_player'
+import useMemberStore from '@/stores/useMemberStore' 
+import channelApi from "@/api/channel" 
 
 const route = useRoute()
 const videoId = route.params.id
 const videoPlayer = ref(null)
+const memberStore = useMemberStore() 
 let hls = null
 
 const videoInfo = reactive({
@@ -22,6 +25,27 @@ const videoInfo = reactive({
     name: ''
   }
 })
+
+const currentUserProfile = ref({
+  profileImg: 'https://via.placeholder.com/40',
+  name: '사용자'
+})
+
+const loadCurrentUserProfile = async () => {
+  try {
+    const myChannelName = memberStore.getChannelNameWithEncrypt()
+    if (myChannelName) {
+      const channelInfoResponse = await channelApi.getChannelInfoByChannelName(myChannelName)
+      if (channelInfoResponse) {
+        currentUserProfile.value = {
+          profileImg: channelInfoResponse.profileImg || 'https://via.placeholder.com/40',
+          name: channelInfoResponse.name || '사용자'
+        }
+      }
+    }
+  } catch (error) {
+  }
+}
 
 const getData = async () => {
   const result = await api.getVideoById(videoId)
@@ -58,8 +82,12 @@ const initHlsPlayer = () => {
   }
 }
 
-onMounted(() => {
-  getData()
+onMounted(async () => {
+  // 데이터 로드를 병렬로 실행
+  await Promise.all([
+    getData(),
+    loadCurrentUserProfile()
+  ])
 })
 
 onUnmounted(() => {
@@ -97,7 +125,8 @@ onUnmounted(() => {
 
         <Video_Tag_Explain :videoInfo="videoInfo"/>
         <Video_Main_Info :videoInfo="videoInfo"/>
-        <Video_Comment/>
+        <!-- 현재 사용자 프로필 정보를 댓글 컴포넌트에 전달 -->
+        <Video_Comment :current-user-profile="currentUserProfile"/>
       </div>
     </div>
   </div>
