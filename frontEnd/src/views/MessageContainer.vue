@@ -13,6 +13,7 @@ const socketStore = useSocketStore(); // 소켓 스토어 초기화
 
 const currentChatId = ref('') // 초기 선택 없음
 const chatData = ref({}) // API로부터 받을 데이터 (초기값 비어있음)
+const newMessage = ref('') // 메시지 입력을 위한 ref 추가
 
 // 백엔드에서 받은 데이터를 컴포넌트가 쓰기 좋은 형태로 변환하는 함수
 function transformChatListData(backendList, currentMemberIdx) {
@@ -30,6 +31,7 @@ function transformChatListData(backendList, currentMemberIdx) {
       name: opponent.name, // <-- This sets the opponent's name
       avatar: opponent.avatar ? `http://localhost:8080${opponent.avatar}` : 'https://via.placeholder.com/50x50',
       recipientIdx: opponent.idx, // Add recipientIdx here
+      recipientName: opponent.name, // recipientName 추가
       lastMessage: item.lastMessage || '대화를 시작해보세요.',
       time: item.lastMessageTime ? new Date(item.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
       unreadCount: item.unreadCount,
@@ -74,8 +76,8 @@ onMounted(async () => {
     currentChatId.value = rawChatList[0].idx.toString();
     // Also set the current chat room in the store for the first selected chat
     const firstChat = chatData.value[currentChatId.value];
-    if (firstChat && firstChat.recipientIdx) {
-      chatStore.setCurrentChatRoom(parseInt(currentChatId.value), firstChat.recipientIdx);
+    if (firstChat && firstChat.recipientIdx && firstChat.recipientName) { // recipientName 조건 추가
+      chatStore.setCurrentChatRoom(parseInt(currentChatId.value), firstChat.recipientIdx, firstChat.recipientName); // recipientName 전달
     }
   }
 });
@@ -87,8 +89,8 @@ const currentChat = computed(() => {
 function handleChatSelected(chatId) {
   currentChatId.value = chatId;
   const selectedChat = chatData.value[chatId];
-  if (selectedChat && selectedChat.recipientIdx) {
-    chatStore.setCurrentChatRoom(parseInt(chatId), selectedChat.recipientIdx);
+  if (selectedChat && selectedChat.recipientIdx && selectedChat.recipientName) { // recipientName 조건 추가
+    chatStore.setCurrentChatRoom(parseInt(chatId), selectedChat.recipientIdx, selectedChat.recipientName); // recipientName 전달
   }
 }
 
@@ -103,6 +105,28 @@ function handleSendMessage(messageText) {
     hour12: true
   })
 
+  // 메시지 전송 로직 구현
+  if (!messageText.trim()) return; // 빈 메시지 전송 방지
+
+  // 현재 채팅방 정보가 스토어에 제대로 설정되어 있는지 확인
+  if (!chatStore.currentRoomIdx || !chatStore.currentRecipientIdx || !chatStore.currentRecipientName) {
+    console.error('채팅방 정보가 불완전하여 메시지를 보낼 수 없습니다.');
+    return;
+  }
+
+  const messageDto = {
+    roomIdx: chatStore.currentRoomIdx,
+    senderIdx: chatStore.currentMemberIdx,
+    senderName: chatStore.currentMemberName,
+    recipientIdx: chatStore.currentRecipientIdx,
+    recipientName: chatStore.currentRecipientName, // 스토어에서 가져온 상대방 이름
+    message: messageText, // ChatWindow에서 전달받은 메시지 텍스트
+    // 필요한 다른 필드 (예: createdAt, isRead 등)는 백엔드에서 처리하거나 추가
+  };
+
+  socketStore.sendMessage(messageDto);
+  // 메시지 전송 후 입력 필드 초기화는 ChatWindow에서 담당할 수 있으므로 여기서는 생략
+  // 또는 ChatWindow에서 @send-message 이벤트 발생 시 메시지 텍스트를 초기화하도록 구현
 }
 
 </script>

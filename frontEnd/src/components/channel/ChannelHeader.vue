@@ -1,7 +1,7 @@
 <script setup>
 import {computed, onMounted, reactive, ref, watch} from 'vue';
 import { useRoute } from 'vue-router';
-import api from '@/api/channel/index.js'
+import api from "@/api/channel"
 import useMemberStore from '@/stores/useMemberStore';
 import subscribe from "@/api/subscribe/index.js";
 
@@ -13,8 +13,29 @@ const channelInfo = reactive({
   name: '',
   content: '',
   email: '',
-  videoCount: 0
+  videoCount: 0,
+  profileImg: "",
 })
+
+const bannerImg = ref('');
+
+
+const getBannerImage = async () => {
+  const imageUrl = await api.getChannelBannerImage();
+  console.log(imageUrl);
+  if (imageUrl) {
+    bannerImg.value = imageUrl;
+  }
+};
+
+const headerBackgroundStyle = computed(() => {
+  if (bannerImg) {
+    return `background-image: url(${bannerImg.value}); background-size: cover; background-position: center;`;
+  } else {
+    return `background: linear-gradient(135deg, #0d1117 0%, #161b22 25%, #21262d 50%, #161b22 75%, #0d1117 100%);`;
+  }
+});
+
 const isSubscribe = ref(false)
 const subscribeIdx = reactive({
   memberIdx: 0
@@ -81,16 +102,17 @@ const loadChannelInfo = async () => {
 onMounted(async () => {
   await loadChannelInfo();
   await getSubscribe();
+  await getBannerImage();
 })
 
 </script>
 
 <template>
-  <div class="channel-header">
+  <div class="channel-header" :style="headerBackgroundStyle">
     <div class="channel-info">
       <div class="profile-section">
         <img
-          :src="channelInfo?.profileImage || `@/assets/images/dabom2.png`"
+          :src="channelInfo.profileImg"
           alt="채널 프로필"
           class="channel-profile-img"
         />
@@ -143,7 +165,7 @@ onMounted(async () => {
 <style scoped>
 /* 헤더임 */
 .channel-header {
-  background: linear-gradient(135deg, #0d1117 0%, #161b22 25%, #21262d 50%, #161b22 75%, #0d1117 100%);
+  /* background: linear-gradient(135deg, #0d1117 0%, #161b22 25%, #21262d 50%, #161b22 75%, #0d1117 100%); */
   padding: 4rem 0 4rem 0;
   color: white;
 }
