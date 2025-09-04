@@ -31,7 +31,6 @@ const useMemberStore = defineStore('member', () => {
   }
 
   const getChannelNameWithEncrypt = () => {
-    console.log(encryptStorage.getItem(CHANNEL_NAME))
     return encryptStorage.getItem(CHANNEL_NAME).name
   }
 

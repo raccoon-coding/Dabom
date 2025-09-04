@@ -96,5 +96,19 @@ export const getChannelInfoByIdx = async (channelIdx) => {
     return data
 }
 
+export const deleteMember = async () => {
+    const requestUrl = `/api/member`
+    let data = {}
+    await api.delete(requestUrl)
+        .then((response) => {
+            data = response.data
+        })
+        .catch((error) => {
+            data = error.data
+        })
+    return data
+}
 
-export default { signup, login, logout, checkEmailExists, checkChannelNameExists, getCurrentMemberInfo, getChannelInfoByIdx }
+
+export default { signup, login, logout, checkEmailExists, checkChannelNameExists, getCurrentMemberInfo, getChannelInfoByIdx,
+    deleteMember}

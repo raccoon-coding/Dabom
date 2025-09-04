@@ -12,9 +12,6 @@ import SockJS from 'sockjs-client'
 
 const socket = ref(null)
 const route = useRoute()
-const message = reactive({
-  messages: [],
-})
 const togetherInfo = reactive({
   togetherIdx: 0,
   title: '',
@@ -31,7 +28,6 @@ const stateModal = reactive({
 })
 const subscribed = ref(false)
 const isMaster = ref(false)
-const joinMember = ref("")
 const testUrl = 'https://s3.ap-northeast-2.amazonaws.com/raccoon.aws.s3/encoder/sample/playlist.m3u8'
 
 const getTogetherInfo = async () => {
@@ -58,24 +54,20 @@ const loadTogetherInfo = (data) => {
   togetherInfo.userIdx = data.userIdx
 }
 const connectWebSocket = async () => {
-  const res = await api.getToken();
-  console.log(res.authorization)
-  const ws = new SockJS('http://localhost:8080/chat')
+  const ws = new SockJS('http://localhost:8080/chat', null,
+      {
+        transportOptions: {
+          xhr: { withCredentials: true },
+          xhrStreaming: { withCredentials: true }
+        }
+      })
   const client = Stomp.over(ws)
   socket.value = client
-
   socket.value.connect(
-    { Authorization: res.authorization },
+      {},
     (frame) => {
       console.log('WebSocket connected:', frame);
       subscribed.value = true
-      socket.value.subscribe(`/topic/together/${togetherInfo.togetherIdx}`, (mes) => {
-        const data = JSON.parse(mes.body)
-        message.messages.push(data)
-        if(data.users !== joinMember.value) {
-          joinMember.value = data.users
-        }
-      });
     },
     (error) => {
       console.error('WebSocket connection error:', error);
@@ -128,14 +120,13 @@ onUnmounted(() => {
   </div>
   <TogetherMasterModal
     v-if="stateModal.masterModal"
+    :socket="socket"
     @close_modal="closeMasterModal()"
   ></TogetherMasterModal>
   <TogetherRoomChat
     v-if="stateModal.chatModal && subscribed"
     :isMaster="isMaster"
     :socket="socket"
-    :messages="message.messages"
-    :joinMember="joinMember"
     :userIdx="togetherInfo.userIdx"
     @close_modal="closeChatModal()"
     @open_master_modal="openMasterModal"
