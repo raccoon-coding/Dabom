@@ -41,37 +41,20 @@ export const useSocketStore = defineStore('socket', () => {
       document.cookie = `ACCESS_TOKEN=${jwt}; path=/;`; // Set path to root for WebSocket
     }
 
-    stompClient.value = Stomp.over(socket);
-
     stompClient.value.connect(
       {}, // No headers needed here, JWT is in cookie
       (frame) => {
-        
+        console.log('STOMP: Connected', frame);
         isConnected.value = true;
-        
-
         stompClient.value.subscribe('/user/queue/messages', (message) => {
-          
+          console.log('STOMP: Message received!', message.body);
           const messageData = JSON.parse(message.body);
-          
-          
-          
-          const transformedMessage = {
-            id: messageData.createdAt || Date.now(),
-            content: messageData.message,
-            sender: messageData.senderName,
-            sent: String(messageData.senderIdx) === String(chatStore.currentMemberIdx),
-            time: new Date(messageData.createdAt).toLocaleTimeString(),
-            isRead: messageData.isRead,
-          };
-
-          
-          chatStore.addMessage(transformedMessage);
-          
+          // Delegate all message processing to the chat store
+          chatStore.processIncomingMessage(messageData);
         });
       },
       (error) => {
-        
+        console.error('STOMP: Connection error', error);
         isConnected.value = false;
         stompClient.value = null;
       }

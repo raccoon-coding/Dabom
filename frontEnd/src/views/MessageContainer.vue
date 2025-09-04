@@ -1,19 +1,21 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'; // Import storeToRefs
 import ChatList from '../components/Message/ChatList.vue'
 import ChatWindow from '../components/Message/ChatWindow.vue'
-import { getChatList, getProfile } from '@/api/chat' // API 임포트
-import useMemberStore from "@/stores/useMemberStore"; // 로그인 스토어 임포트
-import { useChatStore } from '@/stores/useChatStore'; // 채팅 스토어 임포트
-import { useSocketStore } from '@/stores/socket'; // 소켓 스토어 임포트
+import { getChatList, getProfile } from '@/api/chat'
+import useMemberStore from "@/stores/useMemberStore";
+import { useChatStore } from '@/stores/useChatStore';
+import { useSocketStore } from '@/stores/socket';
 
 const memberStore = useMemberStore();
-const chatStore = useChatStore(); // Initialize the store
-const socketStore = useSocketStore(); // 소켓 스토어 초기화
+const chatStore = useChatStore();
+const socketStore = useSocketStore();
 
-const currentChatId = ref('') // 초기 선택 없음
-const chatData = ref({}) // API로부터 받을 데이터 (초기값 비어있음)
-const newMessage = ref('') // 메시지 입력을 위한 ref 추가
+// Use state from the store directly, making it the source of truth
+const { chatRooms: chatData } = storeToRefs(chatStore);
+const currentChatId = ref('')
+const newMessage = ref('')
 
 // 백엔드에서 받은 데이터를 컴포넌트가 쓰기 좋은 형태로 변환하는 함수
 async function transformChatListData(backendList, currentMemberIdx) {
@@ -86,64 +88,65 @@ onMounted(async () => {
     console.warn('MessageContainer: currentMemberIdx or currentMemberName not found in API response.');
   }
 
-  chatData.value = await transformChatListData(rawChatList, currentMemberIdx);
+  // Populate the store instead of a local ref
+  const transformedData = await transformChatListData(rawChatList, currentMemberIdx);
+  chatStore.setChatRooms(transformedData);
 
   // 첫 번째 채팅방을 기본으로 선택
   if (rawChatList && rawChatList.length > 0) {
-    currentChatId.value = rawChatList[0].idx.toString();
-    // Also set the current chat room in the store for the first selected chat
-    const firstChat = chatData.value[currentChatId.value];
-    if (firstChat && firstChat.recipientIdx && firstChat.recipientName) { // recipientName 조건 추가
-      chatStore.setCurrentChatRoom(parseInt(currentChatId.value), firstChat.recipientIdx, firstChat.recipientName); // recipientName 전달
+    const firstChatId = rawChatList[0].idx.toString();
+    currentChatId.value = firstChatId;
+    
+    const firstChat = chatData.value[firstChatId];
+    if (firstChat && firstChat.recipientIdx && firstChat.recipientName) {
+      chatStore.setCurrentChatRoom(parseInt(firstChatId), firstChat.recipientIdx, firstChat.recipientName);
     }
   }
 });
 
 const currentChat = computed(() => {
+  // Read from the store's state
   return chatData.value[currentChatId.value] || null
 })
 
 function handleChatSelected(chatId) {
   currentChatId.value = chatId;
   const selectedChat = chatData.value[chatId];
-  if (selectedChat && selectedChat.recipientIdx && selectedChat.recipientName) { // recipientName 조건 추가
-    chatStore.setCurrentChatRoom(parseInt(chatId), selectedChat.recipientIdx, selectedChat.recipientName); // recipientName 전달
+  if (selectedChat && selectedChat.recipientIdx && selectedChat.recipientName) {
+    // This will now also reset the unread count via the store's action
+    chatStore.setCurrentChatRoom(parseInt(chatId), selectedChat.recipientIdx, selectedChat.recipientName);
   }
 }
 
 function handleSendMessage(messageText) {
-  const chat = chatData.value[currentChatId.value]
-  if (!chat) return
+  const chat = chatData.value[currentChatId.value];
+  if (!chat || !messageText.trim()) return;
 
-  const now = new Date()
-  const time = now.toLocaleTimeString('ko-KR', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  })
+  // 1. Create the message object for the UI (Optimistic Update)
+  const optimisticMessage = {
+    id: Date.now(), // Use a temporary ID
+    content: messageText,
+    sender: chatStore.currentMemberName,
+    sent: true, // It's always from the current user
+    time: new Date().toLocaleTimeString(),
+    isRead: false,
+  };
 
-  // 메시지 전송 로직 구현
-  if (!messageText.trim()) return; // 빈 메시지 전송 방지
+  // 2. Add it to the store so it appears instantly
+  chatStore.addMessage(optimisticMessage);
 
-  // 현재 채팅방 정보가 스토어에 제대로 설정되어 있는지 확인
-  if (!chatStore.currentRoomIdx || !chatStore.currentRecipientIdx || !chatStore.currentRecipientName) {
-    console.error('채팅방 정보가 불완전하여 메시지를 보낼 수 없습니다.');
-    return;
-  }
-
+  // 3. Create the DTO for the backend
   const messageDto = {
     roomIdx: chatStore.currentRoomIdx,
     senderIdx: chatStore.currentMemberIdx,
     senderName: chatStore.currentMemberName,
     recipientIdx: chatStore.currentRecipientIdx,
-    recipientName: chatStore.currentRecipientName, // 스토어에서 가져온 상대방 이름
-    message: messageText, // ChatWindow에서 전달받은 메시지 텍스트
-    // 필요한 다른 필드 (예: createdAt, isRead 등)는 백엔드에서 처리하거나 추가
+    recipientName: chatStore.currentRecipientName,
+    message: messageText,
   };
 
+  // 4. Send to the backend
   socketStore.sendMessage(messageDto);
-  // 메시지 전송 후 입력 필드 초기화는 ChatWindow에서 담당할 수 있으므로 여기서는 생략
-  // 또는 ChatWindow에서 @send-message 이벤트 발생 시 메시지 텍스트를 초기화하도록 구현
 }
 
 </script>
@@ -171,4 +174,9 @@ function handleSendMessage(messageText) {
 <style scoped>
 /* @import url(../assets/main/main.css); */
 @import url(../assets/Message/MessageContainer.css);
+</style>
+
+<style>
+/* @import url(../assets/main/header.css);
+@import url(../assets/main/footer.css); */
 </style>

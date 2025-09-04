@@ -1,15 +1,20 @@
 
 <script setup>
-import api, {toggleVideoVisibility} from '@/api/video/index.js'
-import {ref} from "vue";
+import api from '@/api/video/index.js'
+import {onMounted, ref} from "vue";
 import VideoPublicStatusModal from "@/components/channel/video-management/VideoPublicStatusModal.vue";
 import {useRouter} from "vue-router";
+import imageApi from "@/api/image/index.js";
 
+const ImageType = {
+  THUMBNAIL: { requestPath: "thumbnail", entityType: "VIDEO_THUMBNAIL" }
+}
 const props = defineProps(['videos'])
 const router = useRouter();
 const publicStatusModal = ref(false)
 const targetVideoIdx = ref(null)
 const targetVideo = ref(null)
+
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
@@ -28,6 +33,40 @@ const handleConfirm = async () => {
   closePublicStatusUpdateModal()
 }
 
+
+const onThumbnailImage = (event, videoIdx) => {
+  const file = event.target.files[0]
+  if (file) imageUpload(file, ImageType.THUMBNAIL, videoIdx)
+}
+
+const imageUpload = async (file, { requestPath, entityType }, videoIdx) => {
+  try {
+    const fileInfo = {
+      originalFilename: file.name,
+      fileSize: file.size,
+      contentType: file.type
+    }
+
+    const presignedResponse = await imageApi.getPresignedUrl(fileInfo, requestPath)
+    const { s3Key, uploadUrl } = presignedResponse.data
+
+    const uploadResponse = await imageApi.uploadToPresignedUrl(uploadUrl, file)
+    console.log(videoIdx)
+
+    if (uploadResponse.ok || uploadResponse.status === 200) {
+      const entityResponse = await imageApi.createThumbnailImageEntity({
+        ...fileInfo,
+        s3Key,
+        imageType: entityType
+      }, videoIdx)
+      alert(entityResponse.message)
+    }
+  } catch (error) {
+    console.error(`${entityType} 이미지 업로드 실패:`, error)
+    alert(`${entityType} 이미지 변경 실패`)
+  }
+}
+
 const openPublicStatusUpdateModal = (videoIdx, video) => {
   targetVideo.value = video
   targetVideoIdx.value = videoIdx
@@ -43,6 +82,11 @@ const closePublicStatusUpdateModal = () => {
 const playVideo = (videoIdx) => {
   router.push({name: "videoPlayer", params: {id: videoIdx}})
 }
+
+
+onMounted(() => {
+  console.log('videos:', props.videos)
+})
 </script>
 
 <template>
@@ -74,9 +118,9 @@ const playVideo = (videoIdx) => {
       <tr v-for="video in videos" :key="video.videoIdx" class="video-row">
         <td class="video-cell" @click="playVideo(video.videoIdx)">
           <div class="video-wrapper">
-            <img src='' :alt="video.title"/>
-            <div class="play-overlay" @click="playVideo(video)">
-              <i class="icon-play"></i>
+            <img :src='video.thumbnailImage' :alt="video.title"/>
+            <div class="play-overlay" @click="playVideo(video.idx)">
+              <i class="fa-solid fa-play"></i>
             </div>
           </div>
         </td>
@@ -108,7 +152,16 @@ const playVideo = (videoIdx) => {
         <td class="date-cell">{{ formatDate(video.uploadedAt) }}</td>
 
         <td class="actions-cell">
-
+          <input
+              :id="'thumbnail-' + video.videoIdx"
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="(event) => onThumbnailImage(event, video.videoIdx)"
+          />
+          <label :for="'thumbnail-' + video.videoIdx" class="action-btn upload">
+            썸네일 업로드
+          </label>
         </td>
 
       </tr>
@@ -233,4 +286,51 @@ const playVideo = (videoIdx) => {
   background-color: #e74c3c;
   color: white;
 }
+
+.hidden {
+  display: none;
+}
+
+/* 썸네일 이미지 */
+.video-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  height: 68px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.video-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-wrapper .play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  border-radius: 6px;
+}
+
+.video-wrapper:hover .play-overlay {
+  opacity: 1;
+}
+
+.video-wrapper .play-overlay i.icon-play {
+  font-size: 20px; /* 재생 아이콘 크기 */
+  color: #fff;
+}
+
 </style>
