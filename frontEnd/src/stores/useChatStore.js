@@ -4,19 +4,29 @@ import { defineStore } from 'pinia';
 export const useChatStore = defineStore('chat', () => {
   const currentRoomIdx = ref(null);
   const currentRecipientIdx = ref(null);
-  const currentRecipientName = ref(null); // New state for recipient's name
-  const currentMemberIdx = ref(null); // New state for current user's ID
-  const currentMemberName = ref(null); // New state for current user's name
-  const messages = ref([]); // New state for messages in the current chat room
+  const currentRecipientName = ref(null);
+  const currentMemberIdx = ref(null);
+  const currentMemberName = ref(null);
+  const messages = ref([]);
+  const chatRooms = ref({}); // chatData from component is now here
 
-  function setCurrentChatRoom(roomIdx, recipientIdx, recipientName) { // Added recipientName
-    currentRoomIdx.value = roomIdx;
-    currentRecipientIdx.value = recipientIdx;
-    currentRecipientName.value = recipientName; // Set recipientName
-    messages.value = []; // Clear messages when switching rooms
+  function setChatRooms(rooms) {
+    chatRooms.value = rooms;
   }
 
-  function setCurrentMember(idx, name) { // New function to set current user's info
+  function setCurrentChatRoom(roomIdx, recipientIdx, recipientName) {
+    currentRoomIdx.value = roomIdx;
+    currentRecipientIdx.value = recipientIdx;
+    currentRecipientName.value = recipientName;
+    messages.value = []; // Clear messages when switching rooms
+
+    // Reset unread count for the selected chat room
+    if (chatRooms.value[roomIdx]) {
+      chatRooms.value[roomIdx].unreadCount = 0;
+    }
+  }
+
+  function setCurrentMember(idx, name) {
     currentMemberIdx.value = idx;
     currentMemberName.value = name;
   }
@@ -33,17 +43,52 @@ export const useChatStore = defineStore('chat', () => {
     messages.value = [];
   }
 
+  // New function to handle all incoming messages
+  function processIncomingMessage(messageData) {
+    console.log('ChatStore: Processing incoming message', messageData);
+    const roomIdx = messageData.roomIdx.toString();
+
+    // Update last message and time for the chat room list
+    if (chatRooms.value[roomIdx]) {
+      chatRooms.value[roomIdx].lastMessage = messageData.message;
+      chatRooms.value[roomIdx].time = new Date(messageData.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // If it's for the currently open chat, add it to the messages list
+    if (String(messageData.roomIdx) === String(currentRoomIdx.value)) {
+      console.log('ChatStore: Message is for the CURRENT chat room. Adding to messages list.');
+      const transformedMessage = {
+        id: messageData.createdAt || Date.now(),
+        content: messageData.message,
+        sender: messageData.senderName,
+        sent: String(messageData.senderIdx) === String(currentMemberIdx.value),
+        time: new Date(messageData.createdAt).toLocaleTimeString(),
+        isRead: messageData.isRead,
+      };
+      addMessage(transformedMessage);
+    } else {
+      console.log('ChatStore: Message is for an INACTIVE chat room. Updating unread count.');
+      // If it's for another chat room, increment unread count
+      if (chatRooms.value[roomIdx]) {
+        chatRooms.value[roomIdx].unreadCount = (chatRooms.value[roomIdx].unreadCount || 0) + 1;
+      }
+    }
+  }
+
   return {
     currentRoomIdx,
     currentRecipientIdx,
-    currentRecipientName, // Return new state
+    currentRecipientName,
     currentMemberIdx,
     currentMemberName,
-    messages, // Return new state
+    messages,
+    chatRooms, // expose new state
+    setChatRooms, // expose new action
     setCurrentChatRoom,
     setCurrentMember,
     addMessage,
     setMessages,
     clearMessages,
+    processIncomingMessage, // expose new action
   };
 });
