@@ -15,7 +15,7 @@ const props = defineProps(['title', 'icon', 'videos'])
         </div>
 
         <div class="video-grid">
-            <VideoCardComp v-for="video in props.videos" v-if="video" :key="video.id" :video="video" />
+            <VideoCardComp v-for="video in props.videos" :key="video.id" :video="video" />
         </div>
     </section>
 </template>
