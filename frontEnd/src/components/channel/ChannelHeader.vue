@@ -50,34 +50,32 @@ const isManagementPage = computed(() =>
 );
 
 const getSubscribe = async () => {
-  subscribeIdx.memberIdx = channelInfo.id
-  let res = await subscribe.getSubscribe(subscribeIdx);
-  if(res.data === true) {
-    isSubscribe.value = true;
+  if (!channelInfo.id) {
+    isSubscribe.value = false;
+    return;
+  }
+  const res = await subscribe.getSubscribe();
+  if (res && res.data) {
+    const subscriptionList = res.data;
+    isSubscribe.value = subscriptionList.some(sub => sub.id === channelInfo.id);
+  } else {
+    isSubscribe.value = false;
   }
 }
 
 const subscribing = async () => {
-  if(isSubscribe.value) {
-    return deleteSubscribe()
+  if (isSubscribe.value) {
+    // Unsubscribe
+    await subscribe.deleteSubscribe(channelInfo.id);
+  } else {
+    // Subscribe
+    await subscribe.trySubscribe(channelInfo.id);
   }
-  return trySubscribe()
-}
-
-const trySubscribe = async () => {
-  subscribeIdx.memberIdx = channelInfo.id
-  let res = await subscribe.trySubscribe(subscribeIdx);
-  if(res.code === 200) {
-    isSubscribe.value = true;
-  }
-}
-
-const deleteSubscribe = async () => {
-  subscribeIdx.memberIdx = channelInfo.id
-  let res = await subscribe.deleteSubscribe(subscribeIdx);
-  if(res.code === 200) {
-    isSubscribe.value = false;
-  }
+  
+  // After action, reload everything to ensure UI is fully updated
+  // This will refresh subscriber count and button state
+  await loadChannelInfo();
+  await getSubscribe();
 }
 
 const checkIsMyChannel = () => {
@@ -99,11 +97,21 @@ const loadChannelInfo = async () => {
     }
   
 }
+
+// 컴포넌트가 마운트될 때 채널 정보와 구독 상태를 불러옵니다.
 onMounted(async () => {
   await loadChannelInfo();
   await getSubscribe();
   await getBannerImage();
 })
+
+// 다른 채널 페이지로 이동하는 것을 감지하여 데이터를 새로고침합니다.
+watch(() => route.params.channelName, async (newChannelName, oldChannelName) => {
+  if (newChannelName && newChannelName !== oldChannelName) {
+    await loadChannelInfo();
+    await getSubscribe();
+  }
+});
 
 </script>
 
