@@ -71,21 +71,6 @@ export const deletePlaylistItem = async (playlistdelete) => {
 };
 
 
-export const uploadThumbnail = async (Thumbnailform) => {
-
-    const requestUrl = `/api/channel_thumbnail.json`
-    let data = {}
-
-    await api.get(requestUrl, Thumbnailform)
-        .then((response) => {
-            data = response.data
-        })
-        .catch((error) => {
-            data = error.data
-        })
-    return data
-};
-
 export const getChannelBoardList = async () => {
     const requestUrl = `/api/channel/board/list`;
     let data = [];
@@ -324,7 +309,7 @@ export const getChannelBannerImage = async () => {
 
 export default {
     getChannelInfo, updateChannelInfo, updatePlaylistItem, deletePlaylistItem,
-    uploadThumbnail, getChannelBoardList, getChannelBoardDetail,
+    getChannelBoardList, getChannelBoardDetail,
     getBoardComments, createBoardComment, deleteBoardComment,
     deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted, getChannelBoardListPaged, ChannelBoardLikes, BoardCommentLikes,
     getChannelInfoByChannelName, getChannelBannerImage

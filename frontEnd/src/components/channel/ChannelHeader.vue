@@ -46,7 +46,7 @@ const isOwner = computed(() => {
   return isMyChannel.value;
 });
 const isManagementPage = computed(() =>
-  route.path == '/mychannel'
+  route.path === '/mychannel'
 );
 
 const getSubscribe = async () => {
