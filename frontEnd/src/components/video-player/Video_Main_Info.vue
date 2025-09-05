@@ -50,7 +50,7 @@ const navigateToChatRoom = () => {
     <!-- 제목 + 버튼 한 줄 배치 -->
     <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
       <h1 class="video-title" style="margin: 0">
-        {{ props.videoInfo.title }}
+        {{ props.videoInfo.description }}
       </h1>
       <div class="channel-actions" style="display: flex; gap: 8px">
         <!-- <button class="btn btn-subscribe">{{ props.videoInfo.isSubscribed ? '구독중' : '구독' }}</button> -->
