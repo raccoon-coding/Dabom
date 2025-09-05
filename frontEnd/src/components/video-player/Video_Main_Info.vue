@@ -1,11 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 import StarRating from '@/components/common/StarRating.vue' // StarRating 컴포넌트 임포트
 import PlaylistAddModal from './PlaylistAddModal.vue'
 import api from '@/api/chat'
+import channelApi from '@/api/channel'
+import subscribeApi from '@/api/subscribe'
 import useMemberStore from '@/stores/useMemberStore'
 import Modal from '@/components/main/Modal.vue'
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
 
 const props = defineProps(['videoInfo'])
 const router = useRouter()
@@ -18,10 +20,11 @@ const showPlaylistModal = ref(false) // 모달 표시 상태를 관리할 변수
 
 const showChatModal = ref(false)
 const showLoginModal = ref(false)
+const showSubscribe = ref(false)
 
 const createChatRoom = async () => {
   if (!memberStore.checkLogin()) {
-    showLoginModal.value=true
+    showLoginModal.value = true
     return
   }
 
@@ -38,9 +41,32 @@ const createChatRoom = async () => {
   }
 }
 
+const trySubscribe = async () => {
+  if(!showSubscribe.value) {
+    return subscribe()
+  }
+  await deleteSubscribe()
+}
+
+const subscribe = async () => {
+  let res = await channelApi.getChannelInfoByChannelName(props.videoInfo.channelName)
+  let subscribe = await subscribeApi.trySubscribe(res.id);
+  if(subscribe.code === 200) {
+    showSubscribe.value = true;
+  }
+}
+
+const deleteSubscribe = async () => {
+  let res = await channelApi.getChannelInfoByChannelName(props.videoInfo.channelName)
+  let subscribe = await subscribeApi.deleteSubscribe(res.id);
+  if(subscribe.code === 200) {
+    showSubscribe.value = false;
+  }
+}
+
 const navigateToChatRoom = () => {
   showChatModal.value = false // 모달을 닫습니다.
-  router.push({ name: 'message' });
+  router.push({name: 'message'});
 }
 </script>
 
@@ -50,12 +76,10 @@ const navigateToChatRoom = () => {
     <!-- 제목 + 버튼 한 줄 배치 -->
     <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
       <h1 class="video-title" style="margin: 0">
-        {{ props.videoInfo.description }}
+        {{ props.videoInfo.channelName }}
       </h1>
       <div class="channel-actions" style="display: flex; gap: 8px">
-        <!-- <button class="btn btn-subscribe">{{ props.videoInfo.isSubscribed ? '구독중' : '구독' }}</button> -->
-        <button class="btn btn-subscribe">구독중</button>
-
+        <button class="btn btn-subscribe" @click="trySubscribe">{{ showSubscribe ? '구독중' : '구독' }}</button>
         <button class="action-btn" @click="createChatRoom()">
           <i class="fa-solid fa-envelope"></i>
           메시지
@@ -65,8 +89,7 @@ const navigateToChatRoom = () => {
 
     <div class="channel-row">
       <div class="channel-info-vertical">
-        <span class="channel-name">{{ props.videoInfo.channel?.name }}</span>
-        <span class="subscriber-count">구독자 {{ props.videoInfo.Subscribers }}명</span>
+        <span class="subscriber-count">구독자 {{ props.videoInfo.subscribeCount }}명</span>
       </div>
       <div class="channel-buttons">
         <button class="action-btn together-btn" id="togetherBtn">
@@ -88,38 +111,39 @@ const navigateToChatRoom = () => {
   <!-- 별점 평가 시스템 -->
   <div class="rating-row">
     <span class="current-rating"
-      >조회수 {{ props.videoInfo.views }}회 • 평균 {{ videoRating.toFixed(1) }}점</span
+    >조회수 {{ props.videoInfo.viewCount }}회 • 평균 {{ videoRating.toFixed(1) }}점</span
     >
     <div class="rating-right">
       <span class="rating-label">이 영상을 평가해주세요:</span>
       <div class="star-rating-interactive">
-        <StarRating v-model="videoRating" :video-info="props.videoInfo" />
+        <StarRating v-model="videoRating" :video-info="props.videoInfo"/>
       </div>
     </div>
   </div>
 
   <!-- 플레이리스트 추가 모달 -->
   <PlaylistAddModal
-    v-if="showPlaylistModal"
-    :video-info="props.videoInfo"
-    @close="showPlaylistModal = false"
+      v-if="showPlaylistModal"
+      :video-info="props.videoInfo"
+      @close="showPlaylistModal = false"
   />
   <Modal
-    v-if="showChatModal"
-    title="채팅방 생성"
-    message="채팅방이 생성되었습니다. 채팅 페이지로 이동합니다"
-    @confirm="navigateToChatRoom"
+      v-if="showChatModal"
+      title="채팅방 생성"
+      message="채팅방이 생성되었습니다. 채팅 페이지로 이동합니다"
+      @confirm="navigateToChatRoom"
   />
   <Modal
-    v-if="showLoginModal"
-    title="로그인이 필요합니다."
-    message="채팅을 시작하려면 로그인해주세요."
-    @confirm="showLoginModal = false"
+      v-if="showLoginModal"
+      title="로그인이 필요합니다."
+      message="채팅을 시작하려면 로그인해주세요."
+      @confirm="showLoginModal = false"
   />
 </template>
 
 <style scoped>
 @import url('@/assets/Video_Player/Video_Player.css');
+
 .channel-buttons {
   padding: 0.5rem 0.5rem;
 }
