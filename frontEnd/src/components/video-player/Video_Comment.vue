@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getComments, postComment, deleteComment } from '@/api/videocomment/'
+import { getComments, postComment, deleteComment, videoCommentLikes } from '@/api/videocomment/'
 
 const route = useRoute()
 const videoId = ref(route.params.id)
@@ -25,6 +25,7 @@ const sortOrder = ref('newest') // 정렬 기준: newest, popular, oldest
 const page = ref(0) // 현재 페이지
 const pageSize = 10 // 페이지당 댓글 수
 const hasMore = ref(true) // 추가 댓글 여부
+const likingComments = ref(new Set()) // 좋아요 처리 중인 댓글들
 
 const loadComments = async (reset = false) => {
   if (!videoId.value) return; // videoId가 없으면 실행하지 않음
@@ -54,11 +55,16 @@ const loadComments = async (reset = false) => {
     console.log('response.data:', response.data); // 실제 Slice 객체
     
     if (response && response.data && response.data.content) {
-        // API 함수에서 res.data를 반환하므로 response.data가 실제 Slice
-        comments.value = reset ? response.data.content : [...comments.value, ...response.data.content]
+        // 임시로 좋아요 정보 추가 (테스트용)
+        const commentsWithLikes = response.data.content.map(comment => ({
+            ...comment,
+            isLikes: comment.isLikes || false,
+            likesCount: comment.likesCount || 0
+        }));
+        
+        comments.value = reset ? commentsWithLikes : [...comments.value, ...commentsWithLikes]
         hasMore.value = !response.data.last
-        console.log('댓글 데이터 로드 성공:', response.data.content);
-        console.log('첫 번째 댓글 프로필:', response.data.content[0]?.profileImg);
+        console.log('댓글 데이터 로드 성공:', commentsWithLikes);
     } else {
         console.log('예상과 다른 응답 구조입니다.');
         comments.value = []
@@ -101,6 +107,33 @@ const handleDeleteComment = async (commentId) => {
     loadComments(true)
   } catch (error) {
     alert(error.response?.data?.message || '댓글 삭제에 실패했습니다.')
+  }
+}
+
+// 댓글 좋아요 처리 함수
+const handleCommentLike = async (comment) => {
+  if (likingComments.value.has(comment.idx)) return
+  
+  try {
+    likingComments.value.add(comment.idx)
+    const response = await videoCommentLikes(comment.idx)
+    
+    if (response === true || (response && response.data === true) || (response && response.code === 200)) {
+      // 좋아요 상태 토글
+      comment.isLikes = !comment.isLikes
+      
+      // 좋아요 수 업데이트
+      if (comment.isLikes) {
+        comment.likesCount = (comment.likesCount || 0) + 1
+      } else {
+        comment.likesCount = Math.max(0, (comment.likesCount || 0) - 1)
+      }
+    }
+  } catch (error) {
+    console.error('댓글 좋아요 처리 오류:', error)
+    alert('좋아요 처리에 실패했습니다.')
+  } finally {
+    likingComments.value.delete(comment.idx)
   }
 }
 
@@ -181,6 +214,26 @@ onMounted(() => {
           </div>
           <p class="comment-text">{{ comment.content }}</p>
           <div class="comment-actions">
+            <!-- 좋아요 버튼 추가 -->
+            <button 
+              class="comment-action-btn like-btn"
+              :class="{ 
+                'liked': comment.isLikes,
+                'processing': likingComments.has(comment.idx)
+              }"
+              :disabled="likingComments.has(comment.idx)"
+              @click="handleCommentLike(comment)"
+            >
+              <i 
+                class="fas fa-thumbs-up" 
+                :style="{ color: comment.isLikes ? '#ff3040' : '#888' }"
+              ></i>
+              <span>{{ comment.likesCount || 0 }}</span>
+            </button>
+            <!-- 디버깅용 정보 표시 -->
+            <small style="color: #666; margin-left: 10px;">
+            </small>
+            
             <button
                 v-if="currentUser && currentUser.id === comment.memberIdx"
                 class="comment-btn delete-btn"
@@ -201,10 +254,12 @@ onMounted(() => {
 
 <style scoped>
 @import url(../../assets/Video_Player/Video_Player.css);
+
 .delete-btn {
   color: #ff4d4f;
   margin-left: 8px;
 }
+
 .btn-load-more {
   display: block;
   margin: 20px auto;
@@ -217,5 +272,50 @@ onMounted(() => {
 
 .btn-load-more:hover {
   background-color: #0056b3;
+}
+
+/* 댓글 좋아요 버튼 스타일 */
+.comment-action-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-right: 0.5rem;
+}
+
+.comment-action-btn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.comment-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.comment-action-btn.liked {
+  color: #ff3040;
+}
+
+.comment-action-btn.processing {
+  opacity: 0.7;
+}
+
+.comment-action-btn i {
+  font-size: 0.75rem;
+  transition: color 0.3s ease;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
 }
 </style>

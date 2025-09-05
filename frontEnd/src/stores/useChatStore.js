@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { getChatRoom } from '@/api/chat';
 
 export const useChatStore = defineStore('chat', () => {
   const currentRoomIdx = ref(null);
@@ -13,8 +14,28 @@ export const useChatStore = defineStore('chat', () => {
   function setChatRooms(rooms) {
     chatRooms.value = rooms;
   }
-
-  function setCurrentChatRoom(roomIdx, recipientIdx, recipientName) {
+  async function fetchAndSetMessages(roomIdx) {
+    if (!roomIdx) return;
+    try {
+      const chatHistory = await getChatRoom(roomIdx);
+      const transformedMessages = chatHistory.content
+        .map(msg => ({
+          id: msg.createdAt || Date.now(),
+          content: msg.message,
+          sender: msg.senderName,
+          sent: String(msg.senderIdx) === String(currentMemberIdx.value),
+          time: new Date(msg.createdAt).toLocaleTimeString(),
+          isRead: msg.isRead,
+        }))
+        .filter(msg => msg.content && msg.content.trim() !== '') // Filter out empty messages
+        .reverse(); // Reverse to show latest messages at the bottom
+      setMessages(transformedMessages);
+    } catch (error) {
+      console.error('Failed to fetch chat history:', error);
+      setMessages([]); // Clear messages on error
+    }
+  }
+  async function setCurrentChatRoom(roomIdx, recipientIdx, recipientName) {
     currentRoomIdx.value = roomIdx;
     currentRecipientIdx.value = recipientIdx;
     currentRecipientName.value = recipientName;
@@ -24,6 +45,7 @@ export const useChatStore = defineStore('chat', () => {
     if (chatRooms.value[roomIdx]) {
       chatRooms.value[roomIdx].unreadCount = 0;
     }
+    await fetchAndSetMessages(roomIdx);
   }
 
   function setCurrentMember(idx, name) {
@@ -65,7 +87,10 @@ export const useChatStore = defineStore('chat', () => {
         time: new Date(messageData.createdAt).toLocaleTimeString(),
         isRead: messageData.isRead,
       };
-      addMessage(transformedMessage);
+      // Filter out empty messages before adding
+      if (transformedMessage.content && transformedMessage.content.trim() !== '') {
+        addMessage(transformedMessage);
+      }
     } else {
       console.log('ChatStore: Message is for an INACTIVE chat room. Updating unread count.');
       // If it's for another chat room, increment unread count

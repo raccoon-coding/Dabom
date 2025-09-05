@@ -123,7 +123,6 @@ onUnmounted(() => {
         <div class="video-title-section">
           <h1 class="video-title">{{ videoInfo.title }}</h1>
         </div>
-
         <Video_Tag_Explain :videoInfo="videoInfo"/>
         <Video_Main_Info :videoInfo="videoInfo"/>
         <!-- 현재 사용자 프로필 정보를 댓글 컴포넌트에 전달 -->
@@ -185,9 +184,6 @@ onUnmounted(() => {
   gap: 1.5rem;
 }
 
-.video-title-section {
-  padding: 1rem 0;
-}
 
 .video-title {
   color: var(--text-primary, #ffffff);

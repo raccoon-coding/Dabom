@@ -1,10 +1,8 @@
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import api from '@/api/score';
 import useMemberStore from '@/stores/useMemberStore';
 import Modal from '@/components/main/Modal.vue'
-import video from '@/api/video';
-
 
 const memberStore = useMemberStore();
 
@@ -54,39 +52,18 @@ watch(() => props.modelValue, (newValue) => {
 });
 
 watch(scoreTarget, async (newTarget) => {
-  if (!newTarget || !newTarget.idx) {
-    currentRating.value = 0;
-    userRatedScore.value = 0;
-    userScoreIdx.value = null;
-    selectedRating.value = 0;
-    emit('update:modelValue', currentRating.value);
-    return;
-  }
-
-  const memberIdx = parseInt(localStorage.getItem('memberIdx'));
-  if (!isNaN(memberIdx)) {
+  if (newTarget && newTarget.idx) {
     try {
-      const response = await api.getUserScoreForVideo(newTarget.idx, memberIdx);
-      if (newTarget.type === 'VIDEO' && response?.data?.score !== undefined) {
-        userRatedScore.value = response.data.score;
-        userScoreIdx.value = response.data.idx;
-        currentRating.value = response.data.score;
-        selectedRating.value = response.data.score;
-      } else {
-        const avgScore = await api.getAverageScore(newTarget.type, newTarget.idx);
-        currentRating.value = avgScore;
-        userRatedScore.value = 0;
-        userScoreIdx.value = null;
-        selectedRating.value = 0;
-      }
-    } catch (error) {
-      console.error('평점 로드 실패:', error);
+      // 항상 전체 평균 점수만 가져오도록 로직을 단순화합니다.
       const avgScore = await api.getAverageScore(newTarget.type, newTarget.idx);
       currentRating.value = avgScore;
-      userRatedScore.value = 0;
-      userScoreIdx.value = null;
-      selectedRating.value = 0;
+    } catch (error) {
+      console.error('평균 점수 로딩 실패:', error);
+      currentRating.value = 0; // 에러 발생 시 0으로 초기화
     }
+  } else {
+    // 대상이 없으면 평점을 0으로 리셋합니다.
+    currentRating.value = 0;
   }
   emit('update:modelValue', currentRating.value);
 }, { immediate: true });
@@ -198,13 +175,6 @@ const cancelRating = () => {
   hoverRating.value = 0;
 };
 
-
-const getData = () => {
-  console.log(props.videoIdx);
-  console.log(videoInfo);
-
-}
-
 </script>
 
 <template>
@@ -234,11 +204,6 @@ const getData = () => {
       <button @click="cancelRating()" class="cancel-btn">
         취소
       </button>
-      <button @click="getData()" class="cancel-btn">
-        정보 보기
-      </button>
-
-
     </div>
   </div>
 
