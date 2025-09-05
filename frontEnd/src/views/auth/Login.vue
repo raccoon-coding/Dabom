@@ -2,7 +2,7 @@
 import {reactive, ref} from 'vue';
 import LoginForm from '@/entity/auth/LoginForm';
 import Modal from '@/components/main/Modal.vue'
-import api, {getCurrentMemberInfo} from '@/api/auth'
+import api from '@/api/auth'
 import useMemberStore from '@/stores/useMemberStore';
 
 const memberStore = useMemberStore();
@@ -13,9 +13,9 @@ const showErrorModal = ref(false)
 const errorMessage = ref('')
 const errorTitle = 'Together 생성 에러'
 const socialLogin = reactive({
-  "google": "http://localhost:8080/oauth2/authorization/google",
-  "kakao": "http://localhost:8080/oauth2/authorization/kakao",
-  "naver": "http://localhost:8080/oauth2/authorization/naver"
+  "google": "https://api.dabomvideo.kro.kr/oauth2/authorization/google",
+  "kakao": "https://api.dabomvideo.kro.kr/oauth2/authorization/kakao",
+  "naver": "https://api.dabomvideo.kro.kr/oauth2/authorization/naver"
 })
 
 const closeErrorModal = () => {

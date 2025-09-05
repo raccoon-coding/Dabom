@@ -54,7 +54,7 @@ const loadTogetherInfo = (data) => {
   togetherInfo.userIdx = data.userIdx
 }
 const connectWebSocket = async () => {
-  const ws = new SockJS('http://localhost:8080/chat', null,
+  const ws = new SockJS('https://api.dabomvideo.kro.kr/chat', null,
       {
         transportOptions: {
           xhr: { withCredentials: true },

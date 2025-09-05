@@ -18,7 +18,7 @@ export const login = async (loginForm) => {
     const requestUrl = `/api/member/login`
     let data = {}
 
-    await api.post(requestUrl, loginForm)
+    await api.post(requestUrl, loginForm, { withCredentials: true })
         .then((response) => {
             data = response.data
         })

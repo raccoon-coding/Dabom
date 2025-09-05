@@ -1,8 +1,9 @@
 import axios from "axios"
 
 const api = axios.create({
-    baseURL: '',
-    timeout: 5000
+    baseURL: 'https://api.dabomvideo.kro.kr',
+    timeout: 5000,
+    withCredentials: true
 });
 
 

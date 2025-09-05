@@ -33,15 +33,17 @@ export const useSocketStore = defineStore('socket', () => {
     const jwt = await getJWT();
 
     const chatStore = useChatStore();
-    const socket = new SockJS('http://localhost:8080/chat');
+    const socket = new SockJS('https://api.dabomvideo.kro.kr/chat', null,
+        {
+          transportOptions: {
+            xhr: { withCredentials: true },
+            xhrStreaming: { withCredentials: true }
+          }
+        });
     stompClient.value = Stomp.over(socket);
 
-    const headers = {
-      Authorization: jwt
-    };
-
     stompClient.value.connect(
-      headers,
+        {},
       (frame) => {
         console.log('WebSocket connected:', frame);
         isConnected.value = true;
