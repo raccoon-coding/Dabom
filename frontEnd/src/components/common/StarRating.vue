@@ -175,13 +175,6 @@ const cancelRating = () => {
   hoverRating.value = 0;
 };
 
-
-const getData = () => {
-  console.log(props.videoIdx);
-  console.log(videoInfo);
-
-}
-
 </script>
 
 <template>
@@ -211,11 +204,6 @@ const getData = () => {
       <button @click="cancelRating()" class="cancel-btn">
         취소
       </button>
-      <button @click="getData()" class="cancel-btn">
-        정보 보기
-      </button>
-
-
     </div>
   </div>
 
