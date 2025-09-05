@@ -7,7 +7,7 @@ const props = defineProps(['videoInfo']);
     <!-- 영상 설명 및 태그 -->
     <div class="video-description">
         <div class="description-content">
-            <p> {{props.videoInfo.explainText}}</p>
+            <p> {{props.videoInfo.description}}</p>
             <div class="video-tags">
                 <span class="tag" v-for="tag in props.videoInfo.tags" :key="tag"> {{tag}} </span>
             </div>
