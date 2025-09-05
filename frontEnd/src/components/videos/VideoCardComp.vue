@@ -19,7 +19,7 @@ const goToChannel = () => {
 <template>
     <div class="video-card">
         <div class="video-thumbnail">
-            <img src="@/assets/images/dabom2.png" alt="썸네일" />
+            <img :src="video.videoImage || '@/assets/images/dabom2.png'"  alt="썸네일" />
             <div class="video-duration">{{ props.video.duration }}</div>
             <div class="video-overlay">
                 <button class="video-overlay__play-btn" @click="playVideo">
