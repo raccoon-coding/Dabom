@@ -3,6 +3,7 @@ import TogetherMasterModal from '@/components/together_room/TogetherMasterModal.
 import TogetherRoomChat from '@/components/together_room/TogetherRoomChat.vue'
 import TogetherRoomNavigator from '@/components/together_room/TogetherRoomNavigator.vue'
 import Video_Player_Component from '@/components/video-player/Video_Player_Component.vue'
+import Modal from '@/components/main/Modal.vue'
 
 import Stomp from 'stompjs'
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
@@ -25,17 +26,21 @@ const togetherInfo = reactive({
 const stateModal = reactive({
   chatModal: false,
   masterModal: false,
+  togetherModal: false
 })
 const subscribed = ref(false)
 const isMaster = ref(false)
-const testUrl = 'https://s3.ap-northeast-2.amazonaws.com/raccoon.aws.s3/encoder/sample/playlist.m3u8'
+const togetherTitle = "Together 공지"
+const togetherMessage = ref("")
 
 const getTogetherInfo = async () => {
   let res = await api.getTogetherInfo(togetherInfo.togetherIdx)
   if (res.code === 200) {
-    console.log("together Info")
-    console.log(res.data)
     loadTogetherInfo(res.data)
+  }
+  if(res.code === 400) {
+    togetherMessage.value = res.message
+    stateModal.togetherModal = true;
   }
 }
 const getIsMaster = async () => {
@@ -52,6 +57,10 @@ const loadTogetherInfo = (data) => {
   togetherInfo.maxMemberNum = data.maxMemberNum
   togetherInfo.joinMemberNumber = data.joinMemberNumber
   togetherInfo.userIdx = data.userIdx
+  togetherInfo.videoUrl = data.videoUrl
+  if(togetherInfo.videoUrl === "") {
+    togetherInfo.videoUrl = 'https://s3.ap-northeast-2.amazonaws.com/raccoon.aws.s3/encoder/sample/playlist.m3u8'
+  }
 }
 const connectWebSocket = async () => {
   const ws = new SockJS('http://localhost:8080/chat', null,
@@ -66,15 +75,34 @@ const connectWebSocket = async () => {
   socket.value.connect(
       {},
     (frame) => {
-      console.log('WebSocket connected:', frame);
       subscribed.value = true
+      subscribeMasterEvent()
     },
     (error) => {
-      console.error('WebSocket connection error:', error);
     }
   )
 }
 
+const subscribeMasterEvent = () => {
+  socket.value.subscribe(`/topic/master/control/together/${togetherInfo.togetherIdx}`, (mes) => {
+    const data = JSON.parse(mes.body)
+    console.log(data)
+    if(data.videoUrl !== '') {
+      window.location.reload();
+    }
+    if(data.kickIdx !== '') {
+      if(togetherInfo.userIdx === data.kickIdx) {
+        togetherMessage.value = "강퇴당하셨습니다."
+        stateModal.togetherModal = true;
+      }
+    }
+  });
+}
+
+const returnTogether = () => {
+  stateModal.togetherModal = false;
+  window.location.href = '/together'
+}
 const openChatModal = () => {
   stateModal.chatModal = true
 }
@@ -113,7 +141,7 @@ onUnmounted(() => {
     <!-- Video Container -->
     <div class="video-container" :class="{ 'modal-open': stateModal.chatModal }">
       <div class="video-player">
-        <Video_Player_Component v-if="subscribed" :video_url="testUrl" :socket="socket"
+        <Video_Player_Component v-if="subscribed" :video_url="togetherInfo.videoUrl" :socket="socket"
                                 :togetherIdx="togetherInfo.togetherIdx" :isMaster="isMaster"/>
       </div>
     </div>
@@ -131,6 +159,7 @@ onUnmounted(() => {
     @close_modal="closeChatModal()"
     @open_master_modal="openMasterModal"
   />
+  <Modal v-if="stateModal.togetherModal" :title="togetherTitle" :message="togetherMessage" @confirm="returnTogether" />
 </template>
 
 <style scoped>
