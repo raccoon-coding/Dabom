@@ -15,8 +15,8 @@ const onSubmit = () => {
 
 <template>
     <section class="main-banner">
-        <h1 class="main-banner_title">여기가 메인 배너 타이틀임</h1>
-        <p class="main-banner_subtitle">여긴 서브타이틀임</p>
+        <h1 class="main-banner_title">Welcome Dabom</h1>
+        <p class="main-banner_subtitle">혼자 보는 영상에서 함께하는 경험으로</p>
         <SearchBarComp />
         <!-- <div class="search-container">
             <form class="search-form" @submit.prevent="onSubmit">
@@ -54,58 +54,4 @@ const onSubmit = () => {
     margin-bottom: 40px;
 }
 
-.search-container {
-    display: flex;
-    justify-content: center;
-    position: relative;
-    margin: 0 auto;
-}
-
-.search-input-wrapper {
-    display: flex;
-    width: 100%;
-    max-width: 45rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.search-input {
-    flex: 1;
-    padding: 0.75rem 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 25px 0 0 25px;
-    background-color: var(--card-bg);
-    color: var(--text-primary);
-    font-size: 1rem;
-    transition: var(--transition);
-    width: 90rem;
-}
-
-.search-input:focus {
-    outline: none;
-    border: 2px solid var(--primary-color);
-}
-
-.search-btn {
-    display: flex;
-    outline: none;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    border: 2px solid var(--border-color);
-    border-radius: 0 25px 25px 0;
-    background-color: var(--hover-color);
-    color: var(--text-primary);
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.search-btn:hover {
-    border: 2px solid var(--primary-color);
-    background-color: var(--primary-color);
-}
-
-.search-btn i {
-    font-size: 1rem;
-}
 </style>

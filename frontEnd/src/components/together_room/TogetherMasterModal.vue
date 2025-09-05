@@ -9,7 +9,10 @@ const props = defineProps(['socket'])
 const emits = defineEmits(['close_modal'])
 const route = useRoute()
 const togetherIdx = ref('');
-const videoURI = ref(null);
+const masterBody = reactive({
+  videoUrl: '',
+  kickIdx: 0
+});
 const members = reactive({
   members: []
 })
@@ -17,16 +20,24 @@ const members = reactive({
 const getMembers = async () => {
   let res = await api.getMembersByMaster(togetherIdx.value);
   if (res.code === 200) {
-    console.log(res.data.members)
-    members.members.push(...res.data.members)
+    members.members = [...res.data.members]
   }
 }
 
 const changeVideo = async () => {
-  let res = await api.changeTogetherVideo(videoURI.value);
-  if(res.code === 200) {
-
+  if(masterBody.videoUrl === '') {
+    return
   }
+  let res = await api.changeTogetherVideo(togetherIdx.value, masterBody.videoUrl);
+  if(res.code === 200) {
+    masterBody.kickIdx = 0
+    props.socket.send(`/app/master/control/together/${togetherIdx.value}`, {}, JSON.stringify(masterBody));
+    masterBody.videoUrl = ''
+  }
+}
+
+const reloadMember = () => {
+  getMembers();
 }
 
 const closeMasterModal = () => {
@@ -54,10 +65,10 @@ onMounted(() => {
               id="videoUrl"
               type="url"
               placeholder="함께 볼 동영상 URL을 입력하세요"
-              v-model="videoURI"
+              v-model="masterBody.videoUrl"
           />
           <div class="button-container">
-            <button type="submit" class="btn-create" @click="sendApi">
+            <button type="submit" class="btn-create" @click="changeVideo">
               <i class="fas fa-plus"></i>
               변경 완료
             </button>
@@ -66,7 +77,11 @@ onMounted(() => {
       </div>
       <div class="modal-content">
         <div class="participant-list" id="participantList">
-          <Item v-for="member in members.members" :member="member"></Item>
+          <Item v-for="member in members.members"
+                :masterBody="masterBody"
+                :socket="props.socket"
+                :member="member"
+                @reload="reloadMember"></Item>
         </div>
       </div>
 
