@@ -10,7 +10,6 @@ import useMemberStore from '@/stores/useMemberStore'
 import Modal from '@/components/main/Modal.vue'
 import CreateTogetherModal from "@/components/together/CreateTogetherModal.vue";
 import {useRoute, useRouter} from 'vue-router'
-
 const route = useRoute()
 const videoId = route.params.id
 const props = defineProps(['videoInfo'])

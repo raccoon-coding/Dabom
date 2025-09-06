@@ -51,6 +51,7 @@ const loadCurrentUserProfile = async () => {
 const getData = async () => {
   const result = await api.getVideoById(videoId)
   Object.assign(videoInfo, result.data)
+  console.log(result.data)
   if (videoInfo.savedPath) {
     initHlsPlayer()
   }
