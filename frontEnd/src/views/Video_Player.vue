@@ -1,7 +1,6 @@
 <script setup>
 import Video_Main_Info from '@/components/video-player/Video_Main_Info.vue'
 import Video_Tag_Explain from '@/components/video-player/Video_Tag_Explain.vue'
-import Video_Recommend from '@/components/video-player/Video_Recommend.vue'
 import Video_Comment from '@/components/video-player/Video_Comment.vue'
 import {useRoute} from 'vue-router'
 import {onMounted, reactive, ref, onUnmounted} from 'vue'
@@ -21,9 +20,11 @@ const videoInfo = reactive({
   title: '',
   description: '',
   savedPath: '',
-  channel: {
-    name: ''
-  }
+  isSubscribed: '',
+  channelName: '',
+  viewCount: 0,
+  videoScore: 0,
+  subscribeCount: 0
 })
 
 const currentUserProfile = ref({
