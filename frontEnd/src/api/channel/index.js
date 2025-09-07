@@ -71,21 +71,6 @@ export const deletePlaylistItem = async (playlistdelete) => {
 };
 
 
-export const uploadThumbnail = async (Thumbnailform) => {
-
-    const requestUrl = `/api/channel_thumbnail.json`
-    let data = {}
-
-    await api.get(requestUrl, Thumbnailform)
-        .then((response) => {
-            data = response.data
-        })
-        .catch((error) => {
-            data = error.data
-        })
-    return data
-};
-
 export const getChannelBoardList = async () => {
     const requestUrl = `/api/channel/board/list`;
     let data = [];
@@ -307,10 +292,25 @@ export const BoardCommentLikes = async (idx) => {
     return data;
 }
 
+export const getChannelBannerImage = async () => {
+    const requestUrl = `/api/member/info/banner`;
+    try {
+        const response = await api.get(requestUrl);
+        if (response.data && response.data.code === 200) {
+            return response.data.data;
+        } else {
+          console.log("실패")
+            return null;
+        }
+    } catch (error) {
+        return null;
+    }
+};
+
 export default {
     getChannelInfo, updateChannelInfo, updatePlaylistItem, deletePlaylistItem,
-    uploadThumbnail, getChannelBoardList, getChannelBoardDetail,
+    getChannelBoardList, getChannelBoardDetail,
     getBoardComments, createBoardComment, deleteBoardComment,
     deleteChannelBoard, updateChannelBoard, createChannelBoard, getBoardCommentsSorted, getChannelBoardListPaged, ChannelBoardLikes, BoardCommentLikes,
-    getChannelInfoByChannelName
+    getChannelInfoByChannelName, getChannelBannerImage
 }

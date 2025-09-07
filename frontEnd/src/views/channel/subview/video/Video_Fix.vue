@@ -1,27 +1,63 @@
 <script setup>
-import BannerComp from '@/components/banner/BannerComp.vue';
-import SidebarContainer from '@/components/sidebar/SidebarContainer.vue';
 import VideoSectionComp from '@/components/videos/VideoSectionComp.vue';
-import {onMounted, reactive} from 'vue';
-import api from '@/api/video'
+import { onMounted, reactive, computed } from 'vue';
+import api from '@/api/video';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 
 const state = reactive({
-  popularVideos: []
-})
+  popularVideos: [],
+  currentPage: 0,
+  size: 10,
+  loading: false,
+  hasNext: true,
+  error: null,
+});
 
-const getVideoList = async () => {
-  const result = await api.getVideoList()
-  state.popularVideos = result
-}
+const channelName = computed(() => {
+  return route.params.channelName ? route.params.channelName : null;
+});
+
+const getVideoList = async (page = 0, append = false) => {
+  if (state.loading) return;
+
+  try {
+    state.loading = true;
+    state.error = null;
+
+    const result = await api.getVideoList(page, state.size, '', channelName.value);
+
+    if (append) {
+      state.popularVideos = [...state.popularVideos, ...result.content];
+    } else {
+      state.popularVideos = result.content;
+    }
+
+    state.hasNext = result.hasNext;
+    state.currentPage = page;
+
+    if (result.content.length === 0 && channelName.value) {
+      state.error = `"${channelName.value}"에 대한 동영상이 없습니다.`;
+    }
+
+  } catch (error) {
+    console.error('비디오 로딩 실패:', error);
+    state.error = '비디오를 불러오는데 실패했습니다.';
+  } finally {
+    state.loading = false;
+  }
+};
+
 onMounted(() => {
-  getVideoList()
-})
+  getVideoList();
+});
 </script>
+
 
 <template>
   <div class="video-section">
-    <!-- <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="popularVideos" /> -->
-    <VideoSectionComp :title="'인기영상'" :icon="'fas fa-fire'" :videos="state.popularVideos"/>
+    <VideoSectionComp :title="'내 동영상'" :icon="'fas fa-fire'" :videos="state.popularVideos"/>
   </div>
 
 </template>

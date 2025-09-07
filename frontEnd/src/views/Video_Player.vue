@@ -1,18 +1,18 @@
 <script setup>
 import Video_Main_Info from '@/components/video-player/Video_Main_Info.vue'
 import Video_Tag_Explain from '@/components/video-player/Video_Tag_Explain.vue'
-import Video_Recommend from '@/components/video-player/Video_Recommend.vue'
 import Video_Comment from '@/components/video-player/Video_Comment.vue'
-import { useRoute } from 'vue-router'
-import { onMounted, reactive, ref, onUnmounted } from 'vue'
+import {useRoute} from 'vue-router'
+import {onMounted, reactive, ref, onUnmounted} from 'vue'
 import Hls from 'hls.js'
 import api from '@/api/video_player'
-import video from "@/api/video/index.js"
-import Video_Player_Component from "@/components/video-player/Video_Player_Component.vue";
+import useMemberStore from '@/stores/useMemberStore' 
+import channelApi from "@/api/channel" 
 
 const route = useRoute()
 const videoId = route.params.id
 const videoPlayer = ref(null)
+const memberStore = useMemberStore() 
 let hls = null
 
 const videoInfo = reactive({
@@ -20,15 +20,38 @@ const videoInfo = reactive({
   title: '',
   description: '',
   savedPath: '',
-  channel: {
-    name: ''
-  }
+  isSubscribed: '',
+  channelName: '',
+  viewCount: 0,
+  videoScore: 0,
+  subscribeCount: 0
 })
+
+const currentUserProfile = ref({
+  profileImg: 'https://via.placeholder.com/40',
+  name: '사용자'
+})
+
+const loadCurrentUserProfile = async () => {
+  try {
+    const myChannelName = memberStore.getChannelNameWithEncrypt()
+    if (myChannelName) {
+      const channelInfoResponse = await channelApi.getChannelInfoByChannelName(myChannelName)
+      if (channelInfoResponse) {
+        currentUserProfile.value = {
+          profileImg: channelInfoResponse.profileImg || 'https://via.placeholder.com/40',
+          name: channelInfoResponse.name || '사용자'
+        }
+      }
+    }
+  } catch (error) {
+  }
+}
 
 const getData = async () => {
   const result = await api.getVideoById(videoId)
-  Object.assign(videoInfo, result.data) // 또는 result 구조에 맞게 수정
-  // 데이터 로드 후 HLS 플레이어 초기화
+  Object.assign(videoInfo, result.data)
+  console.log(result.data)
   if (videoInfo.savedPath) {
     initHlsPlayer()
   }
@@ -40,7 +63,6 @@ const initHlsPlayer = () => {
   const video = videoPlayer.value
   const videoUrl = videoInfo.savedPath
 
-  // 기존 HLS 인스턴스 정리
   if (hls) {
     hls.destroy()
   }
@@ -58,13 +80,16 @@ const initHlsPlayer = () => {
       console.error('HLS 에러:', data)
     })
   } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    // Safari 네이티브 HLS 지원
     video.src = videoUrl
   }
 }
 
-onMounted(() => {
-  getData()
+onMounted(async () => {
+  // 데이터 로드를 병렬로 실행
+  await Promise.all([
+    getData(),
+    loadCurrentUserProfile()
+  ])
 })
 
 onUnmounted(() => {
@@ -76,31 +101,97 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="video-container">
+  <div class="video-page-container">
+    <!-- 고정된 비디오 플레이어 섹션 -->
     <div class="video-player-section">
-      <!-- Left Column -->
-      <div class="main-content-column">
-        <div class="video-player-wrapper">
-<!--          <Video_Player_Component :video_url="videoInfo.savedPath" :is_open_modal="stateModal.chatModal" />-->
-          <video
-              ref="videoPlayer"
-              class="video-player"
-              controls muted autoplay>
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <h2>{{ videoInfo.title }}</h2>
-        <Video_Tag_Explain :videoInfo="videoInfo"></Video_Tag_Explain>
-        <Video_Main_Info :videoInfo="videoInfo"></Video_Main_Info>
-        <Video_Comment></Video_Comment>
+      <div class="video-player-wrapper">
+        <video
+            ref="videoPlayer"
+            class="video-player"
+            controls
+            muted
+            autoplay
+        >
+          지원하지 않는 비디오 플레이어 입니다.
+        </video>
       </div>
-      <!-- Right Sidebar -->
-      <div class="recommended-sidebar">
-        <Video_Recommend></Video_Recommend>
+    </div>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <div class="main-content-area">
+      <!-- 좌측 컨텐츠 -->
+      <div class="content-column">
+        <div class="video-title-section">
+          <h1 class="video-title">{{ videoInfo.title }}</h1>
+        </div>
+        <Video_Tag_Explain :videoInfo="videoInfo"/>
+        <Video_Main_Info :videoInfo="videoInfo"/>
+        <!-- 현재 사용자 프로필 정보를 댓글 컴포넌트에 전달 -->
+        <Video_Comment :current-user-profile="currentUserProfile"/>
       </div>
     </div>
   </div>
 </template>
+
 <style scoped>
-@import url(../assets/Video_Player/Video_Player.css);
+/* 전체 페이지 컨테이너 */
+.video-page-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--background-color, #1a1a1a);
+}
+
+/* 고정된 비디오 플레이어 섹션 */
+.video-player-section {
+  width: 100vw;
+  height: 75vh;
+  padding: 0;
+  background-color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-player-wrapper {
+  width: 100vw;
+  height: 75vh;
+  max-width: none;
+  background-color: #000;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  display: block;
+}
+
+/* 메인 컨텐츠 영역 */
+.main-content-area {
+  width: 85vw;
+  margin: 0 auto;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.content-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+
+.video-title {
+  color: var(--text-primary, #ffffff);
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0;
+  word-wrap: break-word;
+}
 </style>

@@ -36,7 +36,6 @@ export const getChatList = async () => {
 };
 
 export const getChatRoom = async (roomIdx, page = 0, size = 20) => {
-  console.log("챗룸")
   const requestUrl = `/api/chat/read/${roomIdx}`;
   try {
     const response = await api.get(requestUrl, {
@@ -50,20 +49,28 @@ export const getChatRoom = async (roomIdx, page = 0, size = 20) => {
   }
 };
 
-export const createChatRoom = async (member2Idx) => {
-  const requestUrl = '/api/chat/room';
-  const member1Idx = parseInt(localStorage.getItem('memberIdx'));
+export const createChatRoom = async (videoIdx) => {
+  const requestUrl = `/api/chat/room/${videoIdx}`;
   try {
-    const response = await api.post(
-      requestUrl,
-      { member1: { idx: member1Idx }, member2: { idx: member2Idx } },
-      { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } }
-    );
+    const response = await api.post(requestUrl, {}, { // Use api.post
+      headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
+    });
     return response.data.data;
   } catch (error) {
     console.error('Failed to create chat room:', error);
-    return null;
+    throw error;
   }
 };
 
-export default { getRandomTogetherList, getTogetherSearch, getChatList, getChatRoom, createChatRoom };
+export const getProfile = async (memberIdx) => {
+  const requestUrl = `/api/member/info/profileImg/${memberIdx}`;
+  try {
+    const response = await api.get(requestUrl);
+    return response.data.data;
+  } catch (error) {
+    console.error('이미지 가져오기 실패', error);
+    return error.response?.data || {};
+  }
+}
+
+export default { getRandomTogetherList, getTogetherSearch, getChatList, getChatRoom, createChatRoom,getProfile };

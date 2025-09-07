@@ -3,6 +3,7 @@ import { reactive, watch, ref, computed, onMounted, onUnmounted } from 'vue';
 import {useRoute, useRouter} from 'vue-router'
 import useMemberStore from '@/stores/useMemberStore';
 import api from '@/api/auth'
+import SearchBarComp from "@/components/search/SearchBarComp.vue";
 
 const route = useRoute()
 const memberStore = useMemberStore();
@@ -26,7 +27,13 @@ const logoutMember = async () => {
   const data = await api.logout()
   memberStore.removeWithEncrypt()
   currentUserIdx.value = null; // 로그아웃 시 초기화
+  await toggleDropdown()
   window.location.href = '/'
+}
+
+const toDM = async () => {
+  await router.push(`/message`)
+  await toggleDropdown()
 }
 
 const toggleDropdown = async () => {
@@ -40,7 +47,7 @@ const toggleDropdown = async () => {
     <div class="header-left">
       <div class="header-logo">
         <a href="/">
-          <img src="@/assets/images/dabom2.png" alt="DaBom Logo" class="logo-image" />
+          <img src="@/assets/images/dabom2.png" alt="Dabom Logo" class="logo-image" />
         </a>
       </div>
       <div class="nav-left">
@@ -50,7 +57,7 @@ const toggleDropdown = async () => {
         </nav>
       </div>
     </div>
-
+    <SearchBarComp/>
     <div class="header-right">
       <div v-if="!memberStore.checkLogin()" class="login-menu">
         <RouterLink :to="{ name: 'login' }" class="login-item">로그인</RouterLink>
@@ -64,7 +71,7 @@ const toggleDropdown = async () => {
           </div>
           <div class="profile-dropdown" v-if="state.isDropdownOpen">
             <a @click="toMyChannel" class="dropdown-item" href="#" @click.prevent>내 채널</a>
-            <RouterLink :to="{ name: 'message' }" class="dropdown-item">DM</RouterLink>
+            <a @click="toDM" class="dropdown-item" href="/message" @click.prevent>DM</a>
             <a href="#" class="dropdown-item" @click="logoutMember">로그아웃</a>
           </div>
         </div>

@@ -7,7 +7,7 @@ export const imageUpload = async (file, directory) => {
 
   try {
     const response = await api.post(
-      "/api/image/upload",
+      "/api/member/profileimage",
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" }
@@ -37,4 +37,51 @@ export const multiImageUpload = async (files, directory) => {
   }
 };
 
-export default { imageUpload };
+export const getPresignedUrl = async (fileInfo, requestPath) => {
+  const requestUrl = `/api/images/presigned/${requestPath}`
+
+  return await api.post(requestUrl, fileInfo)
+      .then((response) => {
+        return response.data
+      })
+      .catch((error) => {
+        console.error(error);
+        throw error;
+      })
+}
+
+export const uploadToPresignedUrl = async (presignedUrl, file) => {
+  return await api.put(presignedUrl, file, {
+    headers: {
+      'Content-Type': file.type
+    },
+  });
+}
+
+export const createMemberImageEntity = async (requestData) => {
+  const requestUrl = `/api/images`
+  return await api.post(requestUrl, requestData)
+      .then((response) => {
+        console.log(response)
+        return response.data;
+      })
+      .catch((error) => {
+        console.error(error)
+        throw error;
+      })
+}
+
+export const createThumbnailImageEntity = async (requestData, videoIdx) => {
+    const requestUrl = `/api/images/thumbnail/${videoIdx}`
+    return await api.post(requestUrl, requestData)
+        .then((response) => {
+            console.log(response)
+            return response.data;
+        })
+        .catch((error) => {
+            console.error(error)
+            throw error;
+        })
+}
+
+export default { imageUpload, getPresignedUrl, uploadToPresignedUrl, createMemberImageEntity, createThumbnailImageEntity };

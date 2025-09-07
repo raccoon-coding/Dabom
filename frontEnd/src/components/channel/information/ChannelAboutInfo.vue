@@ -18,18 +18,17 @@ export default {
   },
   async mounted() {
     try {
-      const result = await api.getChannelInfo()
-      console.log('채널 정보:', result)
-      
+      const channelName = this.$route.params.channelName || ''
+      const result = await api.getChannelInfoByChannelName(channelName)
       // 서버 데이터로 업데이트 (기본값이 있으면 유지)
-      this.channelInfo.id = result.data.id || this.channelInfo.id
-      this.channelInfo.name = result.data.name || this.channelInfo.name
-      this.channelInfo.content = result.data.content || this.channelInfo.content 
-      this.channelInfo.email = result.data.email || this.channelInfo.email
-      this.channelInfo.image = result.data.image || this.channelInfo.image
-      this.channelInfo.sns01 = result.data.sns01 || this.channelInfo.sns01
-      this.channelInfo.sns02 = result.data.sns02 || this.channelInfo.sns02
-      this.channelInfo.website = result.data.website || this.channelInfo.website
+      this.channelInfo.id = result.id || this.channelInfo.id
+      this.channelInfo.name = result.name || this.channelInfo.name
+      this.channelInfo.content = result.content || this.channelInfo.content
+      this.channelInfo.email = result.email || this.channelInfo.email
+      this.channelInfo.image = result.image || this.channelInfo.image
+      this.channelInfo.sns01 = result.sns01 || this.channelInfo.sns01
+      this.channelInfo.sns02 = result.sns02 || this.channelInfo.sns02
+      this.channelInfo.website = result.website || this.channelInfo.website
     } catch (error) {
       console.error('채널 정보 불러오기 실패:', error)
       // 에러 시 기본값 유지

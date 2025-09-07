@@ -34,8 +34,9 @@ const login = async () => {
   const data = await api.login(form.loginForm)
   const channelName = data.data;
   if (data.code !== 200) {
-    alert("로그인 실패")
-    return
+    showErrorModal.value = true;
+    errorMessage.value = "로그인을 다시 시도해주세요."
+    return;
   }
   memberStore.setWithEncrypt(channelName)
   window.location.href = '/'

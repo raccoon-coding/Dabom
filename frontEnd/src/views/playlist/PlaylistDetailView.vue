@@ -22,7 +22,7 @@
       <div class="video-list-section">
          <VideoSectionComp 
             :videos="videoListForComponent" 
-            title="수록곡"
+            title="Video List"
             icon="fa-solid fa-music"
         />
       </div>

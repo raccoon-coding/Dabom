@@ -34,7 +34,6 @@ const loadPosts = async (page = 0, reset = false) => {
         }
         
         const response = await getChannelBoardListPaged(page, pageSize, 'latest', channelName.value); // 최신순
-        console.log("테스트",channelName.value);
         
         if (reset) {
             posts.value = response.content || [];

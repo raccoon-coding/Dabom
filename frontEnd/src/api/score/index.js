@@ -54,4 +54,18 @@ const deleteScore = async (type, idx) => {
   }
 };
 
-export default { getAverageScore, registerScore, updateScore, deleteScore };
+const saveOrUpdateVideoScore = async (scoreData) => {
+  const requestUrl = `/api/score/register`;
+  try {
+    const response = await api.post(requestUrl, scoreData);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to save or update video score:', error);
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw error;
+  }
+};
+
+export default { getAverageScore, registerScore, updateScore, deleteScore, saveOrUpdateVideoScore };

@@ -2,8 +2,15 @@
 
 import api from "@/plugins/axiosinterceptor";
 
-export const getVideoList = async (page = 0, size = 10, keyword = '') => {
-    const url = `/api/search/videos?page=${page}&size=${size}${keyword ? `&keyword=${encodeURIComponent(keyword)}` : ''}`;
+export const getVideoList = async (page = 0, size = 10, keyword = '', channelName = '') => {
+    let url = `/api/search/videos?page=${page}&size=${size}`;
+
+    if (keyword) {
+        url += `&keyword=${keyword}`;
+    }
+    if (channelName) {
+        url += `&channelName=${channelName}`;
+    }
     try {
         const response = await api.get(url);
         return response.data.data;
@@ -12,6 +19,8 @@ export const getVideoList = async (page = 0, size = 10, keyword = '') => {
         throw error;
     }
 };
+
+
 
 export const uploadVideo = async (file) => {
     const url = `/api/videos/upload`;
@@ -25,15 +34,15 @@ export const uploadVideo = async (file) => {
         data = response.data;
     } catch (error) {
         console.error('비디오 업로드 실패:', error);
-        data = error.response?.data || {error: '업로드 실패'};
+        data = error.response?.data || { error: '업로드 실패' };
     }
 
 
     return data;
 };
 
-export const uploadVideoMetadata = async (videoId, metadata) => {
-    const url = `/api/videos/metadata/${videoId}`;
+export const uploadVideoMetadata = async (videoIdx, metadata) => {
+    const url = `/api/videos/metadata/${videoIdx}`;
     let data = {};
 
     try {
@@ -44,7 +53,7 @@ export const uploadVideoMetadata = async (videoId, metadata) => {
         data = response.data;
     } catch (error) {
         console.error('메타데이터 저장 실패:', error);
-        data = error.response?.data || {error: '메타데이터 저장 실패'};
+        data = error.response?.data || { error: '메타데이터 저장 실패' };
     }
 
     return data;
@@ -87,8 +96,37 @@ export const getMyVideoList = async () => {
         })
 }
 
+export const toggleVideoVisibility = async (videoIdx) => {
+    const requestUrl = `/api/videos/${videoIdx}/visibility`
+
+    await api.patch(requestUrl)
+        .then((response) => {
+            console.log(response)
+        })
+        .catch((error) => {
+            console.error(error)
+            throw error
+        })
+}
+
+export const cleanupS3TempVideo = (videoIdx) => {
+    const requestUrl = `/api/videos/${videoIdx}/cleanup`
+    api.delete(requestUrl)
+        .then((response) => {
+        })
+        .catch((error) => {
+            console.error(error)
+            throw error;
+        })
+}
 
 
-export default {getVideoList, uploadVideo, uploadVideoMetadata, getPresignedUrl, uploadToPresignedUrl, getMyVideoList};
+export default {
+    uploadVideo, uploadVideoMetadata, uploadToPresignedUrl,
+    getVideoList, getPresignedUrl, getMyVideoList,
+    toggleVideoVisibility,
+    cleanupS3TempVideo
+}
+
 
 

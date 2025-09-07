@@ -109,6 +109,24 @@ export const deleteMember = async () => {
     return data
 }
 
+export const updateProfileImage = async (formData) => {
+    const requestUrl = `/api/member/profileimage`
+    return await api.post(requestUrl, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+        .then((response) => {
+            return response.data
+        })
+        .catch((error) => {
+            console.error('프로필 이미지 업로드 실패:', error)
+            throw error
+        })
+}
 
-export default { signup, login, logout, checkEmailExists, checkChannelNameExists, getCurrentMemberInfo, getChannelInfoByIdx,
-    deleteMember}
+
+export default {
+    signup, login, logout, checkEmailExists, checkChannelNameExists, getCurrentMemberInfo, getChannelInfoByIdx,
+    deleteMember, updateProfileImage
+}

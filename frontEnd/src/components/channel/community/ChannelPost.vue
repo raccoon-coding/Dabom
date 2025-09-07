@@ -14,6 +14,7 @@ const post = reactive({
     contents: '',
     createdAt: '',
     commentCount: 0
+    
 })
 
 const fetchPostDetail = async () => {
@@ -26,7 +27,8 @@ const fetchPostDetail = async () => {
             title: response.title || '제목 없음',
             contents: response.contents || '내용 없음',
             createdAt: response.createdAt || '시간 정보 없음',
-            commentCount: response.commentCount || 0
+            commentCount: response.commentCount || 0,
+            
         })
         
     } catch (error) {
@@ -57,7 +59,7 @@ onMounted(() => {
     <div v-else class="community-post">
       <div class="post-header">
         <div class="post-author">
-          <img src="https://via.placeholder.com/40" alt="채널" class="author-avatar">
+          <!-- <img src="https://via.placeholder.com/40" alt="채널" class="author-avatar"> -->
           <div class="author-info">
             <span class="author-name">크리에이티브 채널</span>
             <span class="post-time">{{ post.createdAt }}</span>

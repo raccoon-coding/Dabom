@@ -4,7 +4,8 @@ import {onMounted, reactive, ref} from "vue";
 import api from '@/api/together/'
 
 const route = useRoute()
-const props = defineProps(['member']);
+const props = defineProps(['member', 'socket', 'masterBody']);
+const emits = defineEmits(['reload'])
 const togetherIdx = ref('');
 const memberInfo = reactive({
   isMaster: "",
@@ -13,7 +14,13 @@ const memberInfo = reactive({
 })
 
 const kickMember = async () => {
-  await api.kickTogetherMember(togetherIdx.value, memberInfo.memberIdx)
+  let res = await api.kickTogetherMember(togetherIdx.value, memberInfo.memberIdx)
+  if(res.code === 200) {
+    props.masterBody.kickIdx = memberInfo.memberIdx
+    props.masterBody.videoUrl = ''
+    props.socket.send(`/app/master/control/together/${togetherIdx.value}`, {}, JSON.stringify(props.masterBody));
+    emits('reload')
+  }
 }
 
 const getMemberInfo = () => {

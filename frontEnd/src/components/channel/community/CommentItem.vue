@@ -40,11 +40,12 @@ const handleCommentLike = async (commentIdx) => {
 <template>
     <div class="comment-item">
         <div class="comment-avatar-container">
-            <img src="https://via.placeholder.com/32" alt="작성자" class="comment-avatar">
+<img :src="comment.profileImg || 'https://via.placeholder.com/32'" alt="작성자" class="comment-avatar">
         </div>
         <div class="comment-main">
             <div class="comment-header">
-                <span class="comment-author-name">익명</span>
+                <span class="comment-author-name"></span>
+                 <span class="comment-author-name">{{ comment.name  || '익명' }}</span>
                 <span class="comment-time">{{ comment.createdAt }}</span>
                 <span v-if="comment.isModified" class="modified-badge">
                     <i class="fas fa-edit"></i>
