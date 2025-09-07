@@ -1,7 +1,7 @@
 <script setup>
 import useMemberStore from '@/stores/useMemberStore';
 import { useRoute } from 'vue-router';
-import { ref, onMounted, watch, onUnmounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { getChannelBoardListPaged, deleteChannelBoard, updateChannelBoard, createChannelBoard } from '@/api/channel';
 
 import PostCard from '@/components/channel/community-management/PostCard.vue';
@@ -12,17 +12,14 @@ const props = defineProps({
   isActive: Boolean
 });
 
-// 게시글 목록과 기본 상태
 const posts = ref([]);
 const loading = ref(false);
 const totalPostCount = ref(0);
 
-// 무한 스크롤 관련 상태
 const currentPage = ref(0);
 const hasNext = ref(true);
 const isLoadingMore = ref(false);
 const pageSize = 10;
-
 
 const memberStore = useMemberStore();
 const route = useRoute();
@@ -34,29 +31,22 @@ const getChannelName = () => {
   }
 };
 const channelName = getChannelName();
-// 정렬 관련 상태
-const sortBy = ref('oldest'); // 기본 오래된순
 
-// 모달 관련 상태
+const sortBy = ref('oldest');
 const showCreateModal = ref(false);
-
-// 무한 스크롤 트리거 컴포넌트 참조
 const infiniteScrollTrigger = ref(null);
 
-// 게시글 목록 조회 (무한 스크롤)
 const loadPosts = async (page = 0, reset = false) => {
   if (isLoadingMore.value && !reset) return;
   
   isLoadingMore.value = true;
   try {
-    // 무한 스크롤 추가 로딩 시에만 딜레이 (첫 로딩은 즉시)
     if (page > 0 && !reset) {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
     
     const response = await getChannelBoardListPaged(page, pageSize, sortBy.value, channelName);
     
-    // 전체 게시글 개수 업데이트
     if (reset || page === 0) {
       totalPostCount.value = response.totalCount || 0;
     }
@@ -81,7 +71,6 @@ const loadPosts = async (page = 0, reset = false) => {
     hasNext.value = response.hasNext;
     currentPage.value = page;
     
-    // Observer 재설정 (reset인 경우)
     if (reset && infiniteScrollTrigger.value) {
       setTimeout(() => {
         infiniteScrollTrigger.value.setupObserver();
@@ -89,7 +78,6 @@ const loadPosts = async (page = 0, reset = false) => {
     }
     
   } catch (error) {
-    console.error('게시글 로딩 실패:', error);
     if (reset) {
       posts.value = [];
     }
@@ -98,24 +86,19 @@ const loadPosts = async (page = 0, reset = false) => {
   }
 };
 
-// 다음 페이지 로드
 const loadMorePosts = () => {
   if (hasNext.value && !isLoadingMore.value) {
     loadPosts(currentPage.value + 1);
   }
 };
 
-// 정렬 변경
 const handleSortChange = (newSort) => {
   sortBy.value = newSort;
-  
-  // 정렬 변경 시 처음부터 다시 로드
   currentPage.value = 0;
   hasNext.value = true;
   loadPosts(0, true);
 };
 
-// 게시글 편집 모드 토글
 const handleEdit = (post) => {
   post.isEditing = !post.isEditing;
   if (post.isEditing) {
@@ -125,7 +108,6 @@ const handleEdit = (post) => {
   }
 };
 
-// 게시글 삭제
 const handleDeletePost = async (postIdx) => {
   if (!confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
     return;
@@ -135,7 +117,6 @@ const handleDeletePost = async (postIdx) => {
     const response = await deleteChannelBoard(postIdx);
     if (response.code === 200 || response.success) {
       alert('게시글이 삭제되었습니다.');
-      // 삭제 후 첫 페이지부터 새로고침
       currentPage.value = 0;
       hasNext.value = true;
       await loadPosts(0, true);
@@ -143,12 +124,10 @@ const handleDeletePost = async (postIdx) => {
       throw new Error(response.message || '삭제에 실패했습니다.');
     }
   } catch (error) {
-    console.error('게시글 삭제 실패:', error);
     alert('게시글 삭제에 실패했습니다.');
   }
 };
 
-// 게시글 수정 저장
 const handleSaveEdit = async (post) => {
   if (!post.editTitle.trim()) {
     alert('제목을 입력해주세요.');
@@ -172,7 +151,6 @@ const handleSaveEdit = async (post) => {
       post.title = post.editTitle;
       post.contents = post.editContent;
       post.isEditing = false;
-      // 수정 후 새로고침
       currentPage.value = 0;
       hasNext.value = true;
       await loadPosts(0, true);
@@ -180,19 +158,16 @@ const handleSaveEdit = async (post) => {
       throw new Error(response.message || '수정에 실패했습니다.');
     }
   } catch (error) {
-    console.error('게시글 수정 실패:', error);
     alert('게시글 수정에 실패했습니다.');
   }
 };
 
-// 편집 취소
 const handleCancelEdit = (post) => {
   post.isEditing = false;
   post.editTitle = post.title;
   post.editContent = post.contents;
 };
 
-// 새 게시글 작성
 const handleCreatePost = async (postData) => {
   try {
     const response = await createChannelBoard(postData);
@@ -200,7 +175,6 @@ const handleCreatePost = async (postData) => {
     if (response.code === 200 || response.success) {
       alert('게시글이 작성되었습니다.');
       showCreateModal.value = false;
-      // 작성 후 첫 페이지부터 새로고침
       currentPage.value = 0;
       hasNext.value = true;
       await loadPosts(0, true);
@@ -208,29 +182,24 @@ const handleCreatePost = async (postData) => {
       throw new Error(response.message || '작성에 실패했습니다.');
     }
   } catch (error) {
-    console.error('게시글 작성 실패:', error);
     alert('게시글 작성에 실패했습니다.');
   }
 };
 
-// 모달 닫기
 const handleCloseModal = () => {
   showCreateModal.value = false;
 };
 
-// 댓글 관리 페이지로 이동
 const handleCommentManage = (postTitle) => {
   alert(`게시글 "${postTitle}" 의 댓글 관리 기능은 추후 구현 예정입니다.`);
 };
 
-// 컴포넌트 마운트
 onMounted(() => {
   if (props.isActive) {
     loadPosts(0, true);
   }
 });
 
-// props가 변경될 때 데이터 로드
 watch(() => props.isActive, (newVal) => {
   if (newVal) {
     currentPage.value = 0;
@@ -245,7 +214,6 @@ watch(() => props.isActive, (newVal) => {
     <div class="community-header">
       <h2>커뮤니티 게시글 관리</h2>
 
-      <!-- 정렬 드롭다운 컴포넌트 -->
       <SortDropdown 
         :sortBy="sortBy" 
         @sort-change="handleSortChange"
@@ -256,12 +224,10 @@ watch(() => props.isActive, (newVal) => {
       <i class="fas fa-pen"></i> 새 게시글 작성
     </button>
     
-    <!-- 로딩 상태 (초기 로딩) -->
     <div v-if="loading" class="loading">
       <i class="fas fa-spinner fa-spin"></i> 게시글을 불러오는 중...
     </div>
     
-    <!-- 게시글 목록 -->
     <div v-else class="community-posts-manage">
       <div v-if="posts.length === 0 && !isLoadingMore" class="no-posts">
         <i class="fas fa-inbox"></i>
@@ -274,7 +240,6 @@ watch(() => props.isActive, (newVal) => {
           총 {{ totalPostCount }}개의 게시글 ({{ posts.length }}개 로드됨)
         </div>
         
-        <!-- 게시글 카드 컴포넌트들 -->
         <PostCard 
           v-for="post in posts" 
           :key="post.idx"
@@ -286,7 +251,6 @@ watch(() => props.isActive, (newVal) => {
           @comment-manage="handleCommentManage"
         />
         
-        <!-- 무한 스크롤 트리거 컴포넌트 -->
         <InfiniteScrollTrigger 
           ref="infiniteScrollTrigger"
           :hasNext="hasNext" 
@@ -297,7 +261,6 @@ watch(() => props.isActive, (newVal) => {
       </div>
     </div>
     
-    <!-- 게시글 작성 모달 컴포넌트 -->
     <CreatePostModal 
       :show="showCreateModal"
       @submit="handleCreatePost"
@@ -372,7 +335,6 @@ watch(() => props.isActive, (newVal) => {
   transform: translateY(-1px);
 }
 
-/* 반응형 디자인 */
 @media (max-width: 768px) {
   .community-header {
     flex-direction: column;
