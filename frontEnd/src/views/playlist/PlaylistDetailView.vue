@@ -21,7 +21,7 @@
 
       <div class="video-list-section">
          <VideoSectionComp 
-            :videos="videoListForComponent" 
+            :videos="videoListForComponent"
             title="Video List"
             icon="fa-solid fa-music"
         />
@@ -75,7 +75,12 @@ const videoListForComponent = computed(() => {
     return playlist.value.videos.map(item => {
         return {
             ...item,
-            videoId: item.idx // videoId를 video 객체의 idx로 설정
+            videoId: item.idx, // videoId를 video 객체의 idx로 설정
+            videoImage: item.thumbNail,
+            channel: {
+              name: item.channelName,
+              profileImg: item.channelProfile
+            }
         };
     });
 });

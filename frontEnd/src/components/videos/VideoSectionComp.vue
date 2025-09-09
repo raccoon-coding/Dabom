@@ -1,7 +1,20 @@
 <script setup>
 import VideoCardComp from '@/components/videos/VideoCardComp.vue'
+import CreateTogetherModal from "@/components/together/CreateTogetherModal.vue";
+import {reactive} from "vue";
 
 const props = defineProps(['title', 'icon', 'videos'])
+const modalState = reactive({
+  together: false
+})
+
+const showTogetherModal = () => {
+  modalState.together = true
+}
+
+const closeTogetherModal = () => {
+  modalState.together = false
+}
 </script>
 
 <template>
@@ -15,9 +28,14 @@ const props = defineProps(['title', 'icon', 'videos'])
         </div>
 
         <div class="video-grid">
-            <VideoCardComp v-for="video in props.videos" :key="video.id" :video="video" />
+            <VideoCardComp v-for="video in props.videos" :key="video.id" :video="video" @openModal="showTogetherModal" />
         </div>
     </section>
+  <CreateTogetherModal
+      v-if="modalState.together"
+      :visible="modalState.together"
+      @close="closeTogetherModal"
+  />
 </template>
 
 <style scoped>

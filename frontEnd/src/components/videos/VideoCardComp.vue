@@ -2,6 +2,7 @@
 import { useRouter } from 'vue-router';
 
 const props = defineProps(['video'])
+const emits = defineEmits(['openModal'])
 const router = useRouter()
 
 const playVideo = () => {
@@ -14,6 +15,10 @@ const goToChannel = () => {
         router.push(`/channel/${props.video.channel.name}`);
     }
 }
+
+const showTogetherModal = () => [
+
+]
 </script>
 
 <template>
@@ -25,7 +30,7 @@ const goToChannel = () => {
                 <button class="video-overlay__play-btn" @click="playVideo">
                     <i class="fas fa-play"></i>
                 </button>
-                <button class="video-overlay__together-btn" title="Together 모드로 시청">
+                <button class="video-overlay__together-btn" @click="emits('openModal')" title="Together 모드로 시청">
                     <i class="fas fa-users"></i>
                 </button>
             </div>

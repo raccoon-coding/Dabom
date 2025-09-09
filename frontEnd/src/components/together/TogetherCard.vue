@@ -30,7 +30,7 @@ const getTogether = () => {
   together.together_id = data.togetherIdx
   together.title = data.title
   together.host_name = data.master.name
-  together.thumb_nail = data.thumb_nail
+  together.thumb_nail = data.thumbNail
   together.max_join_people = data.maxMemberNum
   together.join_people = data.joinMemberNumber
   together.total_play_time = data.total_play_time
